@@ -14,6 +14,7 @@ use crate::grpc::{PaymentInformation, RegisterPaymentReply};
 use crate::lnurl::pay::model::SuccessActionProcessed;
 use crate::lsp::LspInformation;
 use crate::models::Network::*;
+use crate::reverseswap::CreateReverseSwapResponse;
 
 /// Different types of supported payments
 #[derive(Clone, PartialEq, Eq, Debug, EnumString, Display, Deserialize, Serialize)]
@@ -106,24 +107,83 @@ pub trait SwapperAPI: Send + Sync {
     async fn complete_swap(&self, bolt11: String) -> Result<()>;
 }
 
+/// Details about the BTC/BTC reverse swap pair, at this point in time
+///
+/// Maps the result of https://docs.boltz.exchange/en/latest/api/#getting-pairs for the BTC/BTC pair
 #[derive(Clone, PartialEq, Debug)]
-pub struct ReverseSwapInfo {
+pub struct ReverseSwapPairInfo {
+    /// Minimum amount of sats a reverse swap is allowed to have on this endpoint
     pub min: u64,
+    /// Maximum amount of sats a reverse swap is allowed to have on this endpoint
     pub max: u64,
+    /// Hash of the pair info JSON
     pub fees_hash: String,
+    /// Percentage fee for the Boltz service
     pub fees_percentage: f64,
+    /// Estimated miner fees in sats for locking up funds
     pub fees_lockup: u64,
+    /// Estimated miner fees in sats for claiming funds
     pub fees_claim: u64,
 }
 
+/// Details of past or ongoing reverse swaps, as stored in the Breez local DB
+#[derive(Clone, Debug)]
+pub struct ReverseSwapInfo {
+    // static immutable data
+    pub claim_address: String,
+    pub lockup_address: String,
+
+    // dynamic data
+    pub status: ReverseSwapStatus,
+}
+
+/// The status of a reverse swap
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum ReverseSwapStatus {
+    /// The reverse swap has been created. The HODL invoice is not yet paid.
+    Initial = 0,
+
+    /// The HODL invoice has been paid.
+    InvoicePaid = 1,
+
+    /// The lock transaction has 1 confirmation.
+    LockTxConfirmed = 2,
+
+    /// The claim transaction has 1 confirmation.
+    ClaimTxConfirmed = 3,
+
+    /// The blockchain reached [CreateReverseSwapResponse::timeout_block_height] before the reverse
+    /// swap completed
+    Cancelled = 4,
+}
+
+/// Information about a reverse swap that was just started with Boltz
+#[derive(Debug)]
 pub struct ReverseSwap {
-    pub error_message: String,
+    pub error_message: Option<String>,
+    pub response: CreateReverseSwapResponse,
 }
 
 /// Trait covering functionality involving swaps
 #[tonic::async_trait]
 pub trait ReverseSwapperAPI: Send + Sync {
-    async fn create_reverse_swap(&self) -> Result<ReverseSwap>;
+    async fn reverse_swap_info(&self) -> Result<ReverseSwapPairInfo>;
+
+    /// Creates a reverse submarine swap
+    ///
+    /// # Arguments
+    ///
+    /// * `amount_sat` - Amount that is to be swapped
+    /// * `onchain_claim_address` - BTC address at which the reverse swap will be claimed, in compressed format
+    /// * `pair_hash` - The hash of the exchange rate, looked-up before this call
+    /// * `routing_node` - Pubkey of a LN node used as routing hint
+    async fn create_reverse_swap(
+        &self,
+        amount_sat: u64,
+        onchain_claim_address: String,
+        pair_hash: String,
+        routing_node: String,
+    ) -> Result<ReverseSwap>;
 }
 
 /// Internal SDK log entry

@@ -18,12 +18,12 @@ use crate::lsp::LspInformation;
 use crate::models::{
     parse_short_channel_id, ChannelState, ClosedChannelPaymentDetails, Config, EnvironmentType,
     FiatAPI, GreenlightCredentials, LspAPI, Network, NodeAPI, NodeState, Payment, PaymentDetails,
-    PaymentType, PaymentTypeFilter, ReverseSwapInfo, ReverseSwapperAPI, SwapInfo, SwapperAPI,
+    PaymentType, PaymentTypeFilter, ReverseSwapPairInfo, ReverseSwapperAPI, SwapInfo, SwapperAPI,
 };
 use crate::persist::db::SqliteStorage;
 use crate::reverseswap::BTCSendSwap;
 use crate::swap::BTCReceiveSwap;
-use crate::LnUrlWithdrawRequestData;
+use crate::{LnUrlWithdrawRequestData, ReverseSwapInfo};
 use anyhow::{anyhow, Result};
 use bip39::*;
 use std::cmp::max;
@@ -130,10 +130,12 @@ pub struct BreezServices {
     persister: Arc<SqliteStorage>,
     payment_receiver: Arc<PaymentReceiver>,
     btc_receive_swapper: Arc<BTCReceiveSwap>,
+    btc_send_swapper: Arc<BTCSendSwap>,
     event_listener: Option<Box<dyn EventListener>>,
     shutdown_sender: Mutex<Option<mpsc::Sender<()>>>,
 }
 
+use crate::boltzswap::BoltzApi;
 use bitcoin_hashes::{sha256, Hash};
 
 impl BreezServices {
@@ -424,9 +426,34 @@ impl BreezServices {
         Ok(None)
     }
 
-    pub async fn reverse_swap_info(&self) -> Result<ReverseSwapInfo> {
-        let rsi = crate::boltzswap::reverse_swap_info().await?;
-        return Ok(rsi);
+    pub async fn reverse_swap_info(&self) -> Result<ReverseSwapPairInfo> {
+        self.btc_send_swapper.reverse_swap_info().await
+    }
+
+    /// The steps for a full reverse swap are:
+    ///
+    /// 1. User starts reverse swap (input: desired amount, destination BTC address)
+    /// 2. Receive HODL invoice from Boltz
+    /// 3. Pay the HODL invoice
+    /// 4. Monitor on-chain "lock" tx (poll), notify user on confirmation
+    /// 5. Broadcast "claim" tx (reveal preimage)
+    ///
+    /// This method covers steps 1 and 2 above.
+    pub async fn send_onchain(
+        &self,
+        amount_sat: u64,
+        onchain_recipient_address: String,
+        pair_hash: String,
+    ) -> Result<ReverseSwapInfo> {
+        let routing_hop = self.lsp_info().await?;
+        self.btc_send_swapper
+            .create_reverse_swap(
+                amount_sat,
+                onchain_recipient_address.clone(),
+                pair_hash,
+                routing_hop.pubkey,
+            )
+            .await
     }
 
     /// list non-completed expired swaps that should be refunded bu calling [BreezServices::refund]
@@ -801,6 +828,15 @@ impl BreezServicesBuilder {
             payment_receiver.clone(),
         ));
 
+        let btc_send_swapper = Arc::new(BTCSendSwap::new(
+            self.config.network.clone().into(),
+            self.reverse_swapper_api
+                .clone()
+                .unwrap_or_else(|| Arc::new(BoltzApi {})),
+            persister.clone(),
+            chain_service.clone(),
+        ));
+
         // Create the node services and it them statically
         let breez_services = Arc::new(BreezServices {
             node_api: unwrapped_node_api.clone(),
@@ -812,6 +848,7 @@ impl BreezServicesBuilder {
             chain_service,
             persister,
             btc_receive_swapper,
+            btc_send_swapper,
             payment_receiver,
             event_listener: listener,
             shutdown_sender: Mutex::new(None),

@@ -311,6 +311,25 @@ async fn main() -> Result<()> {
                     Some("recommended_fees") => show_results(sdk()?.recommended_fees().await),
                     Some("receive_onchain") => show_results(sdk()?.receive_onchain().await),
                     Some("reverse_swap_info") => show_results(sdk()?.reverse_swap_info().await),
+                    Some("send_onchain") => {
+                        let amount_sat: u64 = command
+                            .next()
+                            .ok_or("Expected amount_sat arg")
+                            .map_err(|err| anyhow!(err))?
+                            .parse()?;
+                        let onchain_recipient_address: String = command
+                            .next()
+                            .ok_or("Expected onchain_recipient_address arg")
+                            .map_err(|err| anyhow!(err))?
+                            .into();
+
+                        let temp = sdk()?.reverse_swap_info().await?;
+                        show_results(
+                            sdk()?
+                                .send_onchain(amount_sat, onchain_recipient_address, temp.fees_hash)
+                                .await,
+                        )
+                    }
                     Some("in_progress_swap") => show_results(sdk()?.in_progress_swap().await),
                     Some("list_refundables") => show_results(sdk()?.list_refundables().await),
                     Some("execute_dev_command") => {
