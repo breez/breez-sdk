@@ -1,12 +1,116 @@
 use anyhow::Result;
+use bitcoin::{OutPoint, Txid};
+use bitcoin_hashes::hex::FromHex;
 use serde::{Deserialize, Serialize};
 
 #[tonic::async_trait]
 pub trait ChainService: Send + Sync {
     async fn recommended_fees(&self) -> Result<RecommendedFees>;
+    /// Gets all transactions associated with this address. Does not distinguish between spent and unspent.
     async fn address_transactions(&self, address: String) -> Result<Vec<OnchainTx>>;
     async fn current_tip(&self) -> Result<u32>;
     async fn broadcast_transaction(&self, tx: Vec<u8>) -> Result<String>;
+}
+
+#[derive(Clone)]
+pub struct Utxo {
+    pub out: OutPoint,
+    pub value: u32,
+    pub block_height: Option<u32>,
+}
+
+#[derive(Clone)]
+pub struct AddressUtxos {
+    pub unconfirmed: Vec<Utxo>,
+    pub confirmed: Vec<Utxo>,
+}
+
+impl AddressUtxos {
+    pub(crate) fn unconfirmed_sats(&self) -> u32 {
+        self.unconfirmed
+            .iter()
+            .fold(0, |accum, item| accum + item.value)
+    }
+
+    pub(crate) fn unconfirmed_tx_ids(&self) -> Vec<String> {
+        self.unconfirmed
+            .iter()
+            .map(|c| c.out.txid.to_string())
+            .collect()
+    }
+
+    pub(crate) fn confirmed_sats(&self) -> u32 {
+        self.confirmed
+            .iter()
+            .fold(0, |accum, item| accum + item.value)
+    }
+
+    pub(crate) fn confirmed_tx_ids(&self) -> Vec<String> {
+        self.confirmed
+            .iter()
+            .map(|c| c.out.txid.to_string())
+            .collect()
+    }
+
+    /// Get the highest block height of all confirmed transactions that paid to the given onchain address
+    pub(crate) fn _confirmed_block(&self) -> u32 {
+        self.confirmed.iter().fold(0, |b, item| {
+            let confirmed_block = item.block_height.unwrap_or_default();
+            if confirmed_block != 0 || confirmed_block < b {
+                confirmed_block
+            } else {
+                b
+            }
+        })
+    }
+}
+
+/// Gets unspent tx outputs. Specifically filters out inbound utxos that have been spent.
+pub(crate) fn get_utxos(address: String, transactions: Vec<OnchainTx>) -> Result<AddressUtxos> {
+    // Calculate confirmed amount associated with this address
+    let mut spent_outputs: Vec<OutPoint> = Vec::new();
+    let mut utxos: Vec<Utxo> = Vec::new();
+    for (_, tx) in transactions.iter().enumerate() {
+        for (_, vin) in tx.vin.iter().enumerate() {
+            if vin.prevout.scriptpubkey_address == address.clone() {
+                spent_outputs.push(OutPoint {
+                    txid: Txid::from_hex(vin.txid.as_str())?,
+                    vout: vin.vout,
+                })
+            }
+        }
+    }
+
+    for (_i, tx) in transactions.iter().enumerate() {
+        for (index, vout) in tx.vout.iter().enumerate() {
+            if vout.scriptpubkey_address == address {
+                let outpoint = OutPoint {
+                    txid: Txid::from_hex(tx.txid.as_str())?,
+                    vout: index as u32,
+                };
+                if !spent_outputs.contains(&outpoint) {
+                    utxos.push(Utxo {
+                        out: outpoint,
+                        value: vout.value,
+                        block_height: tx.status.block_height,
+                    });
+                }
+            }
+        }
+    }
+    let address_utxos = AddressUtxos {
+        unconfirmed: utxos
+            .clone()
+            .into_iter()
+            .filter(|u| u.block_height.is_none())
+            .collect(),
+        confirmed: utxos
+            .clone()
+            .into_iter()
+            .filter(|u| u.block_height.is_some())
+            .collect(),
+    };
+    Ok(address_utxos)
 }
 
 #[derive(Clone)]

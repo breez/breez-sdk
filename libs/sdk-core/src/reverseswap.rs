@@ -31,26 +31,26 @@ pub struct CreateReverseSwapResponse {
 /// This struct is responsible for sending to an onchain address using lightning payments.
 /// It uses internally an implementation of [ReverseSwapperAPI] that represents Boltz reverse swapper service.
 pub(crate) struct BTCSendSwap {
-    network: bitcoin::Network,
+    _network: bitcoin::Network,
     reverse_swapper_api: Arc<dyn ReverseSwapperAPI>,
-    persister: Arc<crate::persist::db::SqliteStorage>,
-    chain_service: Arc<dyn ChainService>,
+    _persister: Arc<crate::persist::db::SqliteStorage>,
+    _chain_service: Arc<dyn ChainService>,
     //payment_sender: Arc<dyn Sender>,
 }
 
 impl BTCSendSwap {
     pub(crate) fn new(
-        network: bitcoin::Network,
+        _network: bitcoin::Network,
         reverse_swapper_api: Arc<dyn ReverseSwapperAPI>,
-        persister: Arc<crate::persist::db::SqliteStorage>,
-        chain_service: Arc<MempoolSpace>,
+        _persister: Arc<crate::persist::db::SqliteStorage>,
+        _chain_service: Arc<MempoolSpace>,
         //payment_sender: Arc<PaymentSender>,
     ) -> Self {
         Self {
-            network,
+            _network,
             reverse_swapper_api,
-            persister,
-            chain_service,
+            _persister,
+            _chain_service,
             //payment_sender,
         }
     }
