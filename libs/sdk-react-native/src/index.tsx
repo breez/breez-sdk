@@ -38,6 +38,11 @@ enum InputType {
     URL = "url"
 }
 
+enum LnUrlPayResult {
+    ENDPOINT_SUCCESS = "endpointSuccess",
+    ENDPOINT_FAILURE = "endpointFailure"
+}
+
 export enum PaymentType {
     SEND = "send",
     RECEIVED = "received",
@@ -180,6 +185,14 @@ export type LnUrlWithdrawCallbackStatus = {
 export type LnUrlAuthCallbackStatus = {
     status: string
     reason?: string
+}
+
+export type EndpointSuccess = {
+    data?: AesSuccessActionDataDecrypted | MessageSuccessActionData | UrlSuccessActionData
+}
+
+export type EndpointFailure = {
+    data: LnUrlErrorData
 }
 
 export type LnUrlWithdrawRequestData = {
@@ -466,6 +479,23 @@ export async function lnurlAuth(
 ): Promise<LnUrlAuthCallbackStatus> {
     const response = await BreezSDK.lnurlAuth(reqData)
     return response as LnUrlAuthCallbackStatus
+}
+
+export async function payLnurl(
+    reqData: LnUrlPayRequestData,
+    amountSats: number,
+    comment?: string
+): Promise<EndpointSuccess | EndpointFailure> {
+    const response = await BreezSDK.payLnurl(reqData, amountSats, comment)
+
+    switch (response.type) {
+        case LnUrlPayResult.ENDPOINT_SUCCESS:
+            return response as EndpointSuccess
+        case LnUrlPayResult.ENDPOINT_FAILURE:
+            return response as EndpointFailure
+    }
+
+    throw Error(`Unknown lnurl pay result type: ${response.type}`)
 }
 
 export async function nodeInfo(): Promise<NodeState> {
