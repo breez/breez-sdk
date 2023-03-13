@@ -25,7 +25,7 @@ cargo install cargo-ndk
 ```
 * Install [flutter_rust_bridge](https://github.com/fzyzcjy/flutter_rust_bridge): 
 ```
-cargo install flutter_rust_bridge_codegen --version 1.53.0
+cargo install flutter_rust_bridge_codegen --version 1.69.0
 ```
 
 ## Building the plugin
