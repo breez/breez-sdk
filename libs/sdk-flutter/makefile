@@ -3,7 +3,7 @@ SOURCES=$(sort $(wildcard ../sdk-core/src/*.rs ../sdk-core/src/**/*.rs))
 .PHONY: init
 init:
 	cargo install cargo-ndk
-	cargo install flutter_rust_bridge_codegen --version 1.53.0
+	cargo install flutter_rust_bridge_codegen --version 1.69.0
 	flutter pub get
 
 ## all: Compile iOS, Android

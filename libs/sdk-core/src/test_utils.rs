@@ -459,7 +459,7 @@ pub(crate) fn rand_invoice_with_description_hash_and_preimage(
         .payment_hash(Hash::from_slice(payment_hash)?)
         .payment_secret(payment_secret)
         .current_timestamp()
-        .min_final_cltv_expiry(144)
+        .min_final_cltv_expiry_delta(144)
         .build_signed(|hash| Secp256k1::new().sign_ecdsa_recoverable(hash, &private_key))
         .map_err(|err| anyhow!(err))
 }
@@ -510,7 +510,7 @@ pub fn create_invoice(
         .amount_milli_satoshis(amount_msat)
         .expiry_time(Duration::new(3600, 0))
         .payment_secret(PaymentSecret(rand::thread_rng().gen::<[u8; 32]>()))
-        .min_final_cltv_expiry(32);
+        .min_final_cltv_expiry_delta(32);
 
     for hint in hints {
         invoice_builder = invoice_builder.private_route(hint.to_ldk_hint().unwrap());

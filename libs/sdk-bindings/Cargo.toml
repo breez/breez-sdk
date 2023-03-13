@@ -20,7 +20,7 @@ uniffi_macros = "0.22.0"
 lightning-invoice = "*"
 log = "*"
 once_cell = "*"
-flutter_rust_bridge = "1"
+flutter_rust_bridge = "1.69.0"
 tiny-bip39 = "*"
 tonic = { version = "^0.8", features = ["tls", "tls-roots", "tls-webpki-roots"] }
 

@@ -281,7 +281,11 @@ impl Wire2Api<GreenlightCredentials> for *mut wire_GreenlightCredentials {
         Wire2Api::<GreenlightCredentials>::wire2api(*wrap).into()
     }
 }
-
+impl Wire2Api<i64> for *mut i64 {
+    fn wire2api(self) -> i64 {
+        unsafe { *support::box_from_leak_ptr(self) }
+    }
+}
 impl Wire2Api<LnUrlPayRequestData> for *mut wire_LnUrlPayRequestData {
     fn wire2api(self) -> LnUrlPayRequestData {
         let wrap = unsafe { support::box_from_leak_ptr(self) };
@@ -294,7 +298,11 @@ impl Wire2Api<LnUrlWithdrawRequestData> for *mut wire_LnUrlWithdrawRequestData {
         Wire2Api::<LnUrlWithdrawRequestData>::wire2api(*wrap).into()
     }
 }
-
+impl Wire2Api<u64> for *mut u64 {
+    fn wire2api(self) -> u64 {
+        unsafe { *support::box_from_leak_ptr(self) }
+    }
+}
 impl Wire2Api<Config> for wire_Config {
     fn wire2api(self) -> Config {
         Config {
@@ -433,12 +441,24 @@ impl NewWithNullPtr for wire_Config {
     }
 }
 
+impl Default for wire_Config {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+
 impl NewWithNullPtr for wire_GreenlightCredentials {
     fn new_with_null_ptr() -> Self {
         Self {
             device_key: core::ptr::null_mut(),
             device_cert: core::ptr::null_mut(),
         }
+    }
+}
+
+impl Default for wire_GreenlightCredentials {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
     }
 }
 
@@ -456,6 +476,12 @@ impl NewWithNullPtr for wire_LnUrlPayRequestData {
     }
 }
 
+impl Default for wire_LnUrlPayRequestData {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+
 impl NewWithNullPtr for wire_LnUrlWithdrawRequestData {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -468,11 +494,17 @@ impl NewWithNullPtr for wire_LnUrlWithdrawRequestData {
     }
 }
 
+impl Default for wire_LnUrlWithdrawRequestData {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
+
 // Section: sync execution mode utility
 
 #[no_mangle]
-pub extern "C" fn free_WireSyncReturnStruct(val: support::WireSyncReturnStruct) {
+pub extern "C" fn free_WireSyncReturn(ptr: support::WireSyncReturn) {
     unsafe {
-        let _ = support::vec_from_leak_ptr(val.ptr, val.len);
-    }
+        let _ = support::box_from_leak_ptr(ptr);
+    };
 }

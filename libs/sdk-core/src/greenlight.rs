@@ -62,7 +62,8 @@ impl Greenlight {
         let tls_config = TlsConfig::new()?;
         let signer = Signer::new(seed, greenlight_network, tls_config.clone())?;
         let scheduler = Scheduler::new(signer.node_id(), greenlight_network).await?;
-        let recover_res: pb::RegistrationResponse = scheduler.register(&signer, None).await?;
+        let recover_res: pb::scheduler::RegistrationResponse =
+            scheduler.register(&signer, None).await?;
 
         Ok(GreenlightCredentials {
             device_key: recover_res.device_key.into(),
@@ -75,7 +76,7 @@ impl Greenlight {
         let tls_config = TlsConfig::new()?;
         let signer = Signer::new(seed, greenlight_network, tls_config.clone())?;
         let scheduler = Scheduler::new(signer.node_id(), greenlight_network).await?;
-        let recover_res: pb::RecoveryResponse = scheduler.recover(&signer).await?;
+        let recover_res: pb::scheduler::RecoveryResponse = scheduler.recover(&signer).await?;
 
         Ok(GreenlightCredentials {
             device_key: recover_res.device_key.as_bytes().to_vec(),

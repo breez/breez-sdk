@@ -108,7 +108,7 @@ pub fn add_routing_hints(
         .amount_milli_satoshis(new_amount_msats)
         .expiry_time(invoice.expiry_time())
         .payment_secret(*invoice.payment_secret())
-        .min_final_cltv_expiry(invoice.min_final_cltv_expiry());
+        .min_final_cltv_expiry_delta(invoice.min_final_cltv_expiry_delta());
 
     for hint in invoice.route_hints() {
         invoice_builder = invoice_builder.private_route(hint);

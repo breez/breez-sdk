@@ -8,7 +8,7 @@ name = "breez_sdk_core"
 crate-type = ["staticlib", "cdylib", "lib"]
 
 [dependencies]
-flutter_rust_bridge = "1"
+flutter_rust_bridge = "1.69.0"
 aes = "0.8"
 anyhow = { version = "1.0.57", features = ["backtrace"] }
 cbc = { version = "0.1", features = ["std"] }
@@ -43,7 +43,7 @@ strum = "0.24.1"
 strum_macros = "0.24.1"
 
 [dev-dependencies]
-mockito = "*"
+mockito = "0.31.1"
 
 [build-dependencies]
 tonic-build = "^0.8"
