@@ -652,9 +652,7 @@ dependencies = [
 
 [[package]]
 name = "cln-grpc"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57af6eff15ee3fd7a0e09d0baeab8d33c892a73d97b87248e5f94f4749eacfe1"
+version = "0.1.7"
 dependencies = [
  "anyhow",
  "bitcoin 0.30.1",
@@ -1200,13 +1198,12 @@ checksum = "ad0a93d233ebf96623465aad4046a8d3aa4da22d4f4beba5388838c8a434bbb4"
 [[package]]
 name = "gl-client"
 version = "0.1.9"
-source = "git+https://github.com/Blockstream/greenlight.git?rev=c7ff67eb062c021105f5601df3ac8699ecbeb51c#c7ff67eb062c021105f5601df3ac8699ecbeb51c"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.21.2",
  "bech32",
- "bitcoin 0.30.1",
+ "bitcoin 0.29.2",
  "bytes",
  "chacha20poly1305",
  "cln-grpc",

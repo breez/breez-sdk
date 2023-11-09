@@ -16,9 +16,6 @@ hex = "0.4"
 # v0.3 requires bitcoin 0.30, but gl-client uses bitcoin 0.29.2, so we keep this at v0.2 which also uses bitcoin 0.29
 bip21 = "0.2"
 bitcoin = "0.29.2"
-gl-client = { git = "https://github.com/Blockstream/greenlight.git", features = [
-    "permissive",
-], rev = "c7ff67eb062c021105f5601df3ac8699ecbeb51c" }
 zbase32 = "0.1.2"
 base64 = "0.13.0"
 chrono = "0.4"
@@ -64,6 +61,7 @@ miniz_oxide = "0.7.1"
 tokio-stream = "0.1.14"
 serde_with = "3.3.0"
 regex = "1.8.1"
+gl-client = { git = "https://github.com/hydra-yse/greenlight", branch = "20231109-fetchinvoice" }
 
 [dev-dependencies]
 mockito = "1"

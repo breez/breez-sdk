@@ -1,4 +1,5 @@
 use anyhow::anyhow;
+use bitcoin::blockdata::constants::ChainHash;
 use bitcoin::secp256k1::{self, PublicKey};
 use hex::ToHex;
 use lightning::routing::gossip::RoutingFees;
@@ -6,8 +7,9 @@ use lightning::routing::*;
 use lightning_invoice::*;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+use std::num::NonZeroU64;
 use std::str::FromStr;
-use std::time::{SystemTimeError, UNIX_EPOCH};
+use std::time::{Duration, SystemTimeError, UNIX_EPOCH};
 
 pub type InvoiceResult<T, E = InvoiceError> = Result<T, E>;
 
@@ -54,6 +56,37 @@ impl From<SystemTimeError> for InvoiceError {
     fn from(err: SystemTimeError) -> Self {
         Self::Generic(anyhow::Error::new(err))
     }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum Quantity {
+    Bounded(NonZeroU64),
+    Unbounded,
+    One,
+}
+
+impl From<lightning::offers::offer::Quantity> for Quantity {
+    fn from(value: lightning::offers::offer::Quantity) -> Self {
+        match value {
+            lightning::offers::offer::Quantity::One => Quantity::One,
+            lightning::offers::offer::Quantity::Unbounded => Quantity::Unbounded,
+            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded(n),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct LNOffer {
+    pub chains: Vec<ChainHash>,
+    pub amount_msats: Option<u64>,
+    pub description: String,
+    pub absolute_expiry: Option<Duration>,
+    pub issuer: Option<String>,
+    pub supported_quantity: Quantity,
+    pub signing_pubkey: PublicKey,
+    pub metadata: Option<Vec<u8>>,
+    // pub features: Features<OfferContext>,
+    // pub paths: Vec<BlindedPath>,
 }
 
 /// Wrapper for a BOLT11 LN invoice

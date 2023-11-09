@@ -23,6 +23,7 @@ use gl_client::signer::model::greenlight::{amount, cln, scheduler, OffChainPayme
 use gl_client::signer::Signer;
 use gl_client::tls::TlsConfig;
 use gl_client::{node, utils};
+use lightning::offers::offer::Offer;
 use lightning::util::message_signing::verify;
 use lightning_invoice::{RawInvoice, SignedRawInvoice};
 use serde::{Deserialize, Serialize};
@@ -30,7 +31,7 @@ use strum_macros::{Display, EnumString};
 use tokio::sync::{mpsc, Mutex};
 use tokio::time::sleep;
 use tokio_stream::{Stream, StreamExt};
-use tonic::Streaming;
+use tonic::{Code, Streaming};
 
 use crate::invoice::{parse_invoice, InvoiceError};
 use crate::models::*;
@@ -989,6 +990,48 @@ impl NodeAPI for Greenlight {
             .into_inner();
         debug!("send_custom_message returned status {:?}", resp.status);
         Ok(())
+    }
+
+    #[allow(unused_variables)]
+    async fn fetch_invoice(
+        &self,
+        offer: String,
+        amount_msat: Option<u64>,
+        quantity: Option<u64>,
+        recurrence_counter: Option<u64>,
+        recurrence_start: Option<f64>,
+        recurrence_label: Option<String>,
+        timeout: Option<f64>,
+        payer_note: Option<String>,
+    ) -> NodeResult<FetchInvoiceResponse> {
+        // Get the required pubkeys
+        let mut client = self.get_node_client().await?;
+
+        // Parse the offer locally, to avoid any unnecessary calls to the recipient
+        if let Err(parse_error) = offer.parse::<Offer>() {
+            return Err(NodeError::Generic(anyhow!("Invalid offer")));
+        }
+
+        let response = client
+            .fetch_invoice(cln::FetchinvoiceRequest {
+                offer,
+                amount_msat: amount_msat.map(|msat| cln::Amount { msat }),
+                quantity,
+                recurrence_counter,
+                recurrence_start,
+                recurrence_label,
+                timeout,
+                payer_note,
+            })
+            .await;
+
+        response
+            .map(|grpc_response| grpc_response.into())
+            .map_err(|status| match status.code() {
+                Code::NotFound => NodeError::RouteNotFound(anyhow!(status.message().to_string())),
+                Code::Unimplemented => NodeError::NotSupported(),
+                _ => NodeError::Generic(anyhow!("Could not fetch invoice")),
+            })
     }
 }
 

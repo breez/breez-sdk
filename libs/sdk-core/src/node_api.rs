@@ -1,6 +1,6 @@
 use crate::{
-    invoice::InvoiceError, persist::error::PersistError, CustomMessage, PaymentResponse, Peer,
-    PrepareSweepRequest, PrepareSweepResponse, SyncResponse,
+    invoice::InvoiceError, persist::error::PersistError, CustomMessage, FetchInvoiceResponse,
+    PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse, SyncResponse,
 };
 use anyhow::Result;
 use bitcoin::util::bip32::{ChildNumber, ExtendedPrivKey};
@@ -46,6 +46,9 @@ pub enum NodeError {
 
     #[error("Service connectivity: {0}")]
     ServiceConnectivity(anyhow::Error),
+
+    #[error("Feature not yet supported by Greenlight")]
+    NotSupported(),
 }
 
 /// Trait covering functions affecting the LN node
@@ -99,6 +102,17 @@ pub trait NodeAPI: Send + Sync {
     async fn stream_custom_messages(
         &self,
     ) -> NodeResult<Pin<Box<dyn Stream<Item = Result<CustomMessage>> + Send>>>;
+    async fn fetch_invoice(
+        &self,
+        offer: String,
+        amount_msat: Option<u64>,
+        quantity: Option<u64>,
+        recurrence_counter: Option<u64>,
+        recurrence_start: Option<f64>,
+        recurrence_label: Option<String>,
+        timeout: Option<f64>,
+        payer_note: Option<String>,
+    ) -> NodeResult<FetchInvoiceResponse>;
 
     /// Gets the private key at the path specified
     fn derive_bip32_key(&self, path: Vec<ChildNumber>) -> NodeResult<ExtendedPrivKey>;
