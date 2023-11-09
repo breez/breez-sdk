@@ -10,6 +10,7 @@ use bitcoin::hashes::{sha256, Hash};
 use bitcoin::secp256k1::{PublicKey, Secp256k1, SecretKey};
 use bitcoin::{Address, Script};
 use chrono::{DateTime, Duration, Utc};
+use gl_client::pb::cln;
 use ripemd::Digest;
 use ripemd::Ripemd160;
 use rusqlite::types::{FromSql, FromSqlError, FromSqlResult, ToSqlOutput, ValueRef};
@@ -814,6 +815,55 @@ pub struct PrepareRefundResponse {
 
 pub struct RefundResponse {
     pub refund_tx_id: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub struct FetchInvoiceChanges {
+    pub description_appended: Option<String>,
+    pub description: Option<String>,
+    pub vendor_removed: Option<String>,
+    pub vendor: Option<String>,
+    pub amount_msat: Option<u64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub struct FetchInvoiceNextPeriod {
+    pub counter: u64,
+    pub starttime: u64,
+    pub endtime: u64,
+    pub paywindow_start: u64,
+    pub paywindow_end: u64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub struct FetchInvoiceResponse {
+    pub invoice: String,
+    pub changes: Option<FetchInvoiceChanges>,
+    pub next_period: Option<FetchInvoiceNextPeriod>,
+}
+
+impl From<tonic::Response<cln::FetchinvoiceResponse>> for FetchInvoiceResponse {
+    fn from(response: tonic::Response<cln::FetchinvoiceResponse>) -> Self {
+        let response = response.into_inner();
+
+        FetchInvoiceResponse {
+            invoice: response.invoice,
+            changes: response.changes.map(|changes| FetchInvoiceChanges {
+                description: changes.description,
+                description_appended: changes.description_appended,
+                vendor: changes.vendor,
+                vendor_removed: changes.vendor_removed,
+                amount_msat: changes.amount_msat.map(|amount| amount.msat),
+            }),
+            next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
+                counter: np.counter,
+                starttime: np.starttime,
+                endtime: np.endtime,
+                paywindow_start: np.paywindow_start,
+                paywindow_end: np.paywindow_end,
+            }),
+        }
+    }
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.
