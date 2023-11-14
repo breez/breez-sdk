@@ -40,7 +40,7 @@ use crate::swap_in::error::SwapResult;
 use crate::swap_in::swap::create_submarine_swap_script;
 use crate::{
     parse_invoice, Config, CustomMessage, LNInvoice, PaymentResponse, Peer, PrepareSweepRequest,
-    FetchInvoiceResponse, FetchInvoiceRequest, parse, InputType,
+    FetchInvoiceResponse, FetchInvoiceRequest, parse, InputType, PrepareSweepResponse, RouteHint,
 };
 use crate::{OpeningFeeParams, OpeningFeeParamsMenu};
 use crate::{ReceivePaymentRequest, SwapInfo};
