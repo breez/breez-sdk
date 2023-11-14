@@ -41,7 +41,10 @@ use crate::input_parser::LnUrlAuthRequestData;
 use crate::input_parser::LnUrlErrorData;
 use crate::input_parser::LnUrlPayRequestData;
 use crate::input_parser::LnUrlWithdrawRequestData;
+use crate::invoice::Amount;
 use crate::invoice::LNInvoice;
+use crate::invoice::LNOffer;
+use crate::invoice::Quantity;
 use crate::invoice::RouteHint;
 use crate::invoice::RouteHintHop;
 use crate::lnurl::pay::model::AesSuccessActionDataDecrypted;
@@ -830,6 +833,31 @@ impl rust2dart::IntoIntoDart<AesSuccessActionDataDecrypted> for AesSuccessAction
     }
 }
 
+impl support::IntoDart for Amount {
+    fn into_dart(self) -> support::DartAbi {
+        match self {
+            Self::Bitcoin { amount_msats } => {
+                vec![0.into_dart(), amount_msats.into_into_dart().into_dart()]
+            }
+            Self::Currency {
+                iso4217_code,
+                amount,
+            } => vec![
+                1.into_dart(),
+                iso4217_code.into_into_dart().into_dart(),
+                amount.into_into_dart().into_dart(),
+            ],
+        }
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Amount {}
+impl rust2dart::IntoIntoDart<Amount> for Amount {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
 impl support::IntoDart for BackupFailedData {
     fn into_dart(self) -> support::DartAbi {
         vec![self.error.into_into_dart().into_dart()].into_dart()
@@ -1071,13 +1099,13 @@ impl support::IntoDart for InputType {
                 vec![0.into_dart(), address.into_into_dart().into_dart()]
             }
             Self::Bolt11 { invoice } => vec![1.into_dart(), invoice.into_into_dart().into_dart()],
-            Self::Bolt12Offer { offer } => todo!(),
-            Self::NodeId { node_id } => vec![2.into_dart(), node_id.into_into_dart().into_dart()],
-            Self::Url { url } => vec![3.into_dart(), url.into_into_dart().into_dart()],
-            Self::LnUrlPay { data } => vec![4.into_dart(), data.into_into_dart().into_dart()],
-            Self::LnUrlWithdraw { data } => vec![5.into_dart(), data.into_into_dart().into_dart()],
-            Self::LnUrlAuth { data } => vec![6.into_dart(), data.into_into_dart().into_dart()],
-            Self::LnUrlError { data } => vec![7.into_dart(), data.into_into_dart().into_dart()],
+            Self::Bolt12Offer { offer } => vec![2.into_dart(), offer.into_into_dart().into_dart()],
+            Self::NodeId { node_id } => vec![3.into_dart(), node_id.into_into_dart().into_dart()],
+            Self::Url { url } => vec![4.into_dart(), url.into_into_dart().into_dart()],
+            Self::LnUrlPay { data } => vec![5.into_dart(), data.into_into_dart().into_dart()],
+            Self::LnUrlWithdraw { data } => vec![6.into_dart(), data.into_into_dart().into_dart()],
+            Self::LnUrlAuth { data } => vec![7.into_dart(), data.into_into_dart().into_dart()],
+            Self::LnUrlError { data } => vec![8.into_dart(), data.into_into_dart().into_dart()],
         }
         .into_dart()
     }
@@ -1124,6 +1152,28 @@ impl support::IntoDart for LNInvoice {
 }
 impl support::IntoDartExceptPrimitive for LNInvoice {}
 impl rust2dart::IntoIntoDart<LNInvoice> for LNInvoice {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
+impl support::IntoDart for LNOffer {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.chains.into_into_dart().into_dart(),
+            self.amount.into_dart(),
+            self.description.into_into_dart().into_dart(),
+            self.absolute_expiry.into_dart(),
+            self.issuer.into_dart(),
+            self.supported_quantity.into_into_dart().into_dart(),
+            self.signing_pubkey.into_into_dart().into_dart(),
+            self.metadata.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for LNOffer {}
+impl rust2dart::IntoIntoDart<LNOffer> for LNOffer {
     fn into_into_dart(self) -> Self {
         self
     }
@@ -1630,6 +1680,23 @@ impl support::IntoDart for PrepareSweepResponse {
 }
 impl support::IntoDartExceptPrimitive for PrepareSweepResponse {}
 impl rust2dart::IntoIntoDart<PrepareSweepResponse> for PrepareSweepResponse {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
+impl support::IntoDart for Quantity {
+    fn into_dart(self) -> support::DartAbi {
+        match self {
+            Self::Bounded(field0) => vec![0.into_dart(), field0.into_into_dart().into_dart()],
+            Self::Unbounded => vec![1.into_dart()],
+            Self::One => vec![2.into_dart()],
+        }
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for Quantity {}
+impl rust2dart::IntoIntoDart<Quantity> for Quantity {
     fn into_into_dart(self) -> Self {
         self
     }

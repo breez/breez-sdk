@@ -31,7 +31,7 @@ use strum_macros::{Display, EnumString};
 use tokio::sync::{mpsc, Mutex};
 use tokio::time::sleep;
 use tokio_stream::{Stream, StreamExt};
-use tonic::{Code, Streaming};
+use tonic::Streaming;
 
 use crate::invoice::{parse_invoice, InvoiceError};
 use crate::models::*;
@@ -995,43 +995,38 @@ impl NodeAPI for Greenlight {
     #[allow(unused_variables)]
     async fn fetch_invoice(
         &self,
-        offer: String,
-        amount_msat: Option<u64>,
-        quantity: Option<u64>,
-        recurrence_counter: Option<u64>,
-        recurrence_start: Option<f64>,
-        recurrence_label: Option<String>,
-        timeout: Option<f64>,
-        payer_note: Option<String>,
+        req: FetchInvoiceRequest
     ) -> NodeResult<FetchInvoiceResponse> {
-        // Get the required pubkeys
-        let mut client = self.get_node_client().await?;
-
         // Parse the offer locally, to avoid any unnecessary calls to the recipient
-        if let Err(parse_error) = offer.parse::<Offer>() {
-            return Err(NodeError::Generic(anyhow!("Invalid offer")));
+        if let Err(parse_error) = req.offer.parse::<Offer>() {
+            return Err(NodeError::InvalidOffer(anyhow!("Invalid offer")));
         }
 
+        let mut client = self.get_node_client().await?;
         let response = client
-            .fetch_invoice(cln::FetchinvoiceRequest {
-                offer,
-                amount_msat: amount_msat.map(|msat| cln::Amount { msat }),
-                quantity,
-                recurrence_counter,
-                recurrence_start,
-                recurrence_label,
-                timeout,
-                payer_note,
-            })
-            .await;
+            .fetch_invoice(Into::<cln::FetchinvoiceRequest>::into(req))
+            .await?
+            .into_inner();
 
-        response
-            .map(|grpc_response| grpc_response.into())
-            .map_err(|status| match status.code() {
-                Code::NotFound => NodeError::RouteNotFound(anyhow!(status.message().to_string())),
-                Code::Unimplemented => NodeError::NotSupported(),
-                _ => NodeError::Generic(anyhow!("Could not fetch invoice")),
-            })
+        Ok(
+            FetchInvoiceResponse {
+                invoice: response.invoice,
+                changes: response.changes.map(|changes| FetchInvoiceChanges {
+                    description: changes.description,
+                    description_appended: changes.description_appended,
+                    vendor: changes.vendor,
+                    vendor_removed: changes.vendor_removed,
+                    amount_msat: changes.amount_msat.map(|amount| amount.msat),
+                }),
+                next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
+                    counter: np.counter,
+                    start_time: np.starttime,
+                    end_time: np.endtime,
+                    paywindow_start: np.paywindow_start,
+                    paywindow_end: np.paywindow_end,
+                }),
+            }
+        )
     }
 }
 

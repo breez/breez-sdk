@@ -40,6 +40,16 @@ class RNBreezSDK: RCTEventEmitter {
         throw SdkError.Generic(message: "BreezServices not initialized")
     }
 
+    private func ensureWorkingDir(workingDir: String) throws {
+        do {
+            if !FileManager.default.fileExists(atPath: workingDir) {
+                try FileManager.default.createDirectory(atPath: workingDir, withIntermediateDirectories: true)
+            }
+        } catch {
+            throw SdkError.Generic(message: "Mandatory field workingDir must contain a writable directory")
+        }
+    }
+
     @objc(parseInvoice:resolve:reject:)
     func parseInvoice(_ invoice: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         do {
@@ -113,6 +123,9 @@ class RNBreezSDK: RCTEventEmitter {
 
         do {
             let configTmp = try BreezSDKMapper.asConfig(config: config)
+
+            try ensureWorkingDir(workingDir: configTmp.workingDir)
+
             breezServices = try BreezSDK.connect(config: configTmp, seed: seed, listener: BreezSDKListener(emitter: self))
             resolve(["status": "ok"])
         } catch let err {
@@ -124,6 +137,7 @@ class RNBreezSDK: RCTEventEmitter {
     func disconnect(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         do {
             try getBreezServices().disconnect()
+            breezServices = nil
             resolve(["status": "ok"])
         } catch let err {
             rejectErr(err: err, reject: reject)

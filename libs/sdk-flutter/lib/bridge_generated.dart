@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:uuid/uuid.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+import 'package:collection/collection.dart';
 
 import 'dart:ffi' as ffi;
 
@@ -260,6 +261,17 @@ class AesSuccessActionDataDecrypted {
     required this.description,
     required this.plaintext,
   });
+}
+
+@freezed
+sealed class Amount with _$Amount {
+  const factory Amount.bitcoin({
+    required int amountMsats,
+  }) = Amount_Bitcoin;
+  const factory Amount.currency({
+    required U8Array3 iso4217Code,
+    required int amount,
+  }) = Amount_Currency;
 }
 
 class BackupFailedData {
@@ -526,6 +538,9 @@ sealed class InputType with _$InputType {
   const factory InputType.bolt11({
     required LNInvoice invoice,
   }) = InputType_Bolt11;
+  const factory InputType.bolt12Offer({
+    required LNOffer offer,
+  }) = InputType_Bolt12Offer;
   const factory InputType.nodeId({
     required String nodeId,
   }) = InputType_NodeId;
@@ -628,6 +643,28 @@ class LNInvoice {
     required this.expiry,
     required this.routingHints,
     required this.paymentSecret,
+  });
+}
+
+class LNOffer {
+  final List<String> chains;
+  final Amount? amount;
+  final String description;
+  final int? absoluteExpiry;
+  final String? issuer;
+  final Quantity supportedQuantity;
+  final String signingPubkey;
+  final Uint8List? metadata;
+
+  const LNOffer({
+    required this.chains,
+    this.amount,
+    required this.description,
+    this.absoluteExpiry,
+    this.issuer,
+    required this.supportedQuantity,
+    required this.signingPubkey,
+    this.metadata,
   });
 }
 
@@ -1187,6 +1224,15 @@ class PrepareSweepResponse {
   });
 }
 
+@freezed
+sealed class Quantity with _$Quantity {
+  const factory Quantity.bounded(
+    int field0,
+  ) = Quantity_Bounded;
+  const factory Quantity.unbounded() = Quantity_Unbounded;
+  const factory Quantity.one() = Quantity_One;
+}
+
 /// Denominator in an exchange rate
 class Rate {
   final String coin;
@@ -1642,6 +1688,15 @@ class Symbol {
     this.rtl,
     this.position,
   });
+}
+
+class U8Array3 extends NonGrowableListView<int> {
+  static const arraySize = 3;
+  U8Array3(Uint8List inner)
+      : assert(inner.length == arraySize),
+        super(inner);
+  U8Array3.unchecked(Uint8List inner) : super(inner);
+  U8Array3.init() : super(Uint8List(arraySize));
 }
 
 /// UTXO known to the LN node
@@ -2426,6 +2481,22 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     );
   }
 
+  Amount _wire2api_amount(dynamic raw) {
+    switch (raw[0]) {
+      case 0:
+        return Amount_Bitcoin(
+          amountMsats: _wire2api_u64(raw[1]),
+        );
+      case 1:
+        return Amount_Currency(
+          iso4217Code: _wire2api_u8_array_3(raw[1]),
+          amount: _wire2api_u64(raw[2]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
   BackupFailedData _wire2api_backup_failed_data(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 1) throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
@@ -2463,6 +2534,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     return _wire2api_aes_success_action_data_decrypted(raw);
   }
 
+  Amount _wire2api_box_autoadd_amount(dynamic raw) {
+    return _wire2api_amount(raw);
+  }
+
   BackupFailedData _wire2api_box_autoadd_backup_failed_data(dynamic raw) {
     return _wire2api_backup_failed_data(raw);
   }
@@ -2493,6 +2568,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   LNInvoice _wire2api_box_autoadd_ln_invoice(dynamic raw) {
     return _wire2api_ln_invoice(raw);
+  }
+
+  LNOffer _wire2api_box_autoadd_ln_offer(dynamic raw) {
+    return _wire2api_ln_offer(raw);
   }
 
   LnPaymentDetails _wire2api_box_autoadd_ln_payment_details(dynamic raw) {
@@ -2717,26 +2796,30 @@ class BreezSdkCoreImpl implements BreezSdkCore {
           invoice: _wire2api_box_autoadd_ln_invoice(raw[1]),
         );
       case 2:
+        return InputType_Bolt12Offer(
+          offer: _wire2api_box_autoadd_ln_offer(raw[1]),
+        );
+      case 3:
         return InputType_NodeId(
           nodeId: _wire2api_String(raw[1]),
         );
-      case 3:
+      case 4:
         return InputType_Url(
           url: _wire2api_String(raw[1]),
         );
-      case 4:
+      case 5:
         return InputType_LnUrlPay(
           data: _wire2api_box_autoadd_ln_url_pay_request_data(raw[1]),
         );
-      case 5:
+      case 6:
         return InputType_LnUrlWithdraw(
           data: _wire2api_box_autoadd_ln_url_withdraw_request_data(raw[1]),
         );
-      case 6:
+      case 7:
         return InputType_LnUrlAuth(
           data: _wire2api_box_autoadd_ln_url_auth_request_data(raw[1]),
         );
-      case 7:
+      case 8:
         return InputType_LnUrlError(
           data: _wire2api_box_autoadd_ln_url_error_data(raw[1]),
         );
@@ -2816,6 +2899,21 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       expiry: _wire2api_u64(arr[7]),
       routingHints: _wire2api_list_route_hint(arr[8]),
       paymentSecret: _wire2api_uint_8_list(arr[9]),
+    );
+  }
+
+  LNOffer _wire2api_ln_offer(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return LNOffer(
+      chains: _wire2api_StringList(arr[0]),
+      amount: _wire2api_opt_box_autoadd_amount(arr[1]),
+      description: _wire2api_String(arr[2]),
+      absoluteExpiry: _wire2api_opt_box_autoadd_u64(arr[3]),
+      issuer: _wire2api_opt_String(arr[4]),
+      supportedQuantity: _wire2api_quantity(arr[5]),
+      signingPubkey: _wire2api_String(arr[6]),
+      metadata: _wire2api_opt_uint_8_list(arr[7]),
     );
   }
 
@@ -3081,6 +3179,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     return raw == null ? null : _wire2api_StringList(raw);
   }
 
+  Amount? _wire2api_opt_box_autoadd_amount(dynamic raw) {
+    return raw == null ? null : _wire2api_box_autoadd_amount(raw);
+  }
+
   bool? _wire2api_opt_box_autoadd_bool(dynamic raw) {
     return raw == null ? null : _wire2api_box_autoadd_bool(raw);
   }
@@ -3131,6 +3233,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   List<LocalizedName>? _wire2api_opt_list_localized_name(dynamic raw) {
     return raw == null ? null : _wire2api_list_localized_name(raw);
+  }
+
+  Uint8List? _wire2api_opt_uint_8_list(dynamic raw) {
+    return raw == null ? null : _wire2api_uint_8_list(raw);
   }
 
   Payment _wire2api_payment(dynamic raw) {
@@ -3197,6 +3303,21 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       sweepTxWeight: _wire2api_u64(arr[0]),
       sweepTxFeeSat: _wire2api_u64(arr[1]),
     );
+  }
+
+  Quantity _wire2api_quantity(dynamic raw) {
+    switch (raw[0]) {
+      case 0:
+        return Quantity_Bounded(
+          _wire2api_u64(raw[1]),
+        );
+      case 1:
+        return Quantity_Unbounded();
+      case 2:
+        return Quantity_One();
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   Rate _wire2api_rate(dynamic raw) {
@@ -3407,6 +3528,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   int _wire2api_u8(dynamic raw) {
     return raw as int;
+  }
+
+  U8Array3 _wire2api_u8_array_3(dynamic raw) {
+    return U8Array3(_wire2api_uint_8_list(raw));
   }
 
   Uint8List _wire2api_uint_8_list(dynamic raw) {
@@ -4110,7 +4235,7 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
       : _lookup = lookup;
 
   void store_dart_post_cobject(
-    DartPostCObjectFnType ptr,
+    int ptr,
   ) {
     return _store_dart_post_cobject(
       ptr,
@@ -4118,9 +4243,8 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
   }
 
   late final _store_dart_post_cobjectPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(DartPostCObjectFnType)>>('store_dart_post_cobject');
-  late final _store_dart_post_cobject =
-      _store_dart_post_cobjectPtr.asFunction<void Function(DartPostCObjectFnType)>();
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>('store_dart_post_cobject');
+  late final _store_dart_post_cobject = _store_dart_post_cobjectPtr.asFunction<void Function(int)>();
 
   Object get_dart_object(
     int ptr,
@@ -4835,8 +4959,8 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
   late final _wire_execute_command =
       _wire_execute_commandPtr.asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
-  ffi.Pointer<ffi.Bool> new_box_autoadd_bool_0(
-    bool value,
+  ffi.Pointer<bool> new_box_autoadd_bool_0(
+    ffi.Pointer<bool> value,
   ) {
     return _new_box_autoadd_bool_0(
       value,
@@ -4844,9 +4968,9 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
   }
 
   late final _new_box_autoadd_bool_0Ptr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Bool> Function(ffi.Bool)>>('new_box_autoadd_bool_0');
+      _lookup<ffi.NativeFunction<ffi.Pointer<bool> Function(ffi.Pointer<bool>)>>('new_box_autoadd_bool_0');
   late final _new_box_autoadd_bool_0 =
-      _new_box_autoadd_bool_0Ptr.asFunction<ffi.Pointer<ffi.Bool> Function(bool)>();
+      _new_box_autoadd_bool_0Ptr.asFunction<ffi.Pointer<bool> Function(ffi.Pointer<bool>)>();
 
   ffi.Pointer<wire_BuyBitcoinRequest> new_box_autoadd_buy_bitcoin_request_0() {
     return _new_box_autoadd_buy_bitcoin_request_0();
@@ -5267,12 +5391,14 @@ final class wire_ListPaymentsRequest extends ffi.Struct {
 
   external ffi.Pointer<ffi.Int64> to_timestamp;
 
-  external ffi.Pointer<ffi.Bool> include_failures;
+  external ffi.Pointer<bool> include_failures;
 
   external ffi.Pointer<ffi.Uint32> offset;
 
   external ffi.Pointer<ffi.Uint32> limit;
 }
+
+typedef bool = ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Int>)>;
 
 final class wire_SendPaymentRequest extends ffi.Struct {
   external ffi.Pointer<wire_uint_8_list> bolt11;
@@ -5315,7 +5441,7 @@ final class wire_ReceivePaymentRequest extends ffi.Struct {
 
   external ffi.Pointer<wire_OpeningFeeParams> opening_fee_params;
 
-  external ffi.Pointer<ffi.Bool> use_description_hash;
+  external ffi.Pointer<bool> use_description_hash;
 
   external ffi.Pointer<ffi.Uint32> expiry;
 
@@ -5448,10 +5574,6 @@ final class wire_OpenChannelFeeRequest extends ffi.Struct {
 final class wire_ReverseSwapFeesRequest extends ffi.Struct {
   external ffi.Pointer<ffi.Uint64> send_amount_sat;
 }
-
-typedef DartPostCObjectFnType
-    = ffi.Pointer<ffi.NativeFunction<ffi.Bool Function(DartPort port_id, ffi.Pointer<ffi.Void> message)>>;
-typedef DartPort = ffi.Int64;
 
 const int SWAP_PAYMENT_FEE_EXPIRY_SECONDS = 172800;
 

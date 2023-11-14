@@ -1,5 +1,4 @@
 use anyhow::anyhow;
-use bitcoin::blockdata::constants::ChainHash;
 use bitcoin::secp256k1::{self, PublicKey};
 use hex::ToHex;
 use lightning::routing::gossip::RoutingFees;
@@ -7,9 +6,8 @@ use lightning::routing::*;
 use lightning_invoice::*;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::num::NonZeroU64;
 use std::str::FromStr;
-use std::time::{Duration, SystemTimeError, UNIX_EPOCH};
+use std::time::{SystemTimeError, UNIX_EPOCH};
 
 pub type InvoiceResult<T, E = InvoiceError> = Result<T, E>;
 
@@ -60,7 +58,7 @@ impl From<SystemTimeError> for InvoiceError {
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum Quantity {
-    Bounded(NonZeroU64),
+    Bounded(u64),
     Unbounded,
     One,
 }
@@ -70,20 +68,35 @@ impl From<lightning::offers::offer::Quantity> for Quantity {
         match value {
             lightning::offers::offer::Quantity::One => Quantity::One,
             lightning::offers::offer::Quantity::Unbounded => Quantity::Unbounded,
-            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded(n),
+            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded(n.into()),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum Amount { 
+    Bitcoin { amount_msats: u64 },
+    Currency { iso4217_code: [u8; 3], amount: u64 },
+}
+
+impl From<lightning::offers::offer::Amount> for Amount {
+    fn from(amount: lightning::offers::offer::Amount) -> Self {
+        match amount {
+           lightning::offers::offer::Amount::Bitcoin { amount_msats } => Amount::Bitcoin { amount_msats },
+           lightning::offers::offer::Amount::Currency { iso4217_code, amount } => Amount::Currency { iso4217_code, amount },
         }
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct LNOffer {
-    pub chains: Vec<ChainHash>,
-    pub amount_msats: Option<u64>,
+    pub chains: Vec<String>,
+    pub amount: Option<Amount>,
     pub description: String,
-    pub absolute_expiry: Option<Duration>,
+    pub absolute_expiry: Option<u64>,
     pub issuer: Option<String>,
     pub supported_quantity: Quantity,
-    pub signing_pubkey: PublicKey,
+    pub signing_pubkey: String,
     pub metadata: Option<Vec<u8>>,
     // pub features: Features<OfferContext>,
     // pub paths: Vec<BlindedPath>,

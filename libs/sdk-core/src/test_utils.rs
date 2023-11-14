@@ -31,7 +31,7 @@ use crate::chain::{ChainService, OnchainTx, Outspend, RecommendedFees, TxStatus}
 use crate::error::{ReceivePaymentError, SdkError, SdkResult};
 use crate::fiat::{FiatCurrency, Rate};
 use crate::grpc::{PaymentInformation, RegisterPaymentReply};
-use crate::invoice::{InvoiceError, InvoiceResult};
+use crate::invoice::{InvoiceError, InvoiceResult, LNOffer};
 use crate::lsp::LspInformation;
 use crate::models::{FiatAPI, LspAPI, NodeState, Payment, Swap, SwapperAPI, SyncResponse};
 use crate::moonpay::MoonPayApi;
@@ -40,7 +40,7 @@ use crate::swap_in::error::SwapResult;
 use crate::swap_in::swap::create_submarine_swap_script;
 use crate::{
     parse_invoice, Config, CustomMessage, LNInvoice, PaymentResponse, Peer, PrepareSweepRequest,
-    PrepareSweepResponse, RouteHint,
+    FetchInvoiceResponse, FetchInvoiceRequest, parse, InputType,
 };
 use crate::{OpeningFeeParams, OpeningFeeParamsMenu};
 use crate::{ReceivePaymentRequest, SwapInfo};
@@ -417,6 +417,16 @@ impl NodeAPI for MockNodeAPI {
             tokio_stream::wrappers::ReceiverStream::new(rx).map(Ok),
         ))
     }
+
+    async fn fetch_invoice(
+        &self,
+        req: FetchInvoiceRequest,
+    ) -> NodeResult<FetchInvoiceResponse> {
+        match parse(req.offer.as_str()).await {
+            Ok(InputType::Bolt12Offer { offer }) => Ok(fetch_invoice(offer)),
+            _ => Err(NodeError::InvalidOffer(anyhow!("Could not parse offer").into()))
+        }
+    }
 }
 
 impl MockNodeAPI {
@@ -717,6 +727,25 @@ fn sign_invoice(invoice: RawInvoice) -> String {
         })
         .unwrap()
         .to_string()
+}
+
+fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
+    // Mock node receiving FetchInvoiceRequest and building an invoice out of it
+    let minimum_sats = 10000u64;
+    let amount = offer.amount
+        .map(|amount| match amount {
+            crate::invoice::Amount::Bitcoin { amount_msats } => amount_msats,
+            crate::invoice::Amount::Currency { .. } => minimum_sats 
+        })
+        .unwrap_or(10000);
+
+    let invoice = create_invoice(offer.description, amount, vec![], None);
+        
+    FetchInvoiceResponse {
+        invoice: invoice.bolt11, // Should be renamed to simply 'bolt' or 'raw_invoice' in the future
+        changes: None,
+        next_period: None
+    }
 }
 
 /// [OpeningFeeParams] that are valid for more than 48h

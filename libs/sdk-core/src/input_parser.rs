@@ -4,7 +4,6 @@ use anyhow::{anyhow, Result};
 use bip21::Uri;
 use bitcoin::bech32;
 use bitcoin::bech32::FromBase32;
-use lightning::offers::offer::Amount;
 use lightning::offers::offer::Offer;
 use serde::Deserialize;
 use serde::Serialize;
@@ -178,19 +177,16 @@ pub async fn parse(input: &str) -> Result<InputType> {
     if let Ok(offer) = input.parse::<Offer>() {
         return Ok(Bolt12Offer {
             offer: LNOffer {
-                chains: offer.chains(),
-                amount_msats: offer.amount().map(|amount| {
-                    match amount {
-                        Amount::Currency { amount, .. } => amount,
-                        Amount::Bitcoin { amount_msats } => amount_msats,
-                    }
-                    .clone()
-                }),
+                chains: offer.chains()
+                    .iter()
+                    .map(|chain| chain.to_string())
+                    .collect(),
+                amount: offer.amount().map(|amount| amount.clone().into()),
                 description: offer.description().to_string(),
-                absolute_expiry: offer.absolute_expiry(),
+                absolute_expiry: offer.absolute_expiry().map(|expiry| expiry.as_secs()),
                 issuer: offer.issuer().map(|s| s.to_string()),
                 supported_quantity: offer.supported_quantity().into(),
-                signing_pubkey: offer.signing_pubkey(),
+                signing_pubkey: offer.signing_pubkey().to_string(),
                 metadata: offer.metadata().cloned(),
             },
         });

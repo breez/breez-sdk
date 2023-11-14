@@ -1,7 +1,7 @@
 import BreezSDK
 import Foundation
 
-class BreezSDKMapper {
+enum BreezSDKMapper {
     static func asAesSuccessActionDataDecrypted(aesSuccessActionDataDecrypted: [String: Any?]) throws -> AesSuccessActionDataDecrypted {
         guard let description = aesSuccessActionDataDecrypted["description"] as? String else { throw SdkError.Generic(message: "Missing mandatory field description for type AesSuccessActionDataDecrypted") }
         guard let plaintext = aesSuccessActionDataDecrypted["plaintext"] as? String else { throw SdkError.Generic(message: "Missing mandatory field plaintext for type AesSuccessActionDataDecrypted") }

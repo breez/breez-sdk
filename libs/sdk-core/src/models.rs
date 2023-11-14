@@ -817,6 +817,34 @@ pub struct RefundResponse {
     pub refund_tx_id: String,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct FetchInvoiceRequest {
+    pub offer: String,
+    pub amount_msat: Option<u64>,
+    pub quantity: Option<u64>,
+    pub timeout: Option<f64>,
+    pub payer_note: Option<String>,
+    // pub recurrence_counter: Option<u64>,
+    // pub recurrence_start: Option<f64>,
+    // pub recurrence_label: Option<String>,
+}
+
+impl Into<gl_client::pb::cln::FetchinvoiceRequest> for FetchInvoiceRequest {
+    fn into(self) -> gl_client::pb::cln::FetchinvoiceRequest {
+        gl_client::pb::cln::FetchinvoiceRequest {
+            offer: self.offer,
+            amount_msat: self.amount_msat.map(|msat| cln::Amount { msat }),
+            quantity: self.quantity,
+            timeout: self.timeout,
+            payer_note: self.payer_note,
+            // Not yet implemented
+            recurrence_counter: None,
+            recurrence_start: None,
+            recurrence_label: None,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct FetchInvoiceChanges {
     pub description_appended: Option<String>,
@@ -829,8 +857,8 @@ pub struct FetchInvoiceChanges {
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct FetchInvoiceNextPeriod {
     pub counter: u64,
-    pub starttime: u64,
-    pub endtime: u64,
+    pub start_time: u64,
+    pub end_time: u64,
     pub paywindow_start: u64,
     pub paywindow_end: u64,
 }
@@ -840,30 +868,6 @@ pub struct FetchInvoiceResponse {
     pub invoice: String,
     pub changes: Option<FetchInvoiceChanges>,
     pub next_period: Option<FetchInvoiceNextPeriod>,
-}
-
-impl From<tonic::Response<cln::FetchinvoiceResponse>> for FetchInvoiceResponse {
-    fn from(response: tonic::Response<cln::FetchinvoiceResponse>) -> Self {
-        let response = response.into_inner();
-
-        FetchInvoiceResponse {
-            invoice: response.invoice,
-            changes: response.changes.map(|changes| FetchInvoiceChanges {
-                description: changes.description,
-                description_appended: changes.description_appended,
-                vendor: changes.vendor,
-                vendor_removed: changes.vendor_removed,
-                amount_msat: changes.amount_msat.map(|amount| amount.msat),
-            }),
-            next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
-                counter: np.counter,
-                starttime: np.starttime,
-                endtime: np.endtime,
-                paywindow_start: np.paywindow_start,
-                paywindow_end: np.paywindow_end,
-            }),
-        }
-    }
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

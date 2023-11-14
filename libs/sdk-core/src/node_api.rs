@@ -1,6 +1,6 @@
 use crate::{
     invoice::InvoiceError, persist::error::PersistError, CustomMessage, FetchInvoiceResponse,
-    PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse, SyncResponse,
+    PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse, SyncResponse, FetchInvoiceRequest,
 };
 use anyhow::Result;
 use bitcoin::util::bip32::{ChildNumber, ExtendedPrivKey};
@@ -47,8 +47,17 @@ pub enum NodeError {
     #[error("Service connectivity: {0}")]
     ServiceConnectivity(anyhow::Error),
 
-    #[error("Feature not yet supported by Greenlight")]
-    NotSupported(),
+    #[error("Invalid offer: {0:?}")]
+    InvalidOffer(anyhow::Error),
+
+    #[error("Offer expired: {0}")]
+    OfferExpired(anyhow::Error),
+
+    #[error("Offer reply error: {0}")]
+    OfferReplyError(anyhow::Error),
+
+    #[error("Offer timeout: {0}")]
+    OfferTimeout(anyhow::Error),
 }
 
 /// Trait covering functions affecting the LN node
@@ -104,14 +113,7 @@ pub trait NodeAPI: Send + Sync {
     ) -> NodeResult<Pin<Box<dyn Stream<Item = Result<CustomMessage>> + Send>>>;
     async fn fetch_invoice(
         &self,
-        offer: String,
-        amount_msat: Option<u64>,
-        quantity: Option<u64>,
-        recurrence_counter: Option<u64>,
-        recurrence_start: Option<f64>,
-        recurrence_label: Option<String>,
-        timeout: Option<f64>,
-        payer_note: Option<String>,
+        req: FetchInvoiceRequest,
     ) -> NodeResult<FetchInvoiceResponse>;
 
     /// Gets the private key at the path specified

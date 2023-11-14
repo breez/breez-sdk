@@ -35,6 +35,19 @@ class BreezSDKModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
         throw SdkException.Generic("BreezServices not initialized")
     }
 
+    @Throws(SdkException::class)
+    private fun ensureWorkingDir(workingDir: String) {
+        try {
+            val workingDirFile = File(workingDir)
+
+            if (!workingDirFile.exists() && !workingDirFile.mkdirs()) {
+                throw SdkException.Generic("Mandatory field workingDir must contain a writable directory")
+            }
+        } catch (e: SecurityException) {
+            throw SdkException.Generic("Mandatory field workingDir must contain a writable directory")
+        }
+    }
+
     @ReactMethod
     fun addListener(eventName: String) {}
 
@@ -100,10 +113,6 @@ class BreezSDKModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
                 val res = defaultConfig(envTypeTmp, apiKey, nodeConfigTmp)
                 val workingDir = File(reactApplicationContext.filesDir.toString() + "/breezSdk")
 
-                if (!workingDir.exists()) {
-                    workingDir.mkdirs()
-                }
-
                 res.workingDir = workingDir.absolutePath
                 promise.resolve(readableMapOf(res))
             } catch (e: Exception) {
@@ -159,6 +168,8 @@ class BreezSDKModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             val configTmp = asConfig(config) ?: run { throw SdkException.Generic("Missing mandatory field config of type Config") }
             val emitter = reactApplicationContext.getJSModule(RCTDeviceEventEmitter::class.java)
 
+            ensureWorkingDir(configTmp.workingDir)
+
             breezServices = connect(configTmp, asUByteList(seed), BreezSDKListener(emitter))
             promise.resolve(readableMapOf("status" to "ok"))
         } catch (e: Exception) {
@@ -172,6 +183,7 @@ class BreezSDKModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
         executor.execute {
             try {
                 getBreezServices().disconnect()
+                breezServices = null
                 promise.resolve(readableMapOf("status" to "ok"))
             } catch (e: Exception) {
                 promise.reject(e.javaClass.simpleName.replace("Exception", "Error"), e.message, e)
