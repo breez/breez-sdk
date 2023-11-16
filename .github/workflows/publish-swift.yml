@@ -1,0 +1,135 @@
+name: Publish Swift Bindings
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'sdk repository, defaults to current repository'
+        required: false
+        type: string
+      ref:
+        description: 'commit/tag/branch reference'
+        required: true
+        type: string
+      package-version:
+        description: 'version for the swift package (MAJOR.MINOR.BUILD)'
+        required: true
+        type: string
+      publish:
+        description: 'value indicating whether to commit/tag a release.'
+        required: true
+        type: boolean
+        default: false
+    secrets:
+      REPO_SSH_KEY:
+        description: 'ssh key to commit to the breez-sdk-swift repository'
+        required: true
+      COCOAPODS_TRUNK_TOKEN:
+        description: 'cocoapods trunk token'
+        required: true
+
+jobs:
+  build-swift-release:
+    runs-on: macOS-13
+    steps:
+      - name: Checkout breez-sdk repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repository || github.repository }}
+          path: breez-sdk
+
+      - name: Checkout breez-sdk-swift repo
+        uses: actions/checkout@v3
+        with:
+          repository: breez/breez-sdk-swift
+          ssh-key: ${{ secrets.REPO_SSH_KEY }}
+          fetch-depth: 0
+          path: dist
+
+      - name: Download swift bindings
+        uses: actions/download-artifact@v3
+        with:
+          name: bindings-swift
+          path: bindings-swift
+
+      - name: Download aarch64-apple-ios
+        uses: actions/download-artifact@v3
+        with:
+          name: sdk-bindings-aarch64-apple-ios
+          path: aarch64-apple-ios
+      
+      - name: Download ios-universal-sim
+        uses: actions/download-artifact@v3
+        with:
+          name: sdk-bindings-ios-universal-sim
+          path: ios-universal-sim
+    
+      - name: Download darwin-universal
+        uses: actions/download-artifact@v3
+        with:
+          name: sdk-bindings-darwin-universal
+          path: darwin-universal
+
+      - name: Copy swift bindings
+        run: |
+          mkdir -p breez-sdk/libs/sdk-bindings/bindings-swift/Sources/BreezSDK
+          cp bindings-swift/BreezSDK.swift breez-sdk/libs/sdk-bindings/bindings-swift/Sources/BreezSDK/BreezSDK.swift
+          cp bindings-swift/breez_sdkFFI.h breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64/breez_sdkFFI.framework/Headers
+          cp bindings-swift/breez_sdkFFI.h breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64_x86_64-simulator/breez_sdkFFI.framework/Headers
+          cp bindings-swift/breez_sdkFFI.h breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/macos-arm64_x86_64/breez_sdkFFI.framework/Headers
+          mkdir -p breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64/breez_sdkFFI.framework/breez_sdkFFI
+          cp aarch64-apple-ios/libbreez_sdk_bindings.a breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64/breez_sdkFFI.framework/breez_sdkFFI
+          mkdir -p breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64_x86_64-simulator/breez_sdkFFI.framework/breez_sdkFFI
+          cp ios-universal-sim/libbreez_sdk_bindings.a breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/ios-arm64_x86_64-simulator/breez_sdkFFI.framework/breez_sdkFFI
+          cp darwin-universal/libbreez_sdk_bindings.a breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework/macos-arm64_x86_64/breez_sdkFFI.framework/breez_sdkFFI
+
+      - name: Compress XCFramework
+        working-directory: breez-sdk/libs/sdk-bindings/bindings-swift
+        run: |
+          zip -9 -r breez_sdkFFI.xcframework.zip breez_sdkFFI.xcframework
+          echo "XCF_CHECKSUM=`swift package compute-checksum breez_sdkFFI.xcframework.zip`" >> $GITHUB_ENV
+
+      - name: Update Swift Package definition
+        working-directory: breez-sdk/libs/sdk-bindings/bindings-swift
+        run: |
+          sed 's#.binaryTarget(name: "breez_sdkFFI", path: "./breez_sdkFFI.xcframework"),#.binaryTarget(name: "breez_sdkFFI", url: "https://github.com/breez/breez-sdk-swift/releases/download/${{ inputs.package-version || '0.0.1' }}/breez_sdkFFI.xcframework.zip", checksum: "${{ env.XCF_CHECKSUM }}"),#;/.testTarget(name: "BreezSDKTests", dependencies: \["BreezSDK"\]),/d' Package.swift > ../../../../dist/Package.swift
+          cp -r Sources ../../../../dist
+
+      - name: Update Cocoapods definitions
+        working-directory: dist
+        run: |
+          sed -i '' 's#^.\{2\}spec.version.*$#  spec.version                = "${{ inputs.package-version || '0.0.1' }}"#' breez_sdkFFI.podspec
+          sed -i '' 's#^.\{2\}spec.version.*$#  spec.version                = "${{ inputs.package-version || '0.0.1' }}"#' BreezSDK.podspec
+  
+      - name: Tag the Swift bindings
+        if: ${{ inputs.publish }}
+        working-directory: dist
+        run: |
+          git config --global user.name "SDK release tagger"
+          git config --global user.email "no-reply@breez.technology"
+          git add Package.swift
+          git add Sources
+          git add breez_sdkFFI.podspec
+          git add BreezSDK.podspec
+          git commit -m "Update Breez SDK Swift bindings to version ${{ inputs.package-version || '0.0.1' }}"
+          git push
+          git tag ${{ inputs.package-version || '0.0.1' }} -m "${{ inputs.package-version || '0.0.1' }}"
+          git push --tags
+
+      - name: Release and attach XCFramework binary artifact
+        if: ${{ inputs.publish }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework.zip"
+          tag: ${{ inputs.package-version || '0.0.1' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ inputs.package-version || '0.0.1' }}
+          prerelease: true
+
+      - name: Push update to Cocoapods trunk
+        if: ${{ inputs.publish }}
+        working-directory: dist
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{secrets.COCOAPODS_TRUNK_TOKEN}}
+        run: |
+          pod trunk push breez_sdkFFI.podspec --allow-warnings
+          pod trunk push BreezSDK.podspec --allow-warnings --synchronous
