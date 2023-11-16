@@ -39,8 +39,9 @@ use crate::node_api::{NodeAPI, NodeError, NodeResult};
 use crate::swap_in::error::SwapResult;
 use crate::swap_in::swap::create_submarine_swap_script;
 use crate::{
-    parse_invoice, Config, CustomMessage, LNInvoice, PaymentResponse, Peer, PrepareSweepRequest,
-    FetchInvoiceResponse, FetchInvoiceRequest, parse, InputType, PrepareSweepResponse, RouteHint,
+    parse, parse_invoice, Config, CustomMessage, FetchInvoiceRequest, FetchInvoiceResponse,
+    InputType, LNInvoice, PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse,
+    RouteHint,
 };
 use crate::{OpeningFeeParams, OpeningFeeParamsMenu};
 use crate::{ReceivePaymentRequest, SwapInfo};
@@ -418,13 +419,12 @@ impl NodeAPI for MockNodeAPI {
         ))
     }
 
-    async fn fetch_invoice(
-        &self,
-        req: FetchInvoiceRequest,
-    ) -> NodeResult<FetchInvoiceResponse> {
+    async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse> {
         match parse(req.offer.as_str()).await {
             Ok(InputType::Bolt12Offer { offer }) => Ok(fetch_invoice(offer)),
-            _ => Err(NodeError::InvalidOffer(anyhow!("Could not parse offer").into()))
+            _ => Err(NodeError::InvalidOffer(
+                anyhow!("Could not parse offer").into(),
+            )),
         }
     }
 }
@@ -740,11 +740,11 @@ fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
         .unwrap_or(10000);
 
     let invoice = create_invoice(offer.description, amount, vec![], None);
-        
+
     FetchInvoiceResponse {
         invoice: invoice.bolt11, // Should be renamed to simply 'bolt' or 'raw_invoice' in the future
         changes: None,
-        next_period: None
+        next_period: None,
     }
 }
 

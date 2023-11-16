@@ -186,7 +186,7 @@ impl From<tonic::Status> for NodeError {
                 JsonRpcErrCode::InvoiceNoDescription => Self::InvoiceNoDescription(status.into()),
                 JsonRpcErrCode::InvoicePreimageAlreadyExists => {
                     Self::InvoicePreimageAlreadyExists(status.into())
-                },
+                }
                 JsonRpcErrCode::OfferExpired => Self::OfferExpired(status.into()),
                 JsonRpcErrCode::OfferBadInvreqReply => Self::OfferReplyError(status.into()),
                 JsonRpcErrCode::OfferRouteNotFound => Self::RouteNotFound(status.into()),

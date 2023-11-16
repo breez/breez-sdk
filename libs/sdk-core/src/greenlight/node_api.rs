@@ -993,10 +993,7 @@ impl NodeAPI for Greenlight {
     }
 
     #[allow(unused_variables)]
-    async fn fetch_invoice(
-        &self,
-        req: FetchInvoiceRequest
-    ) -> NodeResult<FetchInvoiceResponse> {
+    async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse> {
         // Parse the offer locally, to avoid any unnecessary calls to the recipient
         if let Err(parse_error) = req.offer.parse::<Offer>() {
             return Err(NodeError::InvalidOffer(anyhow!("Invalid offer")));
@@ -1008,25 +1005,23 @@ impl NodeAPI for Greenlight {
             .await?
             .into_inner();
 
-        Ok(
-            FetchInvoiceResponse {
-                invoice: response.invoice,
-                changes: response.changes.map(|changes| FetchInvoiceChanges {
-                    description: changes.description,
-                    description_appended: changes.description_appended,
-                    vendor: changes.vendor,
-                    vendor_removed: changes.vendor_removed,
-                    amount_msat: changes.amount_msat.map(|amount| amount.msat),
-                }),
-                next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
-                    counter: np.counter,
-                    start_time: np.starttime,
-                    end_time: np.endtime,
-                    paywindow_start: np.paywindow_start,
-                    paywindow_end: np.paywindow_end,
-                }),
-            }
-        )
+        Ok(FetchInvoiceResponse {
+            invoice: response.invoice,
+            changes: response.changes.map(|changes| FetchInvoiceChanges {
+                description: changes.description,
+                description_appended: changes.description_appended,
+                vendor: changes.vendor,
+                vendor_removed: changes.vendor_removed,
+                amount_msat: changes.amount_msat.map(|amount| amount.msat),
+            }),
+            next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
+                counter: np.counter,
+                start_time: np.starttime,
+                end_time: np.endtime,
+                paywindow_start: np.paywindow_start,
+                paywindow_end: np.paywindow_end,
+            }),
+        })
     }
 }
 

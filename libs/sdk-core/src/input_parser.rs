@@ -177,7 +177,8 @@ pub async fn parse(input: &str) -> Result<InputType> {
     if let Ok(offer) = input.parse::<Offer>() {
         return Ok(Bolt12Offer {
             offer: LNOffer {
-                chains: offer.chains()
+                chains: offer
+                    .chains()
                     .iter()
                     .map(|chain| chain.to_string())
                     .collect(),

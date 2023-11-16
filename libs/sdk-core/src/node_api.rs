@@ -1,6 +1,7 @@
 use crate::{
-    invoice::InvoiceError, persist::error::PersistError, CustomMessage, FetchInvoiceResponse,
-    PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse, SyncResponse, FetchInvoiceRequest,
+    invoice::InvoiceError, persist::error::PersistError, CustomMessage, FetchInvoiceRequest,
+    FetchInvoiceResponse, PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse,
+    SyncResponse,
 };
 use anyhow::Result;
 use bitcoin::util::bip32::{ChildNumber, ExtendedPrivKey};
@@ -111,10 +112,7 @@ pub trait NodeAPI: Send + Sync {
     async fn stream_custom_messages(
         &self,
     ) -> NodeResult<Pin<Box<dyn Stream<Item = Result<CustomMessage>> + Send>>>;
-    async fn fetch_invoice(
-        &self,
-        req: FetchInvoiceRequest,
-    ) -> NodeResult<FetchInvoiceResponse>;
+    async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse>;
 
     /// Gets the private key at the path specified
     fn derive_bip32_key(&self, path: Vec<ChildNumber>) -> NodeResult<ExtendedPrivKey>;
