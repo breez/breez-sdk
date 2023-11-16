@@ -829,14 +829,14 @@ pub struct FetchInvoiceRequest {
     // pub recurrence_label: Option<String>,
 }
 
-impl Into<gl_client::pb::cln::FetchinvoiceRequest> for FetchInvoiceRequest {
-    fn into(self) -> gl_client::pb::cln::FetchinvoiceRequest {
+impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
+    fn from(request: FetchInvoiceRequest) -> Self {
         gl_client::pb::cln::FetchinvoiceRequest {
-            offer: self.offer,
-            amount_msat: self.amount_msat.map(|msat| cln::Amount { msat }),
-            quantity: self.quantity,
-            timeout: self.timeout,
-            payer_note: self.payer_note,
+            offer: request.offer,
+            amount_msat: request.amount_msat.map(|msat| cln::Amount { msat }),
+            quantity: request.quantity,
+            timeout: request.timeout,
+            payer_note: request.payer_note,
             // Not yet implemented
             recurrence_counter: None,
             recurrence_start: None,
