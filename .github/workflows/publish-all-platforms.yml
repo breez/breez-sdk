@@ -263,7 +263,13 @@ jobs:
   publish-react-native:
     needs:
       - setup
-    if: ${{ needs.setup.outputs.react-native == 'true' }}
+      - publish-swift
+    if: |
+      always() &&
+      ${{ needs.setup.outputs.react-native == 'true' }} &&
+      # If swift is also published, run react native after publishing swift
+      # if it is not, publish react native anyway. 
+      ${{ needs.publish-swift.result == 'success' || needs.publish-swift.result == 'skipped' }}
     uses: ./.github/workflows/publish-react-native.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
