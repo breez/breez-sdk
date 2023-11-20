@@ -597,7 +597,7 @@ enum BreezSDKMapper {
     }
 
     static func asLnInvoice(lnInvoice: [String: Any?]) throws -> LnInvoice {
-        guard let bolt11 = lnInvoice["bolt11"] as? String else { throw SdkError.Generic(message: "Missing mandatory field bolt11 for type LnInvoice") }
+        guard let rawInvoice = lnInvoice["rawInvoice"] as? String else { throw SdkError.Generic(message: "Missing mandatory field rawInvoice for type LnInvoice") }
         guard let payeePubkey = lnInvoice["payeePubkey"] as? String else { throw SdkError.Generic(message: "Missing mandatory field payeePubkey for type LnInvoice") }
         guard let paymentHash = lnInvoice["paymentHash"] as? String else { throw SdkError.Generic(message: "Missing mandatory field paymentHash for type LnInvoice") }
         let description = lnInvoice["description"] as? String
@@ -611,7 +611,7 @@ enum BreezSDKMapper {
         guard let paymentSecret = lnInvoice["paymentSecret"] as? [UInt8] else { throw SdkError.Generic(message: "Missing mandatory field paymentSecret for type LnInvoice") }
 
         return LnInvoice(
-            bolt11: bolt11,
+            rawInvoice: rawInvoice,
             payeePubkey: payeePubkey,
             paymentHash: paymentHash,
             description: description,
@@ -626,7 +626,7 @@ enum BreezSDKMapper {
 
     static func dictionaryOf(lnInvoice: LnInvoice) -> [String: Any?] {
         return [
-            "bolt11": lnInvoice.bolt11,
+            "rawInvoice": lnInvoice.rawInvoice,
             "payeePubkey": lnInvoice.payeePubkey,
             "paymentHash": lnInvoice.paymentHash,
             "description": lnInvoice.description == nil ? nil : lnInvoice.description,
@@ -654,6 +654,67 @@ enum BreezSDKMapper {
 
     static func arrayOf(lnInvoiceList: [LnInvoice]) -> [Any] {
         return lnInvoiceList.map { v -> [String: Any?] in dictionaryOf(lnInvoice: v) }
+    }
+
+    static func asLnOffer(lnOffer: [String: Any?]) throws -> LnOffer {
+        guard let bolt12 = lnOffer["bolt12"] as? String else { throw SdkError.Generic(message: "Missing mandatory field bolt12 for type LnOffer") }
+        guard let chains = lnOffer["chains"] as? [String] else { throw SdkError.Generic(message: "Missing mandatory field chains for type LnOffer") }
+        guard let description = lnOffer["description"] as? String else { throw SdkError.Generic(message: "Missing mandatory field description for type LnOffer") }
+        guard let supportedQuantityTmp = lnOffer["supportedQuantity"] as? [String: Any?] else { throw SdkError.Generic(message: "Missing mandatory field supportedQuantity for type LnOffer") }
+        let supportedQuantity = try asQuantity(quantity: supportedQuantityTmp)
+
+        guard let signingPubkey = lnOffer["signingPubkey"] as? String else { throw SdkError.Generic(message: "Missing mandatory field signingPubkey for type LnOffer") }
+        var amount: Amount?
+        if let amountTmp = lnOffer["amount"] as? [String: Any?] {
+            amount = try asAmount(amount: amountTmp)
+        }
+
+        let absoluteExpiry = lnOffer["absoluteExpiry"] as? UInt64
+        let issuer = lnOffer["issuer"] as? String
+        let metadata = lnOffer["metadata"] as? [UInt8]
+
+        return LnOffer(
+            bolt12: bolt12,
+            chains: chains,
+            description: description,
+            supportedQuantity: supportedQuantity,
+            signingPubkey: signingPubkey,
+            amount: amount,
+            absoluteExpiry: absoluteExpiry,
+            issuer: issuer,
+            metadata: metadata
+        )
+    }
+
+    static func dictionaryOf(lnOffer: LnOffer) -> [String: Any?] {
+        return [
+            "bolt12": lnOffer.bolt12,
+            "chains": lnOffer.chains,
+            "description": lnOffer.description,
+            "supportedQuantity": dictionaryOf(quantity: lnOffer.supportedQuantity),
+            "signingPubkey": lnOffer.signingPubkey,
+            "amount": lnOffer.amount == nil ? nil : dictionaryOf(amount: lnOffer.amount!),
+            "absoluteExpiry": lnOffer.absoluteExpiry == nil ? nil : lnOffer.absoluteExpiry,
+            "issuer": lnOffer.issuer == nil ? nil : lnOffer.issuer,
+            "metadata": lnOffer.metadata == nil ? nil : lnOffer.metadata,
+        ]
+    }
+
+    static func asLnOfferList(arr: [Any]) throws -> [LnOffer] {
+        var list = [LnOffer]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var lnOffer = try asLnOffer(lnOffer: val)
+                list.append(lnOffer)
+            } else {
+                throw SdkError.Generic(message: "Unexpected type LnOffer")
+            }
+        }
+        return list
+    }
+
+    static func arrayOf(lnOfferList: [LnOffer]) -> [Any] {
+        return lnOfferList.map { v -> [String: Any?] in dictionaryOf(lnOffer: v) }
     }
 
     static func asListPaymentsRequest(listPaymentsRequest: [String: Any?]) throws -> ListPaymentsRequest {
@@ -2347,18 +2408,18 @@ enum BreezSDKMapper {
     }
 
     static func asSendPaymentRequest(sendPaymentRequest: [String: Any?]) throws -> SendPaymentRequest {
-        guard let bolt11 = sendPaymentRequest["bolt11"] as? String else { throw SdkError.Generic(message: "Missing mandatory field bolt11 for type SendPaymentRequest") }
+        guard let invoice = sendPaymentRequest["invoice"] as? String else { throw SdkError.Generic(message: "Missing mandatory field invoice for type SendPaymentRequest") }
         let amountMsat = sendPaymentRequest["amountMsat"] as? UInt64
 
         return SendPaymentRequest(
-            bolt11: bolt11,
+            invoice: invoice,
             amountMsat: amountMsat
         )
     }
 
     static func dictionaryOf(sendPaymentRequest: SendPaymentRequest) -> [String: Any?] {
         return [
-            "bolt11": sendPaymentRequest.bolt11,
+            "invoice": sendPaymentRequest.invoice,
             "amountMsat": sendPaymentRequest.amountMsat == nil ? nil : sendPaymentRequest.amountMsat,
         ]
     }
@@ -2842,6 +2903,58 @@ enum BreezSDKMapper {
         return urlSuccessActionDataList.map { v -> [String: Any?] in dictionaryOf(urlSuccessActionData: v) }
     }
 
+    static func asAmount(amount: [String: Any?]) throws -> Amount {
+        let type = amount["type"] as! String
+        if type == "bitcoin" {
+            guard let _amountMsat = amount["amountMsat"] as? UInt64 else { throw SdkError.Generic(message: "Missing mandatory field amountMsat for type Amount") }
+            return Amount.bitcoin(amountMsat: _amountMsat)
+        }
+        if type == "currency" {
+            guard let _iso4217Code = amount["iso4217Code"] as? String else { throw SdkError.Generic(message: "Missing mandatory field iso4217Code for type Amount") }
+            return Amount.currency(iso4217Code: _iso4217Code)
+        }
+
+        throw SdkError.Generic(message: "Unexpected type \(type) for enum Amount")
+    }
+
+    static func dictionaryOf(amount: Amount) -> [String: Any?] {
+        switch amount {
+        case let .bitcoin(
+            amountMsat
+        ):
+            return [
+                "type": "bitcoin",
+                "amountMsat": amountMsat,
+            ]
+
+        case let .currency(
+            iso4217Code, fractionalAmount
+        ):
+            return [
+                "type": "currency",
+                "iso4217Code": iso4217Code,
+                "fractionalAmount": fractionalAmount,
+            ]
+        }
+    }
+
+    static func arrayOf(amountList: [Amount]) -> [Any] {
+        return amountList.map { v -> [String: Any?] in dictionaryOf(amount: v) }
+    }
+
+    static func asAmountList(arr: [Any]) throws -> [Amount] {
+        var list = [Amount]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var amount = try asAmount(amount: val)
+                list.append(amount)
+            } else {
+                throw SdkError.Generic(message: "Unexpected type Amount")
+            }
+        }
+        return list
+    }
+
     static func asBreezEvent(breezEvent: [String: Any?]) throws -> BreezEvent {
         let type = breezEvent["type"] as! String
         if type == "newBlock" {
@@ -3143,6 +3256,12 @@ enum BreezSDKMapper {
 
             return InputType.bolt11(invoice: _invoice)
         }
+        if type == "bolt12Offer" {
+            guard let offerTmp = inputType["offer"] as? [String: Any?] else { throw SdkError.Generic(message: "Missing mandatory field offer for type InputType") }
+            let _offer = try asLnOffer(lnOffer: offerTmp)
+
+            return InputType.bolt12Offer(offer: _offer)
+        }
         if type == "nodeId" {
             guard let _nodeId = inputType["nodeId"] as? String else { throw SdkError.Generic(message: "Missing mandatory field nodeId for type InputType") }
             return InputType.nodeId(nodeId: _nodeId)
@@ -3195,6 +3314,14 @@ enum BreezSDKMapper {
             return [
                 "type": "bolt11",
                 "invoice": dictionaryOf(lnInvoice: invoice),
+            ]
+
+        case let .bolt12Offer(
+            offer
+        ):
+            return [
+                "type": "bolt12Offer",
+                "offer": dictionaryOf(lnOffer: offer),
             ]
 
         case let .nodeId(
@@ -3714,6 +3841,61 @@ enum BreezSDKMapper {
                 list.append(paymentTypeFilter)
             } else {
                 throw SdkError.Generic(message: "Unexpected type PaymentTypeFilter")
+            }
+        }
+        return list
+    }
+
+    static func asQuantity(quantity: [String: Any?]) throws -> Quantity {
+        let type = quantity["type"] as! String
+        if type == "bounded" {
+            guard let _amount = quantity["amount"] as? UInt64 else { throw SdkError.Generic(message: "Missing mandatory field amount for type Quantity") }
+            return Quantity.bounded(amount: _amount)
+        }
+        if type == "unbounded" {
+            return Quantity.unbounded
+        }
+        if type == "one" {
+            return Quantity.one
+        }
+
+        throw SdkError.Generic(message: "Unexpected type \(type) for enum Quantity")
+    }
+
+    static func dictionaryOf(quantity: Quantity) -> [String: Any?] {
+        switch quantity {
+        case let .bounded(
+            amount
+        ):
+            return [
+                "type": "bounded",
+                "amount": amount,
+            ]
+
+        case .unbounded:
+            return [
+                "type": "unbounded",
+            ]
+
+        case .one:
+            return [
+                "type": "one",
+            ]
+        }
+    }
+
+    static func arrayOf(quantityList: [Quantity]) -> [Any] {
+        return quantityList.map { v -> [String: Any?] in dictionaryOf(quantity: v) }
+    }
+
+    static func asQuantityList(arr: [Any]) throws -> [Quantity] {
+        var list = [Quantity]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var quantity = try asQuantity(quantity: val)
+                list.append(quantity)
+            } else {
+                throw SdkError.Generic(message: "Unexpected type Quantity")
             }
         }
         return list

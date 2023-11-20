@@ -1006,7 +1006,7 @@ impl NodeAPI for Greenlight {
             .into_inner();
 
         Ok(FetchInvoiceResponse {
-            invoice: response.invoice,
+            bolt12: response.invoice,
             changes: response.changes.map(|changes| FetchInvoiceChanges {
                 description: changes.description,
                 description_appended: changes.description_appended,

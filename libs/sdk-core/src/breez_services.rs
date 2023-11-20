@@ -237,7 +237,7 @@ impl BreezServices {
         req: SendPaymentRequest,
     ) -> Result<SendPaymentResponse, SendPaymentError> {
         self.start_node().await?;
-        let parsed_invoice = parse_invoice(req.bolt11.as_str())?;
+        let parsed_invoice = parse_invoice(req.invoice.as_str())?;
         let invoice_amount_msat = parsed_invoice.amount_msat.unwrap_or_default();
         let provided_amount_msat = req.amount_msat.unwrap_or_default();
 
@@ -263,7 +263,7 @@ impl BreezServices {
             None => {
                 let payment_res = self
                     .node_api
-                    .send_payment(req.bolt11.clone(), req.amount_msat)
+                    .send_payment(req.invoice.clone(), req.amount_msat)
                     .map_err(Into::into)
                     .await;
                 let payment = self
@@ -310,7 +310,7 @@ impl BreezServices {
             }
             ValidatedCallbackResponse::EndpointSuccess { data: cb } => {
                 let pay_req = SendPaymentRequest {
-                    bolt11: cb.pr.clone(),
+                    invoice: cb.pr.clone(),
                     amount_msat: None,
                 };
 
@@ -1367,6 +1367,16 @@ impl BreezServices {
                 },
             },
         })
+    }
+
+    pub async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> Result<FetchInvoiceResponse> {
+        self.start_node().await?;
+        Ok(
+            self
+                .node_api
+                .fetch_invoice(req)
+                .await?
+        )
     }
 }
 

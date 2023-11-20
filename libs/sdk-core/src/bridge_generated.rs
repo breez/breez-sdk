@@ -836,16 +836,16 @@ impl rust2dart::IntoIntoDart<AesSuccessActionDataDecrypted> for AesSuccessAction
 impl support::IntoDart for Amount {
     fn into_dart(self) -> support::DartAbi {
         match self {
-            Self::Bitcoin { amount_msats } => {
-                vec![0.into_dart(), amount_msats.into_into_dart().into_dart()]
+            Self::Bitcoin { amount_msat } => {
+                vec![0.into_dart(), amount_msat.into_into_dart().into_dart()]
             }
             Self::Currency {
                 iso4217_code,
-                amount,
+                fractional_amount,
             } => vec![
                 1.into_dart(),
                 iso4217_code.into_into_dart().into_dart(),
-                amount.into_into_dart().into_dart(),
+                fractional_amount.into_into_dart().into_dart(),
             ],
         }
         .into_dart()
@@ -1136,7 +1136,7 @@ impl rust2dart::IntoIntoDart<InvoicePaidDetails> for InvoicePaidDetails {
 impl support::IntoDart for LNInvoice {
     fn into_dart(self) -> support::DartAbi {
         vec![
-            self.bolt11.into_into_dart().into_dart(),
+            self.raw_invoice.into_into_dart().into_dart(),
             self.payee_pubkey.into_into_dart().into_dart(),
             self.payment_hash.into_into_dart().into_dart(),
             self.description.into_dart(),
@@ -1160,6 +1160,7 @@ impl rust2dart::IntoIntoDart<LNInvoice> for LNInvoice {
 impl support::IntoDart for LNOffer {
     fn into_dart(self) -> support::DartAbi {
         vec![
+            self.bolt12.into_into_dart().into_dart(),
             self.chains.into_into_dart().into_dart(),
             self.amount.into_dart(),
             self.description.into_into_dart().into_dart(),
@@ -1688,7 +1689,7 @@ impl rust2dart::IntoIntoDart<PrepareSweepResponse> for PrepareSweepResponse {
 impl support::IntoDart for Quantity {
     fn into_dart(self) -> support::DartAbi {
         match self {
-            Self::Bounded(field0) => vec![0.into_dart(), field0.into_into_dart().into_dart()],
+            Self::Bounded { amount } => vec![0.into_dart(), amount.into_into_dart().into_dart()],
             Self::Unbounded => vec![1.into_dart()],
             Self::One => vec![2.into_dart()],
         }

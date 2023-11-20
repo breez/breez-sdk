@@ -87,7 +87,7 @@ typedef struct wire_ListPaymentsRequest {
 } wire_ListPaymentsRequest;
 
 typedef struct wire_SendPaymentRequest {
-  struct wire_uint_8_list *bolt11;
+  struct wire_uint_8_list *invoice;
   uint64_t *amount_msat;
 } wire_SendPaymentRequest;
 

@@ -18,20 +18,20 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Amount {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int amountMsats) bitcoin,
-    required TResult Function(U8Array3 iso4217Code, int amount) currency,
+    required TResult Function(int amountMsat) bitcoin,
+    required TResult Function(String iso4217Code, int fractionalAmount) currency,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int amountMsats)? bitcoin,
-    TResult? Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult? Function(int amountMsat)? bitcoin,
+    TResult? Function(String iso4217Code, int fractionalAmount)? currency,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int amountMsats)? bitcoin,
-    TResult Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult Function(int amountMsat)? bitcoin,
+    TResult Function(String iso4217Code, int fractionalAmount)? currency,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -77,7 +77,7 @@ abstract class _$$Amount_BitcoinImplCopyWith<$Res> {
           _$Amount_BitcoinImpl value, $Res Function(_$Amount_BitcoinImpl) then) =
       __$$Amount_BitcoinImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int amountMsats});
+  $Res call({int amountMsat});
 }
 
 /// @nodoc
@@ -89,12 +89,12 @@ class __$$Amount_BitcoinImplCopyWithImpl<$Res> extends _$AmountCopyWithImpl<$Res
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? amountMsats = null,
+    Object? amountMsat = null,
   }) {
     return _then(_$Amount_BitcoinImpl(
-      amountMsats: null == amountMsats
-          ? _value.amountMsats
-          : amountMsats // ignore: cast_nullable_to_non_nullable
+      amountMsat: null == amountMsat
+          ? _value.amountMsat
+          : amountMsat // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
@@ -103,14 +103,14 @@ class __$$Amount_BitcoinImplCopyWithImpl<$Res> extends _$AmountCopyWithImpl<$Res
 /// @nodoc
 
 class _$Amount_BitcoinImpl implements Amount_Bitcoin {
-  const _$Amount_BitcoinImpl({required this.amountMsats});
+  const _$Amount_BitcoinImpl({required this.amountMsat});
 
   @override
-  final int amountMsats;
+  final int amountMsat;
 
   @override
   String toString() {
-    return 'Amount.bitcoin(amountMsats: $amountMsats)';
+    return 'Amount.bitcoin(amountMsat: $amountMsat)';
   }
 
   @override
@@ -118,11 +118,11 @@ class _$Amount_BitcoinImpl implements Amount_Bitcoin {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$Amount_BitcoinImpl &&
-            (identical(other.amountMsats, amountMsats) || other.amountMsats == amountMsats));
+            (identical(other.amountMsat, amountMsat) || other.amountMsat == amountMsat));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, amountMsats);
+  int get hashCode => Object.hash(runtimeType, amountMsat);
 
   @JsonKey(ignore: true)
   @override
@@ -133,30 +133,30 @@ class _$Amount_BitcoinImpl implements Amount_Bitcoin {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int amountMsats) bitcoin,
-    required TResult Function(U8Array3 iso4217Code, int amount) currency,
+    required TResult Function(int amountMsat) bitcoin,
+    required TResult Function(String iso4217Code, int fractionalAmount) currency,
   }) {
-    return bitcoin(amountMsats);
+    return bitcoin(amountMsat);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int amountMsats)? bitcoin,
-    TResult? Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult? Function(int amountMsat)? bitcoin,
+    TResult? Function(String iso4217Code, int fractionalAmount)? currency,
   }) {
-    return bitcoin?.call(amountMsats);
+    return bitcoin?.call(amountMsat);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int amountMsats)? bitcoin,
-    TResult Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult Function(int amountMsat)? bitcoin,
+    TResult Function(String iso4217Code, int fractionalAmount)? currency,
     required TResult orElse(),
   }) {
     if (bitcoin != null) {
-      return bitcoin(amountMsats);
+      return bitcoin(amountMsat);
     }
     return orElse();
   }
@@ -194,9 +194,9 @@ class _$Amount_BitcoinImpl implements Amount_Bitcoin {
 }
 
 abstract class Amount_Bitcoin implements Amount {
-  const factory Amount_Bitcoin({required final int amountMsats}) = _$Amount_BitcoinImpl;
+  const factory Amount_Bitcoin({required final int amountMsat}) = _$Amount_BitcoinImpl;
 
-  int get amountMsats;
+  int get amountMsat;
   @JsonKey(ignore: true)
   _$$Amount_BitcoinImplCopyWith<_$Amount_BitcoinImpl> get copyWith => throw _privateConstructorUsedError;
 }
@@ -207,7 +207,7 @@ abstract class _$$Amount_CurrencyImplCopyWith<$Res> {
           _$Amount_CurrencyImpl value, $Res Function(_$Amount_CurrencyImpl) then) =
       __$$Amount_CurrencyImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({U8Array3 iso4217Code, int amount});
+  $Res call({String iso4217Code, int fractionalAmount});
 }
 
 /// @nodoc
@@ -221,16 +221,16 @@ class __$$Amount_CurrencyImplCopyWithImpl<$Res> extends _$AmountCopyWithImpl<$Re
   @override
   $Res call({
     Object? iso4217Code = null,
-    Object? amount = null,
+    Object? fractionalAmount = null,
   }) {
     return _then(_$Amount_CurrencyImpl(
       iso4217Code: null == iso4217Code
           ? _value.iso4217Code
           : iso4217Code // ignore: cast_nullable_to_non_nullable
-              as U8Array3,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
+              as String,
+      fractionalAmount: null == fractionalAmount
+          ? _value.fractionalAmount
+          : fractionalAmount // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
@@ -239,16 +239,16 @@ class __$$Amount_CurrencyImplCopyWithImpl<$Res> extends _$AmountCopyWithImpl<$Re
 /// @nodoc
 
 class _$Amount_CurrencyImpl implements Amount_Currency {
-  const _$Amount_CurrencyImpl({required this.iso4217Code, required this.amount});
+  const _$Amount_CurrencyImpl({required this.iso4217Code, required this.fractionalAmount});
 
   @override
-  final U8Array3 iso4217Code;
+  final String iso4217Code;
   @override
-  final int amount;
+  final int fractionalAmount;
 
   @override
   String toString() {
-    return 'Amount.currency(iso4217Code: $iso4217Code, amount: $amount)';
+    return 'Amount.currency(iso4217Code: $iso4217Code, fractionalAmount: $fractionalAmount)';
   }
 
   @override
@@ -256,12 +256,13 @@ class _$Amount_CurrencyImpl implements Amount_Currency {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$Amount_CurrencyImpl &&
-            const DeepCollectionEquality().equals(other.iso4217Code, iso4217Code) &&
-            (identical(other.amount, amount) || other.amount == amount));
+            (identical(other.iso4217Code, iso4217Code) || other.iso4217Code == iso4217Code) &&
+            (identical(other.fractionalAmount, fractionalAmount) ||
+                other.fractionalAmount == fractionalAmount));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, const DeepCollectionEquality().hash(iso4217Code), amount);
+  int get hashCode => Object.hash(runtimeType, iso4217Code, fractionalAmount);
 
   @JsonKey(ignore: true)
   @override
@@ -272,30 +273,30 @@ class _$Amount_CurrencyImpl implements Amount_Currency {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int amountMsats) bitcoin,
-    required TResult Function(U8Array3 iso4217Code, int amount) currency,
+    required TResult Function(int amountMsat) bitcoin,
+    required TResult Function(String iso4217Code, int fractionalAmount) currency,
   }) {
-    return currency(iso4217Code, amount);
+    return currency(iso4217Code, fractionalAmount);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int amountMsats)? bitcoin,
-    TResult? Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult? Function(int amountMsat)? bitcoin,
+    TResult? Function(String iso4217Code, int fractionalAmount)? currency,
   }) {
-    return currency?.call(iso4217Code, amount);
+    return currency?.call(iso4217Code, fractionalAmount);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int amountMsats)? bitcoin,
-    TResult Function(U8Array3 iso4217Code, int amount)? currency,
+    TResult Function(int amountMsat)? bitcoin,
+    TResult Function(String iso4217Code, int fractionalAmount)? currency,
     required TResult orElse(),
   }) {
     if (currency != null) {
-      return currency(iso4217Code, amount);
+      return currency(iso4217Code, fractionalAmount);
     }
     return orElse();
   }
@@ -333,11 +334,11 @@ class _$Amount_CurrencyImpl implements Amount_Currency {
 }
 
 abstract class Amount_Currency implements Amount {
-  const factory Amount_Currency({required final U8Array3 iso4217Code, required final int amount}) =
+  const factory Amount_Currency({required final String iso4217Code, required final int fractionalAmount}) =
       _$Amount_CurrencyImpl;
 
-  U8Array3 get iso4217Code;
-  int get amount;
+  String get iso4217Code;
+  int get fractionalAmount;
   @JsonKey(ignore: true)
   _$$Amount_CurrencyImplCopyWith<_$Amount_CurrencyImpl> get copyWith => throw _privateConstructorUsedError;
 }
@@ -5018,21 +5019,21 @@ abstract class PaymentDetails_ClosedChannel implements PaymentDetails {
 mixin _$Quantity {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int field0) bounded,
+    required TResult Function(int amount) bounded,
     required TResult Function() unbounded,
     required TResult Function() one,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int field0)? bounded,
+    TResult? Function(int amount)? bounded,
     TResult? Function()? unbounded,
     TResult? Function()? one,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int field0)? bounded,
+    TResult Function(int amount)? bounded,
     TResult Function()? unbounded,
     TResult Function()? one,
     required TResult orElse(),
@@ -5084,7 +5085,7 @@ abstract class _$$Quantity_BoundedImplCopyWith<$Res> {
           _$Quantity_BoundedImpl value, $Res Function(_$Quantity_BoundedImpl) then) =
       __$$Quantity_BoundedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int field0});
+  $Res call({int amount});
 }
 
 /// @nodoc
@@ -5097,12 +5098,12 @@ class __$$Quantity_BoundedImplCopyWithImpl<$Res> extends _$QuantityCopyWithImpl<
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? field0 = null,
+    Object? amount = null,
   }) {
     return _then(_$Quantity_BoundedImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
               as int,
     ));
   }
@@ -5111,14 +5112,14 @@ class __$$Quantity_BoundedImplCopyWithImpl<$Res> extends _$QuantityCopyWithImpl<
 /// @nodoc
 
 class _$Quantity_BoundedImpl implements Quantity_Bounded {
-  const _$Quantity_BoundedImpl(this.field0);
+  const _$Quantity_BoundedImpl({required this.amount});
 
   @override
-  final int field0;
+  final int amount;
 
   @override
   String toString() {
-    return 'Quantity.bounded(field0: $field0)';
+    return 'Quantity.bounded(amount: $amount)';
   }
 
   @override
@@ -5126,11 +5127,11 @@ class _$Quantity_BoundedImpl implements Quantity_Bounded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$Quantity_BoundedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0));
+            (identical(other.amount, amount) || other.amount == amount));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, field0);
+  int get hashCode => Object.hash(runtimeType, amount);
 
   @JsonKey(ignore: true)
   @override
@@ -5141,33 +5142,33 @@ class _$Quantity_BoundedImpl implements Quantity_Bounded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int field0) bounded,
+    required TResult Function(int amount) bounded,
     required TResult Function() unbounded,
     required TResult Function() one,
   }) {
-    return bounded(field0);
+    return bounded(amount);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int field0)? bounded,
+    TResult? Function(int amount)? bounded,
     TResult? Function()? unbounded,
     TResult? Function()? one,
   }) {
-    return bounded?.call(field0);
+    return bounded?.call(amount);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int field0)? bounded,
+    TResult Function(int amount)? bounded,
     TResult Function()? unbounded,
     TResult Function()? one,
     required TResult orElse(),
   }) {
     if (bounded != null) {
-      return bounded(field0);
+      return bounded(amount);
     }
     return orElse();
   }
@@ -5208,9 +5209,9 @@ class _$Quantity_BoundedImpl implements Quantity_Bounded {
 }
 
 abstract class Quantity_Bounded implements Quantity {
-  const factory Quantity_Bounded(final int field0) = _$Quantity_BoundedImpl;
+  const factory Quantity_Bounded({required final int amount}) = _$Quantity_BoundedImpl;
 
-  int get field0;
+  int get amount;
   @JsonKey(ignore: true)
   _$$Quantity_BoundedImplCopyWith<_$Quantity_BoundedImpl> get copyWith => throw _privateConstructorUsedError;
 }
@@ -5252,7 +5253,7 @@ class _$Quantity_UnboundedImpl implements Quantity_Unbounded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int field0) bounded,
+    required TResult Function(int amount) bounded,
     required TResult Function() unbounded,
     required TResult Function() one,
   }) {
@@ -5262,7 +5263,7 @@ class _$Quantity_UnboundedImpl implements Quantity_Unbounded {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int field0)? bounded,
+    TResult? Function(int amount)? bounded,
     TResult? Function()? unbounded,
     TResult? Function()? one,
   }) {
@@ -5272,7 +5273,7 @@ class _$Quantity_UnboundedImpl implements Quantity_Unbounded {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int field0)? bounded,
+    TResult Function(int amount)? bounded,
     TResult Function()? unbounded,
     TResult Function()? one,
     required TResult orElse(),
@@ -5356,7 +5357,7 @@ class _$Quantity_OneImpl implements Quantity_One {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int field0) bounded,
+    required TResult Function(int amount) bounded,
     required TResult Function() unbounded,
     required TResult Function() one,
   }) {
@@ -5366,7 +5367,7 @@ class _$Quantity_OneImpl implements Quantity_One {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int field0)? bounded,
+    TResult? Function(int amount)? bounded,
     TResult? Function()? unbounded,
     TResult? Function()? one,
   }) {
@@ -5376,7 +5377,7 @@ class _$Quantity_OneImpl implements Quantity_One {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int field0)? bounded,
+    TResult Function(int amount)? bounded,
     TResult Function()? unbounded,
     TResult Function()? one,
     required TResult orElse(),

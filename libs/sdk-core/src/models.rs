@@ -715,9 +715,9 @@ pub struct ReceivePaymentResponse {
 /// Represents a send payment request.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SendPaymentRequest {
-    /// The bolt11 invoice
-    pub bolt11: String,
-    /// The amount to pay in millisatoshis. Should only be set when `bolt11` is a zero-amount invoice.
+    /// The bolt11/12 invoice
+    pub invoice: String,
+    /// The amount to pay in millisatoshis. Should only be set when `invoice` is a zero-amount invoice.
     pub amount_msat: Option<u64>,
 }
 
@@ -824,9 +824,6 @@ pub struct FetchInvoiceRequest {
     pub quantity: Option<u64>,
     pub timeout: Option<f64>,
     pub payer_note: Option<String>,
-    // pub recurrence_counter: Option<u64>,
-    // pub recurrence_start: Option<f64>,
-    // pub recurrence_label: Option<String>,
 }
 
 impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
@@ -865,7 +862,7 @@ pub struct FetchInvoiceNextPeriod {
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct FetchInvoiceResponse {
-    pub invoice: String,
+    pub bolt12: String,
     pub changes: Option<FetchInvoiceChanges>,
     pub next_period: Option<FetchInvoiceNextPeriod>,
 }

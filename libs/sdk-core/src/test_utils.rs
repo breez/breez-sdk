@@ -289,7 +289,7 @@ impl NodeAPI for MockNodeAPI {
         _cltv: Option<u32>,
     ) -> NodeResult<String> {
         let invoice = create_invoice(description, amount_sats * 1000, vec![], preimage);
-        Ok(invoice.bolt11)
+        Ok(invoice.raw_invoice)
     }
 
     async fn pull_changed(
@@ -731,18 +731,19 @@ fn sign_invoice(invoice: RawInvoice) -> String {
 
 fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
     // Mock node receiving FetchInvoiceRequest and building an invoice out of it
-    let minimum_sats = 10000u64;
-    let amount = offer.amount
+    let currency_amount_msat = 10000u64;
+    let amount = offer
+        .amount
         .map(|amount| match amount {
-            crate::invoice::Amount::Bitcoin { amount_msats } => amount_msats,
-            crate::invoice::Amount::Currency { .. } => minimum_sats 
+            crate::invoice::Amount::Bitcoin { amount_msat } => amount_msat,
+            crate::invoice::Amount::Currency { .. } => currency_amount_msat,
         })
         .unwrap_or(10000);
 
     let invoice = create_invoice(offer.description, amount, vec![], None);
 
     FetchInvoiceResponse {
-        invoice: invoice.bolt11, // Should be renamed to simply 'bolt' or 'raw_invoice' in the future
+        bolt12: invoice.raw_invoice,
         changes: None,
         next_period: None,
     }

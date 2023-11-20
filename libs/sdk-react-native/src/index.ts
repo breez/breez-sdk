@@ -112,7 +112,7 @@ export type InvoicePaidDetails = {
 }
 
 export type LnInvoice = {
-    bolt11: string
+    rawInvoice: string
     payeePubkey: string
     paymentHash: string
     description?: string
@@ -122,6 +122,18 @@ export type LnInvoice = {
     expiry: number
     routingHints: RouteHint[]
     paymentSecret: number[]
+}
+
+export type LnOffer = {
+    bolt12: string
+    chains: string[]
+    description: string
+    supportedQuantity: Quantity
+    signingPubkey: string
+    amount?: Amount
+    absoluteExpiry?: number
+    issuer?: string
+    metadata?: number[]
 }
 
 export type ListPaymentsRequest = {
@@ -409,7 +421,7 @@ export type SendOnchainResponse = {
 }
 
 export type SendPaymentRequest = {
-    bolt11: string
+    invoice: string
     amountMsat?: number
 }
 
@@ -491,6 +503,20 @@ export type UrlSuccessActionData = {
     url: string
 }
 
+export enum AmountVariant {
+    BITCOIN = "bitcoin",
+    CURRENCY = "currency"
+}
+
+export type Amount = {
+    type: AmountVariant.BITCOIN,
+    amountMsat: number
+} | {
+    type: AmountVariant.CURRENCY,
+    iso4217Code: string
+    fractionalAmount: number
+}
+
 export enum BreezEventVariant {
     NEW_BLOCK = "newBlock",
     INVOICE_PAID = "invoicePaid",
@@ -550,6 +576,7 @@ export enum FeeratePreset {
 export enum InputTypeVariant {
     BITCOIN_ADDRESS = "bitcoinAddress",
     BOLT11 = "bolt11",
+    BOLT12_OFFER = "bolt12Offer",
     NODE_ID = "nodeId",
     URL = "url",
     LN_URL_PAY = "lnUrlPay",
@@ -564,6 +591,9 @@ export type InputType = {
 } | {
     type: InputTypeVariant.BOLT11,
     invoice: LnInvoice
+} | {
+    type: InputTypeVariant.BOLT12_OFFER,
+    offer: LnOffer
 } | {
     type: InputTypeVariant.NODE_ID,
     nodeId: string
@@ -671,6 +701,21 @@ export enum PaymentTypeFilter {
     SENT = "sent",
     RECEIVED = "received",
     CLOSED_CHANNEL = "closedChannel"
+}
+
+export enum QuantityVariant {
+    BOUNDED = "bounded",
+    UNBOUNDED = "unbounded",
+    ONE = "one"
+}
+
+export type Quantity = {
+    type: QuantityVariant.BOUNDED,
+    amount: number
+} | {
+    type: QuantityVariant.UNBOUNDED
+} | {
+    type: QuantityVariant.ONE
 }
 
 export enum ReverseSwapStatus {

@@ -55,10 +55,10 @@ pub enum NodeError {
     OfferExpired(anyhow::Error),
 
     #[error("Offer reply error: {0}")]
-    OfferReplyError(anyhow::Error),
+    OfferInvoiceRequestError(anyhow::Error),
 
     #[error("Offer timeout: {0}")]
-    OfferTimeout(anyhow::Error),
+    OfferInvoiceRequestTimeout(anyhow::Error),
 }
 
 /// Trait covering functions affecting the LN node

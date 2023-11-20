@@ -8,7 +8,6 @@ import 'package:meta/meta.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:uuid/uuid.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-import 'package:collection/collection.dart';
 
 import 'dart:ffi' as ffi;
 
@@ -266,11 +265,11 @@ class AesSuccessActionDataDecrypted {
 @freezed
 sealed class Amount with _$Amount {
   const factory Amount.bitcoin({
-    required int amountMsats,
+    required int amountMsat,
   }) = Amount_Bitcoin;
   const factory Amount.currency({
-    required U8Array3 iso4217Code,
-    required int amount,
+    required String iso4217Code,
+    required int fractionalAmount,
   }) = Amount_Currency;
 }
 
@@ -619,9 +618,9 @@ class ListPaymentsRequest {
   });
 }
 
-/// Wrapper for a BOLT11 LN invoice
+/// Wrapper for a BOLT11/12 LN invoice
 class LNInvoice {
-  final String bolt11;
+  final String rawInvoice;
   final String payeePubkey;
   final String paymentHash;
   final String? description;
@@ -633,7 +632,7 @@ class LNInvoice {
   final Uint8List paymentSecret;
 
   const LNInvoice({
-    required this.bolt11,
+    required this.rawInvoice,
     required this.payeePubkey,
     required this.paymentHash,
     this.description,
@@ -647,6 +646,7 @@ class LNInvoice {
 }
 
 class LNOffer {
+  final String bolt12;
   final List<String> chains;
   final Amount? amount;
   final String description;
@@ -657,6 +657,7 @@ class LNOffer {
   final Uint8List? metadata;
 
   const LNOffer({
+    required this.bolt12,
     required this.chains,
     this.amount,
     required this.description,
@@ -1226,9 +1227,9 @@ class PrepareSweepResponse {
 
 @freezed
 sealed class Quantity with _$Quantity {
-  const factory Quantity.bounded(
-    int field0,
-  ) = Quantity_Bounded;
+  const factory Quantity.bounded({
+    required int amount,
+  }) = Quantity_Bounded;
   const factory Quantity.unbounded() = Quantity_Unbounded;
   const factory Quantity.one() = Quantity_One;
 }
@@ -1496,14 +1497,14 @@ class SendOnchainResponse {
 
 /// Represents a send payment request.
 class SendPaymentRequest {
-  /// The bolt11 invoice
-  final String bolt11;
+  /// The bolt11/12 invoice
+  final String invoice;
 
-  /// The amount to pay in millisatoshis. Should only be set when `bolt11` is a zero-amount invoice.
+  /// The amount to pay in millisatoshis. Should only be set when `invoice` is a zero-amount invoice.
   final int? amountMsat;
 
   const SendPaymentRequest({
-    required this.bolt11,
+    required this.invoice,
     this.amountMsat,
   });
 }
@@ -1688,15 +1689,6 @@ class Symbol {
     this.rtl,
     this.position,
   });
-}
-
-class U8Array3 extends NonGrowableListView<int> {
-  static const arraySize = 3;
-  U8Array3(Uint8List inner)
-      : assert(inner.length == arraySize),
-        super(inner);
-  U8Array3.unchecked(Uint8List inner) : super(inner);
-  U8Array3.init() : super(Uint8List(arraySize));
 }
 
 /// UTXO known to the LN node
@@ -2485,12 +2477,12 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     switch (raw[0]) {
       case 0:
         return Amount_Bitcoin(
-          amountMsats: _wire2api_u64(raw[1]),
+          amountMsat: _wire2api_u64(raw[1]),
         );
       case 1:
         return Amount_Currency(
-          iso4217Code: _wire2api_u8_array_3(raw[1]),
-          amount: _wire2api_u64(raw[2]),
+          iso4217Code: _wire2api_String(raw[1]),
+          fractionalAmount: _wire2api_u64(raw[2]),
         );
       default:
         throw Exception("unreachable");
@@ -2889,7 +2881,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     final arr = raw as List<dynamic>;
     if (arr.length != 10) throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
     return LNInvoice(
-      bolt11: _wire2api_String(arr[0]),
+      rawInvoice: _wire2api_String(arr[0]),
       payeePubkey: _wire2api_String(arr[1]),
       paymentHash: _wire2api_String(arr[2]),
       description: _wire2api_opt_String(arr[3]),
@@ -2904,16 +2896,17 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   LNOffer _wire2api_ln_offer(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return LNOffer(
-      chains: _wire2api_StringList(arr[0]),
-      amount: _wire2api_opt_box_autoadd_amount(arr[1]),
-      description: _wire2api_String(arr[2]),
-      absoluteExpiry: _wire2api_opt_box_autoadd_u64(arr[3]),
-      issuer: _wire2api_opt_String(arr[4]),
-      supportedQuantity: _wire2api_quantity(arr[5]),
-      signingPubkey: _wire2api_String(arr[6]),
-      metadata: _wire2api_opt_uint_8_list(arr[7]),
+      bolt12: _wire2api_String(arr[0]),
+      chains: _wire2api_StringList(arr[1]),
+      amount: _wire2api_opt_box_autoadd_amount(arr[2]),
+      description: _wire2api_String(arr[3]),
+      absoluteExpiry: _wire2api_opt_box_autoadd_u64(arr[4]),
+      issuer: _wire2api_opt_String(arr[5]),
+      supportedQuantity: _wire2api_quantity(arr[6]),
+      signingPubkey: _wire2api_String(arr[7]),
+      metadata: _wire2api_opt_uint_8_list(arr[8]),
     );
   }
 
@@ -3309,7 +3302,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     switch (raw[0]) {
       case 0:
         return Quantity_Bounded(
-          _wire2api_u64(raw[1]),
+          amount: _wire2api_u64(raw[1]),
         );
       case 1:
         return Quantity_Unbounded();
@@ -3528,10 +3521,6 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   int _wire2api_u8(dynamic raw) {
     return raw as int;
-  }
-
-  U8Array3 _wire2api_u8_array_3(dynamic raw) {
-    return U8Array3(_wire2api_uint_8_list(raw));
   }
 
   Uint8List _wire2api_uint_8_list(dynamic raw) {
@@ -4188,7 +4177,7 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
   }
 
   void _api_fill_to_wire_send_payment_request(SendPaymentRequest apiObj, wire_SendPaymentRequest wireObj) {
-    wireObj.bolt11 = api2wire_String(apiObj.bolt11);
+    wireObj.invoice = api2wire_String(apiObj.invoice);
     wireObj.amount_msat = api2wire_opt_box_autoadd_u64(apiObj.amountMsat);
   }
 
@@ -5401,7 +5390,7 @@ final class wire_ListPaymentsRequest extends ffi.Struct {
 typedef bool = ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Int>)>;
 
 final class wire_SendPaymentRequest extends ffi.Struct {
-  external ffi.Pointer<wire_uint_8_list> bolt11;
+  external ffi.Pointer<wire_uint_8_list> invoice;
 
   external ffi.Pointer<ffi.Uint64> amount_msat;
 }

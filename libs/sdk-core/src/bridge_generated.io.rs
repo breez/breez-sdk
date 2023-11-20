@@ -803,7 +803,7 @@ impl Wire2Api<SendOnchainRequest> for wire_SendOnchainRequest {
 impl Wire2Api<SendPaymentRequest> for wire_SendPaymentRequest {
     fn wire2api(self) -> SendPaymentRequest {
         SendPaymentRequest {
-            bolt11: self.bolt11.wire2api(),
+            invoice: self.invoice.wire2api(),
             amount_msat: self.amount_msat.wire2api(),
         }
     }
@@ -1035,7 +1035,7 @@ pub struct wire_SendOnchainRequest {
 #[repr(C)]
 #[derive(Clone)]
 pub struct wire_SendPaymentRequest {
-    bolt11: *mut wire_uint_8_list,
+    invoice: *mut wire_uint_8_list,
     amount_msat: *mut u64,
 }
 
@@ -1465,7 +1465,7 @@ impl Default for wire_SendOnchainRequest {
 impl NewWithNullPtr for wire_SendPaymentRequest {
     fn new_with_null_ptr() -> Self {
         Self {
-            bolt11: core::ptr::null_mut(),
+            invoice: core::ptr::null_mut(),
             amount_msat: core::ptr::null_mut(),
         }
     }

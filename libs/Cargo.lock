@@ -747,7 +747,7 @@ dependencies = [
 [[package]]
 name = "cln-grpc"
 version = "0.1.7"
-source = "git+https://github.com/cdecker/lightning?branch=20231107-grpc-methods#075927b2c5f38fdbde4c0764135be58340b0ce08"
+source = "git+https://github.com/cdecker/lightning.git?tag=gl-20231113#075927b2c5f38fdbde4c0764135be58340b0ce08"
 dependencies = [
  "anyhow",
  "bitcoin 0.30.1",
@@ -1283,7 +1283,7 @@ checksum = "ad0a93d233ebf96623465aad4046a8d3aa4da22d4f4beba5388838c8a434bbb4"
 [[package]]
 name = "gl-client"
 version = "0.1.9"
-source = "git+https://github.com/hydra-yse/greenlight?branch=20231109-fetchinvoice#7f54f0efd88ed9170ae4069b7be5079eeadaa3eb"
+source = "git+https://github.com/Blockstream/greenlight.git?rev=ec73e988eda4adc8839d59810b5992b6b446ddeb#ec73e988eda4adc8839d59810b5992b6b446ddeb"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1311,7 +1311,6 @@ dependencies = [
  "serde",
  "serde_bolt 0.2.6",
  "serde_json",
- "serde_with 2.3.3",
  "sha256",
  "tempfile",
  "thiserror",
@@ -2922,7 +2921,6 @@ dependencies = [
  "base64 0.13.1",
  "chrono",
  "hex",
- "indexmap 1.9.3",
  "serde",
  "serde_json",
  "serde_with_macros 2.3.3",

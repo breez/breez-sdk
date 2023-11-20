@@ -188,9 +188,9 @@ impl From<tonic::Status> for NodeError {
                     Self::InvoicePreimageAlreadyExists(status.into())
                 }
                 JsonRpcErrCode::OfferExpired => Self::OfferExpired(status.into()),
-                JsonRpcErrCode::OfferBadInvreqReply => Self::OfferReplyError(status.into()),
+                JsonRpcErrCode::OfferBadInvreqReply => Self::OfferInvoiceRequestError(status.into()),
                 JsonRpcErrCode::OfferRouteNotFound => Self::RouteNotFound(status.into()),
-                JsonRpcErrCode::OfferTimeout => Self::OfferTimeout(status.into()),
+                JsonRpcErrCode::OfferTimeout => Self::OfferInvoiceRequestTimeout(status.into()),
                 _ => Self::Generic(status.into()),
             },
             _ => Self::Generic(status.into()),

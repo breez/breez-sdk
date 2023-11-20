@@ -197,7 +197,7 @@ pub use input_parser::{
     parse, BitcoinAddressData, InputType, LnUrlAuthRequestData, LnUrlErrorData,
     LnUrlPayRequestData, LnUrlRequestData, LnUrlWithdrawRequestData, MetadataItem,
 };
-pub use invoice::{parse_invoice, LNInvoice, RouteHint, RouteHintHop};
+pub use invoice::{parse_invoice, LNInvoice, RouteHint, RouteHintHop, Amount, Quantity, LNOffer};
 
 pub use lnurl::pay::model::*;
 pub use lsp::LspInformation;

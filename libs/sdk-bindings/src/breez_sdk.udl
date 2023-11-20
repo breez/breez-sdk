@@ -133,7 +133,7 @@ dictionary RouteHint {
 };
 
 dictionary LNInvoice {
-    string bolt11;
+    string raw_invoice;
     string payee_pubkey;
     string payment_hash;
     string? description;
@@ -599,9 +599,35 @@ dictionary RecommendedFees {
 };
 
 [Enum]
+interface Amount {
+    Bitcoin(u64 amount_msat);
+    Currency(string iso4217_code, u64 fractional_amount);
+};
+
+[Enum]
+interface Quantity {
+    Bounded(u64 amount);
+    Unbounded();
+    One();
+};
+
+dictionary LNOffer {     
+    string              bolt12;
+    sequence<string>    chains;
+    string              description;
+    Quantity            supported_quantity;
+    string              signing_pubkey;
+    Amount?             amount;  
+    u64?                absolute_expiry;
+    string?             issuer;
+    sequence<u8>?       metadata;
+};
+
+[Enum]
 interface InputType {
     BitcoinAddress(BitcoinAddressData address);
     Bolt11(LNInvoice invoice);
+    Bolt12Offer(LNOffer offer);
     NodeId(string node_id);
     Url(string url);
     LnUrlPay(LnUrlPayRequestData data);
@@ -634,7 +660,7 @@ dictionary SweepResponse {
 };
 
 dictionary SendPaymentRequest {
-    string bolt11;
+    string invoice;
     u64? amount_msat;
 };
 

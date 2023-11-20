@@ -58,7 +58,7 @@ impl From<SystemTimeError> for InvoiceError {
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum Quantity {
-    Bounded(u64),
+    Bounded { amount: u64 },
     Unbounded,
     One,
 }
@@ -68,28 +68,44 @@ impl From<lightning::offers::offer::Quantity> for Quantity {
         match value {
             lightning::offers::offer::Quantity::One => Quantity::One,
             lightning::offers::offer::Quantity::Unbounded => Quantity::Unbounded,
-            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded(n.into()),
+            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded { amount: n.into() },
         }
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum Amount { 
-    Bitcoin { amount_msats: u64 },
-    Currency { iso4217_code: [u8; 3], amount: u64 },
+pub enum Amount {
+    Bitcoin {
+        amount_msat: u64,
+    },
+    Currency {
+        // Reference to [FiatCurrency.id]
+        iso4217_code: String,
+        fractional_amount: u64,
+    },
 }
 
 impl From<lightning::offers::offer::Amount> for Amount {
     fn from(amount: lightning::offers::offer::Amount) -> Self {
         match amount {
-           lightning::offers::offer::Amount::Bitcoin { amount_msats } => Amount::Bitcoin { amount_msats },
-           lightning::offers::offer::Amount::Currency { iso4217_code, amount } => Amount::Currency { iso4217_code, amount },
+            lightning::offers::offer::Amount::Bitcoin { amount_msats } => Amount::Bitcoin {
+                amount_msat: amount_msats,
+            },
+            lightning::offers::offer::Amount::Currency {
+                iso4217_code,
+                amount,
+            } => Amount::Currency {
+                iso4217_code: String::from_utf8(iso4217_code.to_vec())
+                    .expect("Expecting a valid ISO 4217 character sequence"),
+                fractional_amount: amount,
+            },
         }
     }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct LNOffer {
+    pub bolt12: String,
     pub chains: Vec<String>,
     pub amount: Option<Amount>,
     pub description: String,
@@ -102,10 +118,10 @@ pub struct LNOffer {
     // pub paths: Vec<BlindedPath>,
 }
 
-/// Wrapper for a BOLT11 LN invoice
+/// Wrapper for a BOLT11/12 LN invoice
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct LNInvoice {
-    pub bolt11: String,
+    pub raw_invoice: String,
     pub payee_pubkey: String,
     pub payment_hash: String,
     pub description: Option<String>,
@@ -265,7 +281,7 @@ pub fn parse_invoice(bolt11: &str) -> InvoiceResult<LNInvoice> {
     let converted_hints = invoice_hints.iter().map(RouteHint::from_ldk_hint).collect();
     // return the parsed invoice
     let ln_invoice = LNInvoice {
-        bolt11: bolt11.to_string(),
+        raw_invoice: bolt11.to_string(),
         payee_pubkey,
         expiry: invoice.expiry_time().as_secs(),
         amount_msat: invoice.amount_milli_satoshis(),
