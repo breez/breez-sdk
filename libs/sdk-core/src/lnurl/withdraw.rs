@@ -60,7 +60,7 @@ fn build_withdraw_callback_url(
         .map_err(|e| LnUrlError::InvalidUri(anyhow::Error::new(e)))?;
 
     url.query_pairs_mut().append_pair("k1", &req_data.k1);
-    url.query_pairs_mut().append_pair("pr", &invoice.raw_invoice);
+    url.query_pairs_mut().append_pair("pr", &invoice.bolt11);
 
     let mut callback_url = url.to_string();
     callback_url = maybe_replace_host_with_mockito_test_host(callback_url)?;

@@ -289,7 +289,7 @@ impl NodeAPI for MockNodeAPI {
         _cltv: Option<u32>,
     ) -> NodeResult<String> {
         let invoice = create_invoice(description, amount_sats * 1000, vec![], preimage);
-        Ok(invoice.raw_invoice)
+        Ok(invoice.bolt11)
     }
 
     async fn pull_changed(
@@ -743,7 +743,7 @@ fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
     let invoice = create_invoice(offer.description, amount, vec![], None);
 
     FetchInvoiceResponse {
-        bolt12: invoice.raw_invoice,
+        bolt12: invoice.bolt11,
         changes: None,
         next_period: None,
     }
