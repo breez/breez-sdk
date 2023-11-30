@@ -992,10 +992,9 @@ impl NodeAPI for Greenlight {
         Ok(())
     }
 
-    #[allow(unused_variables)]
     async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse> {
         // Parse the offer locally, to avoid any unnecessary calls to the recipient
-        if let Err(parse_error) = req.offer.parse::<Offer>() {
+        if let Err(_) = req.offer.parse::<Offer>() {
             return Err(NodeError::InvalidOffer(anyhow!("Invalid offer")));
         }
 
