@@ -852,19 +852,9 @@ pub struct FetchInvoiceChanges {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub struct FetchInvoiceNextPeriod {
-    pub counter: u64,
-    pub start_time: u64,
-    pub end_time: u64,
-    pub paywindow_start: u64,
-    pub paywindow_end: u64,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct FetchInvoiceResponse {
     pub bolt12: String,
     pub changes: Option<FetchInvoiceChanges>,
-    pub next_period: Option<FetchInvoiceNextPeriod>,
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

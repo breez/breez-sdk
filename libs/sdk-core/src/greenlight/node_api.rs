@@ -1014,12 +1014,8 @@ impl NodeAPI for Greenlight {
                 vendor_removed: changes.vendor_removed,
                 amount_msat: changes.amount_msat.map(|amount| amount.msat),
             }),
-            next_period: response.next_period.map(|np| FetchInvoiceNextPeriod {
-                counter: np.counter,
-                start_time: np.starttime,
-                end_time: np.endtime,
-                paywindow_start: np.paywindow_start,
-                paywindow_end: np.paywindow_end,
+        })
+    }
             }),
         })
     }
