@@ -133,7 +133,8 @@ dictionary RouteHint {
 };
 
 dictionary LNInvoice {
-    string bolt11;
+    string? bolt11;
+    string? bolt12;
     string payee_pubkey;
     string payment_hash;
     string? description;

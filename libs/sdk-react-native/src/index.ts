@@ -112,7 +112,8 @@ export type InvoicePaidDetails = {
 }
 
 export type LnInvoice = {
-    rawInvoice: string
+    bolt11?: string
+    bolt12?: string
     payeePubkey: string
     paymentHash: string
     description?: string

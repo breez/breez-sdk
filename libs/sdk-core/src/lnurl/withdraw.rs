@@ -56,11 +56,15 @@ fn build_withdraw_callback_url(
     req_data: &LnUrlWithdrawRequestData,
     invoice: &LNInvoice,
 ) -> LnUrlResult<String> {
+    let raw_invoice = invoice.bolt11.as_ref()
+        .or(invoice.bolt12.as_ref())
+        .expect("Expected either a bolt11 or bolt12 invoice");
+
     let mut url = reqwest::Url::from_str(&req_data.callback)
         .map_err(|e| LnUrlError::InvalidUri(anyhow::Error::new(e)))?;
 
     url.query_pairs_mut().append_pair("k1", &req_data.k1);
-    url.query_pairs_mut().append_pair("pr", &invoice.bolt11);
+    url.query_pairs_mut().append_pair("pr", raw_invoice);
 
     let mut callback_url = url.to_string();
     callback_url = maybe_replace_host_with_mockito_test_host(callback_url)?;

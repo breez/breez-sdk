@@ -417,7 +417,7 @@ impl BTCReceiveSwap {
                 .await?
                 .ln_invoice;
             self.persister
-                .update_swap_bolt11(bitcoin_address.clone(), invoice.bolt11)?;
+                .update_swap_bolt11(bitcoin_address.clone(), invoice.bolt11.expect("Expecting a Bolt11 invoice"))?;
             swap_info = self
                 .persister
                 .get_swap_info_by_address(bitcoin_address)?

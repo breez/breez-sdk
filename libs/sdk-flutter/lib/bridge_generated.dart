@@ -620,7 +620,8 @@ class ListPaymentsRequest {
 
 /// Wrapper for a BOLT11/12 LN invoice
 class LNInvoice {
-  final String rawInvoice;
+  final String? bolt11;
+  final String? bolt12;
   final String payeePubkey;
   final String paymentHash;
   final String? description;
@@ -632,7 +633,8 @@ class LNInvoice {
   final Uint8List paymentSecret;
 
   const LNInvoice({
-    required this.rawInvoice,
+    this.bolt11,
+    this.bolt12,
     required this.payeePubkey,
     required this.paymentHash,
     this.description,
@@ -2879,18 +2881,19 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   LNInvoice _wire2api_ln_invoice(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 10) throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    if (arr.length != 11) throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
     return LNInvoice(
-      rawInvoice: _wire2api_String(arr[0]),
-      payeePubkey: _wire2api_String(arr[1]),
-      paymentHash: _wire2api_String(arr[2]),
-      description: _wire2api_opt_String(arr[3]),
-      descriptionHash: _wire2api_opt_String(arr[4]),
-      amountMsat: _wire2api_opt_box_autoadd_u64(arr[5]),
-      timestamp: _wire2api_u64(arr[6]),
-      expiry: _wire2api_u64(arr[7]),
-      routingHints: _wire2api_list_route_hint(arr[8]),
-      paymentSecret: _wire2api_uint_8_list(arr[9]),
+      bolt11: _wire2api_opt_String(arr[0]),
+      bolt12: _wire2api_opt_String(arr[1]),
+      payeePubkey: _wire2api_String(arr[2]),
+      paymentHash: _wire2api_String(arr[3]),
+      description: _wire2api_opt_String(arr[4]),
+      descriptionHash: _wire2api_opt_String(arr[5]),
+      amountMsat: _wire2api_opt_box_autoadd_u64(arr[6]),
+      timestamp: _wire2api_u64(arr[7]),
+      expiry: _wire2api_u64(arr[8]),
+      routingHints: _wire2api_list_route_hint(arr[9]),
+      paymentSecret: _wire2api_uint_8_list(arr[10]),
     );
   }
 
