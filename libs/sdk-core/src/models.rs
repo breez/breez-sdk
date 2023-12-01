@@ -10,7 +10,6 @@ use bitcoin::hashes::{sha256, Hash};
 use bitcoin::secp256k1::{PublicKey, Secp256k1, SecretKey};
 use bitcoin::{Address, Script};
 use chrono::{DateTime, Duration, Utc};
-use gl_client::pb::cln;
 use ripemd::Digest;
 use ripemd::Ripemd160;
 use rusqlite::types::{FromSql, FromSqlError, FromSqlResult, ToSqlOutput, ValueRef};
@@ -824,22 +823,6 @@ pub struct FetchInvoiceRequest {
     pub quantity: Option<u64>,
     pub timeout: Option<f64>,
     pub payer_note: Option<String>,
-}
-
-impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
-    fn from(request: FetchInvoiceRequest) -> Self {
-        gl_client::pb::cln::FetchinvoiceRequest {
-            offer: request.offer,
-            amount_msat: request.amount_msat.map(|msat| cln::Amount { msat }),
-            quantity: request.quantity,
-            timeout: request.timeout,
-            payer_note: request.payer_note,
-            // Not yet implemented
-            recurrence_counter: None,
-            recurrence_start: None,
-            recurrence_label: None,
-        }
-    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
