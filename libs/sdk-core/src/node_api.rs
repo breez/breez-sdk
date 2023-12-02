@@ -1,7 +1,7 @@
 use crate::{
     invoice::InvoiceError, persist::error::PersistError, CustomMessage, FetchInvoiceRequest,
     FetchInvoiceResponse, PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse,
-    SyncResponse,
+    SyncResponse, CreateOfferRequest, PayOfferRequest, OfferChange, FetchInvoiceRequiredField,
 };
 use anyhow::Result;
 use bitcoin::util::bip32::{ChildNumber, ExtendedPrivKey};
@@ -48,7 +48,7 @@ pub enum NodeError {
     #[error("Service connectivity: {0}")]
     ServiceConnectivity(anyhow::Error),
 
-    #[error("Invalid offer: {0:?}")]
+    #[error("Invalid offer: {0}")]
     InvalidOffer(anyhow::Error),
 
     #[error("Offer expired: {0}")]
@@ -59,6 +59,12 @@ pub enum NodeError {
 
     #[error("Offer timeout: {0}")]
     OfferInvoiceRequestTimeout(anyhow::Error),
+
+    #[error("Fetch invoice request is missing required fields: {0:?}")]
+    FetchInvoiceRequestMissingFields(Vec<FetchInvoiceRequiredField>),
+
+    #[error("Offer has changed: {0:?}")]
+    OfferChanged(Vec<OfferChange>),
 }
 
 /// Trait covering functions affecting the LN node
@@ -113,6 +119,8 @@ pub trait NodeAPI: Send + Sync {
         &self,
     ) -> NodeResult<Pin<Box<dyn Stream<Item = Result<CustomMessage>> + Send>>>;
     async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse>;
+    async fn create_offer(&self, req: CreateOfferRequest) -> NodeResult<String>;
+    async fn pay_offer(&self, req: PayOfferRequest) -> NodeResult<PaymentResponse>;
 
     /// Gets the private key at the path specified
     fn derive_bip32_key(&self, path: Vec<ChildNumber>) -> NodeResult<ExtendedPrivKey>;

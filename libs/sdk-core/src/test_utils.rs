@@ -427,6 +427,14 @@ impl NodeAPI for MockNodeAPI {
             )),
         }
     }
+
+    async fn create_offer(&self, req: crate::CreateOfferRequest) -> NodeResult<String> {
+        todo!()
+    }
+
+    async fn pay_offer(&self, req: crate::PayOfferRequest) -> NodeResult<PaymentResponse> {
+        todo!()
+    }
 }
 
 impl MockNodeAPI {
@@ -740,12 +748,9 @@ fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
         })
         .unwrap_or(10000);
 
-    let invoice = create_invoice(offer.description, amount, vec![], None);
-
     FetchInvoiceResponse {
-        bolt12: invoice.bolt11,
+        bolt12: "".to_string(),
         changes: None,
-        next_period: None,
     }
 }
 

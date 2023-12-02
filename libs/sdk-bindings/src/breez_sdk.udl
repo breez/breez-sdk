@@ -404,6 +404,24 @@ dictionary StaticBackupResponse {
     sequence<string>? backup;
 };
 
+dictionary CreateOfferRequest {
+    u64? amount_msat;
+    string description;
+    u64? absolute_expiry;
+    string? issuer;
+    u64? supported_quantity;
+	string? label;
+	boolean? single_use;
+}
+
+dictionary PayOfferRequest {
+    string offer;
+    u64? amount_msat;
+    u64? quantity;
+    f64? timeout;
+    string? payer_note;
+}
+
 dictionary ReceiveOnchainRequest {
     OpeningFeeParams? opening_fee_params=null;
 };
@@ -818,6 +836,12 @@ interface BlockingBreezServices {
 
    [Throws=SdkError]
    PrepareSweepResponse prepare_sweep(PrepareSweepRequest req);
+
+   [Throws=SdkError]
+   string create_offer(CreateOfferRequest req);
+
+   [Throws=SdkError]
+   SendPaymentResponse pay_offer(PayOfferRequest req);
 };
 
 namespace breez_sdk {  

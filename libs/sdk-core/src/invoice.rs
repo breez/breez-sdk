@@ -118,11 +118,10 @@ pub struct LNOffer {
     // pub paths: Vec<BlindedPath>,
 }
 
-/// Wrapper for a BOLT11/12 LN invoice
+/// Wrapper for a BOLT11 invoice
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct LNInvoice {
-    pub bolt11: Option<String>,
-    pub bolt12: Option<String>,
+    pub bolt11: String,
     pub payee_pubkey: String,
     pub payment_hash: String,
     pub description: Option<String>,
@@ -282,8 +281,7 @@ pub fn parse_invoice(bolt11: &str) -> InvoiceResult<LNInvoice> {
     let converted_hints = invoice_hints.iter().map(RouteHint::from_ldk_hint).collect();
     // return the parsed invoice
     let ln_invoice = LNInvoice {
-        bolt11: Some(bolt11.to_string()),
-        bolt12: None,
+        bolt11: invoice.to_string(),
         payee_pubkey,
         expiry: invoice.expiry_time().as_secs(),
         amount_msat: invoice.amount_milli_satoshis(),

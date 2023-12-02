@@ -816,6 +816,12 @@ pub struct RefundResponse {
     pub refund_tx_id: String,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub enum FetchInvoiceRequiredField {
+    Quantity,
+    Amount,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FetchInvoiceRequest {
     pub offer: String,
@@ -838,6 +844,33 @@ pub struct FetchInvoiceChanges {
 pub struct FetchInvoiceResponse {
     pub bolt12: String,
     pub changes: Option<FetchInvoiceChanges>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub enum OfferChange {
+    Amount { new_amount: u64 },
+    Vendor { new_vendor: String },
+    Description { new_description: String }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PayOfferRequest {
+    pub offer: String,
+    pub amount_msat: Option<u64>,
+    pub quantity: Option<u64>,
+    pub timeout: Option<f64>,
+    pub payer_note: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+pub struct CreateOfferRequest {
+    pub amount_msat: Option<u64>,
+    pub description: String,
+    pub absolute_expiry: Option<u64>,
+    pub issuer: Option<String>,
+    pub supported_quantity: Option<u64>,
+	pub label: Option<String>,
+	pub single_use: Option<bool>,
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

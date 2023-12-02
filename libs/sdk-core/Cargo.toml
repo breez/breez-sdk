@@ -61,9 +61,9 @@ miniz_oxide = "0.7.1"
 tokio-stream = "0.1.14"
 serde_with = "3.3.0"
 regex = "1.8.1"
-gl-client = { git = "https://github.com/Blockstream/greenlight.git", features = [
+gl-client = { git = "https://github.com/hydra-yse/greenlight.git", features = [
     "permissive",
-], rev = "ec73e988eda4adc8839d59810b5992b6b446ddeb" }
+], branch = "cln-grpc-bump" }
 
 [dev-dependencies]
 mockito = "1"

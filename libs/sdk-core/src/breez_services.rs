@@ -1378,6 +1378,16 @@ impl BreezServices {
                 .await?
         )
     }
+
+    pub async fn create_offer(&self, req: CreateOfferRequest) -> Result<String> {
+        self.start_node().await?;
+        Ok(
+            self
+                .node_api
+                .create_offer(req)
+                .await?
+        )
+    }
 }
 
 struct GlobalSdkLogger {
