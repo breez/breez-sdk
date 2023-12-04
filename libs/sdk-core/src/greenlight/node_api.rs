@@ -1052,7 +1052,7 @@ impl NodeAPI for Greenlight {
             absolute_expiry: req.absolute_expiry,
             issuer: req.issuer,
             label: req.label,
-            single_use: req.single_use,
+            single_use: Some(false),
             recurrence: None,
             recurrence_base: None,
             recurrence_paywindow: None,

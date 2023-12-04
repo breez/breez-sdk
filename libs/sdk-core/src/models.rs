@@ -870,7 +870,6 @@ pub struct CreateOfferRequest {
     pub issuer: Option<String>,
     pub supported_quantity: Option<u64>,
 	pub label: Option<String>,
-	pub single_use: Option<bool>,
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

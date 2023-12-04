@@ -411,7 +411,6 @@ dictionary CreateOfferRequest {
     string? issuer;
     u64? supported_quantity;
     string? label;
-    boolean? single_use;
 };
 
 dictionary PayOfferRequest {
