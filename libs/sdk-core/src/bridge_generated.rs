@@ -1136,7 +1136,7 @@ impl rust2dart::IntoIntoDart<InvoicePaidDetails> for InvoicePaidDetails {
 impl support::IntoDart for LNInvoice {
     fn into_dart(self) -> support::DartAbi {
         vec![
-            self.bolt11.into_dart(),
+            self.bolt11.into_into_dart().into_dart(),
             self.payee_pubkey.into_into_dart().into_dart(),
             self.payment_hash.into_into_dart().into_dart(),
             self.description.into_dart(),

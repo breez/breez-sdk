@@ -538,6 +538,28 @@ class RNBreezSDK: RCTEventEmitter {
         }
     }
 
+    @objc(createOffer:resolve:reject:)
+    func createOffer(_ req: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        do {
+            let createOfferRequest = try BreezSDKMapper.asCreateOfferRequest(createOfferRequest: req)
+            var res = try getBreezServices().createOffer(req: createOfferRequest)
+            resolve(res)
+        } catch let err {
+            rejectErr(err: err, reject: reject)
+        }
+    }
+
+    @objc(payOffer:resolve:reject:)
+    func payOffer(_ req: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        do {
+            let payOfferRequest = try BreezSDKMapper.asPayOfferRequest(payOfferRequest: req)
+            var res = try getBreezServices().payOffer(req: payOfferRequest)
+            resolve(BreezSDKMapper.dictionaryOf(sendPaymentResponse: res))
+        } catch let err {
+            rejectErr(err: err, reject: reject)
+        }
+    }
+
     func rejectErr(err: Error, reject: @escaping RCTPromiseRejectBlock) {
         var errorName = "Generic"
         var message = "\(err)"

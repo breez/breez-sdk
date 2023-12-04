@@ -479,6 +479,93 @@ enum BreezSDKMapper {
         return configList.map { v -> [String: Any?] in dictionaryOf(config: v) }
     }
 
+    static func asCreateOfferRequest(createOfferRequest: [String: Any?]) throws -> CreateOfferRequest {
+        var amountMsat: UInt64?
+        if hasNonNilKey(data: createOfferRequest, key: "amountMsat") {
+            guard let amountMsatTmp = createOfferRequest["amountMsat"] as? UInt64 else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "amountMsat"))
+            }
+            amountMsat = amountMsatTmp
+        }
+        guard let description = createOfferRequest["description"] as? String else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "description", typeName: "CreateOfferRequest"))
+        }
+        var absoluteExpiry: UInt64?
+        if hasNonNilKey(data: createOfferRequest, key: "absoluteExpiry") {
+            guard let absoluteExpiryTmp = createOfferRequest["absoluteExpiry"] as? UInt64 else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "absoluteExpiry"))
+            }
+            absoluteExpiry = absoluteExpiryTmp
+        }
+        var issuer: String?
+        if hasNonNilKey(data: createOfferRequest, key: "issuer") {
+            guard let issuerTmp = createOfferRequest["issuer"] as? String else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "issuer"))
+            }
+            issuer = issuerTmp
+        }
+        var supportedQuantity: UInt64?
+        if hasNonNilKey(data: createOfferRequest, key: "supportedQuantity") {
+            guard let supportedQuantityTmp = createOfferRequest["supportedQuantity"] as? UInt64 else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "supportedQuantity"))
+            }
+            supportedQuantity = supportedQuantityTmp
+        }
+        var label: String?
+        if hasNonNilKey(data: createOfferRequest, key: "label") {
+            guard let labelTmp = createOfferRequest["label"] as? String else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "label"))
+            }
+            label = labelTmp
+        }
+        var singleUse: Bool?
+        if hasNonNilKey(data: createOfferRequest, key: "singleUse") {
+            guard let singleUseTmp = createOfferRequest["singleUse"] as? Bool else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "singleUse"))
+            }
+            singleUse = singleUseTmp
+        }
+
+        return CreateOfferRequest(
+            amountMsat: amountMsat,
+            description: description,
+            absoluteExpiry: absoluteExpiry,
+            issuer: issuer,
+            supportedQuantity: supportedQuantity,
+            label: label,
+            singleUse: singleUse
+        )
+    }
+
+    static func dictionaryOf(createOfferRequest: CreateOfferRequest) -> [String: Any?] {
+        return [
+            "amountMsat": createOfferRequest.amountMsat == nil ? nil : createOfferRequest.amountMsat,
+            "description": createOfferRequest.description,
+            "absoluteExpiry": createOfferRequest.absoluteExpiry == nil ? nil : createOfferRequest.absoluteExpiry,
+            "issuer": createOfferRequest.issuer == nil ? nil : createOfferRequest.issuer,
+            "supportedQuantity": createOfferRequest.supportedQuantity == nil ? nil : createOfferRequest.supportedQuantity,
+            "label": createOfferRequest.label == nil ? nil : createOfferRequest.label,
+            "singleUse": createOfferRequest.singleUse == nil ? nil : createOfferRequest.singleUse,
+        ]
+    }
+
+    static func asCreateOfferRequestList(arr: [Any]) throws -> [CreateOfferRequest] {
+        var list = [CreateOfferRequest]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var createOfferRequest = try asCreateOfferRequest(createOfferRequest: val)
+                list.append(createOfferRequest)
+            } else {
+                throw SdkError.Generic(message: errUnexpectedType(typeName: "CreateOfferRequest"))
+            }
+        }
+        return list
+    }
+
+    static func arrayOf(createOfferRequestList: [CreateOfferRequest]) -> [Any] {
+        return createOfferRequestList.map { v -> [String: Any?] in dictionaryOf(createOfferRequest: v) }
+    }
+
     static func asCurrencyInfo(currencyInfo: [String: Any?]) throws -> CurrencyInfo {
         guard let name = currencyInfo["name"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "name", typeName: "CurrencyInfo"))
@@ -2034,6 +2121,75 @@ enum BreezSDKMapper {
 
     static func arrayOf(openingFeeParamsMenuList: [OpeningFeeParamsMenu]) -> [Any] {
         return openingFeeParamsMenuList.map { v -> [String: Any?] in dictionaryOf(openingFeeParamsMenu: v) }
+    }
+
+    static func asPayOfferRequest(payOfferRequest: [String: Any?]) throws -> PayOfferRequest {
+        guard let offer = payOfferRequest["offer"] as? String else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "offer", typeName: "PayOfferRequest"))
+        }
+        var amountMsat: UInt64?
+        if hasNonNilKey(data: payOfferRequest, key: "amountMsat") {
+            guard let amountMsatTmp = payOfferRequest["amountMsat"] as? UInt64 else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "amountMsat"))
+            }
+            amountMsat = amountMsatTmp
+        }
+        var quantity: UInt64?
+        if hasNonNilKey(data: payOfferRequest, key: "quantity") {
+            guard let quantityTmp = payOfferRequest["quantity"] as? UInt64 else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "quantity"))
+            }
+            quantity = quantityTmp
+        }
+        var timeout: Double?
+        if hasNonNilKey(data: payOfferRequest, key: "timeout") {
+            guard let timeoutTmp = payOfferRequest["timeout"] as? Double else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "timeout"))
+            }
+            timeout = timeoutTmp
+        }
+        var payerNote: String?
+        if hasNonNilKey(data: payOfferRequest, key: "payerNote") {
+            guard let payerNoteTmp = payOfferRequest["payerNote"] as? String else {
+                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "payerNote"))
+            }
+            payerNote = payerNoteTmp
+        }
+
+        return PayOfferRequest(
+            offer: offer,
+            amountMsat: amountMsat,
+            quantity: quantity,
+            timeout: timeout,
+            payerNote: payerNote
+        )
+    }
+
+    static func dictionaryOf(payOfferRequest: PayOfferRequest) -> [String: Any?] {
+        return [
+            "offer": payOfferRequest.offer,
+            "amountMsat": payOfferRequest.amountMsat == nil ? nil : payOfferRequest.amountMsat,
+            "quantity": payOfferRequest.quantity == nil ? nil : payOfferRequest.quantity,
+            "timeout": payOfferRequest.timeout == nil ? nil : payOfferRequest.timeout,
+            "payerNote": payOfferRequest.payerNote == nil ? nil : payOfferRequest.payerNote,
+        ]
+    }
+
+    static func asPayOfferRequestList(arr: [Any]) throws -> [PayOfferRequest] {
+        var list = [PayOfferRequest]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var payOfferRequest = try asPayOfferRequest(payOfferRequest: val)
+                list.append(payOfferRequest)
+            } else {
+                throw SdkError.Generic(message: errUnexpectedType(typeName: "PayOfferRequest"))
+            }
+        }
+        return list
+    }
+
+    static func arrayOf(payOfferRequestList: [PayOfferRequest]) -> [Any] {
+        return payOfferRequestList.map { v -> [String: Any?] in dictionaryOf(payOfferRequest: v) }
     }
 
     static func asPayment(payment: [String: Any?]) throws -> Payment {

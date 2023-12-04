@@ -410,9 +410,9 @@ dictionary CreateOfferRequest {
     u64? absolute_expiry;
     string? issuer;
     u64? supported_quantity;
-	string? label;
-	boolean? single_use;
-}
+    string? label;
+    boolean? single_use;
+};
 
 dictionary PayOfferRequest {
     string offer;
@@ -420,7 +420,7 @@ dictionary PayOfferRequest {
     u64? quantity;
     f64? timeout;
     string? payer_note;
-}
+};
 
 dictionary ReceiveOnchainRequest {
     OpeningFeeParams? opening_fee_params=null;

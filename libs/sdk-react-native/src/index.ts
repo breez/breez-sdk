@@ -81,6 +81,16 @@ export type Config = {
     nodeConfig: NodeConfig
 }
 
+export type CreateOfferRequest = {
+    amountMsat?: number
+    description: string
+    absoluteExpiry?: number
+    issuer?: string
+    supportedQuantity?: number
+    label?: string
+    singleUse?: boolean
+}
+
 export type CurrencyInfo = {
     name: string
     fractionSize: number
@@ -290,6 +300,14 @@ export type OpeningFeeParams = {
 
 export type OpeningFeeParamsMenu = {
     values: OpeningFeeParams[]
+}
+
+export type PayOfferRequest = {
+    offer: string
+    amountMsat?: number
+    quantity?: number
+    timeout?: number
+    payerNote?: string
 }
 
 export type Payment = {
@@ -971,5 +989,15 @@ export const buyBitcoin = async (req: BuyBitcoinRequest): Promise<BuyBitcoinResp
 
 export const prepareSweep = async (req: PrepareSweepRequest): Promise<PrepareSweepResponse> => {
     const response = await BreezSDK.prepareSweep(req)
+    return response
+}
+
+export const createOffer = async (req: CreateOfferRequest): Promise<string> => {
+    const response = await BreezSDK.createOffer(req)
+    return response
+}
+
+export const payOffer = async (req: PayOfferRequest): Promise<SendPaymentResponse> => {
+    const response = await BreezSDK.payOffer(req)
     return response
 }

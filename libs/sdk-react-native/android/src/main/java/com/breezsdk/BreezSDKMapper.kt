@@ -435,6 +435,75 @@ fun asConfigList(arr: ReadableArray): List<Config> {
     return list
 }
 
+fun asCreateOfferRequest(createOfferRequest: ReadableMap): CreateOfferRequest? {
+    if (!validateMandatoryFields(
+            createOfferRequest,
+            arrayOf(
+                "description",
+            ),
+        )
+    ) {
+        return null
+    }
+    val amountMsat = if (hasNonNullKey(createOfferRequest, "amountMsat")) createOfferRequest.getDouble("amountMsat").toULong() else null
+    val description = createOfferRequest.getString("description")!!
+    val absoluteExpiry =
+        if (hasNonNullKey(
+                createOfferRequest,
+                "absoluteExpiry",
+            )
+        ) {
+            createOfferRequest.getDouble("absoluteExpiry").toULong()
+        } else {
+            null
+        }
+    val issuer = if (hasNonNullKey(createOfferRequest, "issuer")) createOfferRequest.getString("issuer") else null
+    val supportedQuantity =
+        if (hasNonNullKey(
+                createOfferRequest,
+                "supportedQuantity",
+            )
+        ) {
+            createOfferRequest.getDouble("supportedQuantity").toULong()
+        } else {
+            null
+        }
+    val label = if (hasNonNullKey(createOfferRequest, "label")) createOfferRequest.getString("label") else null
+    val singleUse = if (hasNonNullKey(createOfferRequest, "singleUse")) createOfferRequest.getBoolean("singleUse") else null
+    return CreateOfferRequest(
+        amountMsat,
+        description,
+        absoluteExpiry,
+        issuer,
+        supportedQuantity,
+        label,
+        singleUse,
+    )
+}
+
+fun readableMapOf(createOfferRequest: CreateOfferRequest): ReadableMap {
+    return readableMapOf(
+        "amountMsat" to createOfferRequest.amountMsat,
+        "description" to createOfferRequest.description,
+        "absoluteExpiry" to createOfferRequest.absoluteExpiry,
+        "issuer" to createOfferRequest.issuer,
+        "supportedQuantity" to createOfferRequest.supportedQuantity,
+        "label" to createOfferRequest.label,
+        "singleUse" to createOfferRequest.singleUse,
+    )
+}
+
+fun asCreateOfferRequestList(arr: ReadableArray): List<CreateOfferRequest> {
+    val list = ArrayList<CreateOfferRequest>()
+    for (value in arr.toArrayList()) {
+        when (value) {
+            is ReadableMap -> list.add(asCreateOfferRequest(value)!!)
+            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
+        }
+    }
+    return list
+}
+
 fun asCurrencyInfo(currencyInfo: ReadableMap): CurrencyInfo? {
     if (!validateMandatoryFields(
             currencyInfo,
@@ -1810,6 +1879,51 @@ fun asOpeningFeeParamsMenuList(arr: ReadableArray): List<OpeningFeeParamsMenu> {
     for (value in arr.toArrayList()) {
         when (value) {
             is ReadableMap -> list.add(asOpeningFeeParamsMenu(value)!!)
+            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
+        }
+    }
+    return list
+}
+
+fun asPayOfferRequest(payOfferRequest: ReadableMap): PayOfferRequest? {
+    if (!validateMandatoryFields(
+            payOfferRequest,
+            arrayOf(
+                "offer",
+            ),
+        )
+    ) {
+        return null
+    }
+    val offer = payOfferRequest.getString("offer")!!
+    val amountMsat = if (hasNonNullKey(payOfferRequest, "amountMsat")) payOfferRequest.getDouble("amountMsat").toULong() else null
+    val quantity = if (hasNonNullKey(payOfferRequest, "quantity")) payOfferRequest.getDouble("quantity").toULong() else null
+    val timeout = if (hasNonNullKey(payOfferRequest, "timeout")) payOfferRequest.getDouble("timeout") else null
+    val payerNote = if (hasNonNullKey(payOfferRequest, "payerNote")) payOfferRequest.getString("payerNote") else null
+    return PayOfferRequest(
+        offer,
+        amountMsat,
+        quantity,
+        timeout,
+        payerNote,
+    )
+}
+
+fun readableMapOf(payOfferRequest: PayOfferRequest): ReadableMap {
+    return readableMapOf(
+        "offer" to payOfferRequest.offer,
+        "amountMsat" to payOfferRequest.amountMsat,
+        "quantity" to payOfferRequest.quantity,
+        "timeout" to payOfferRequest.timeout,
+        "payerNote" to payOfferRequest.payerNote,
+    )
+}
+
+fun asPayOfferRequestList(arr: ReadableArray): List<PayOfferRequest> {
+    val list = ArrayList<PayOfferRequest>()
+    for (value in arr.toArrayList()) {
+        when (value) {
+            is ReadableMap -> list.add(asPayOfferRequest(value)!!)
             else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
         }
     }

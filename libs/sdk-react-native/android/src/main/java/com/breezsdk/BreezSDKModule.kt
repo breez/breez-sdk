@@ -748,4 +748,39 @@ class BreezSDKModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             }
         }
     }
+
+    @ReactMethod
+    fun createOffer(
+        req: ReadableMap,
+        promise: Promise,
+    ) {
+        executor.execute {
+            try {
+                val createOfferRequest =
+                    asCreateOfferRequest(req) ?: run {
+                        throw SdkException.Generic(errMissingMandatoryField("req", "CreateOfferRequest"))
+                    }
+                val res = getBreezServices().createOffer(createOfferRequest)
+                promise.resolve(res)
+            } catch (e: Exception) {
+                promise.reject(e.javaClass.simpleName.replace("Exception", "Error"), e.message, e)
+            }
+        }
+    }
+
+    @ReactMethod
+    fun payOffer(
+        req: ReadableMap,
+        promise: Promise,
+    ) {
+        executor.execute {
+            try {
+                val payOfferRequest = asPayOfferRequest(req) ?: run { throw SdkException.Generic(errMissingMandatoryField("req", "PayOfferRequest")) }
+                val res = getBreezServices().payOffer(payOfferRequest)
+                promise.resolve(readableMapOf(res))
+            } catch (e: Exception) {
+                promise.reject(e.javaClass.simpleName.replace("Exception", "Error"), e.message, e)
+            }
+        }
+    }
 }
