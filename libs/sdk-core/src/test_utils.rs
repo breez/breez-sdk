@@ -31,7 +31,7 @@ use crate::chain::{ChainService, OnchainTx, Outspend, RecommendedFees, TxStatus}
 use crate::error::{ReceivePaymentError, SdkError, SdkResult};
 use crate::fiat::{FiatCurrency, Rate};
 use crate::grpc::{PaymentInformation, RegisterPaymentReply};
-use crate::invoice::{InvoiceError, InvoiceResult, LNOffer};
+use crate::invoice::InvoiceError;
 use crate::lsp::LspInformation;
 use crate::models::{FiatAPI, LspAPI, NodeState, Payment, Swap, SwapperAPI, SyncResponse};
 use crate::moonpay::MoonPayApi;
@@ -41,7 +41,7 @@ use crate::swap_in::swap::create_submarine_swap_script;
 use crate::{
     parse, parse_invoice, Config, CustomMessage, FetchInvoiceRequest, FetchInvoiceResponse,
     InputType, LNInvoice, PaymentResponse, Peer, PrepareSweepRequest, PrepareSweepResponse,
-    RouteHint,
+    RouteHint, CreateOfferRequest
 };
 use crate::{OpeningFeeParams, OpeningFeeParamsMenu};
 use crate::{ReceivePaymentRequest, SwapInfo};
@@ -420,20 +420,11 @@ impl NodeAPI for MockNodeAPI {
     }
 
     async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse> {
-        match parse(req.offer.as_str()).await {
-            Ok(InputType::Bolt12Offer { offer }) => Ok(fetch_invoice(offer)),
-            _ => Err(NodeError::InvalidOffer(
-                anyhow!("Could not parse offer").into(),
-            )),
-        }
+        Err(NodeError::Generic(anyhow!("Not implemented")))
     }
 
-    async fn create_offer(&self, req: crate::CreateOfferRequest) -> NodeResult<String> {
-        todo!()
-    }
-
-    async fn pay_offer(&self, req: crate::PayOfferRequest) -> NodeResult<PaymentResponse> {
-        todo!()
+    async fn create_offer(&self, req: CreateOfferRequest) -> NodeResult<String> {
+        Err(NodeError::Generic(anyhow!("Not implemented")))
     }
 }
 
@@ -735,23 +726,6 @@ fn sign_invoice(invoice: RawInvoice) -> String {
         })
         .unwrap()
         .to_string()
-}
-
-fn fetch_invoice(offer: LNOffer) -> FetchInvoiceResponse {
-    // Mock node receiving FetchInvoiceRequest and building an invoice out of it
-    let currency_amount_msat = 10000u64;
-    let amount = offer
-        .amount
-        .map(|amount| match amount {
-            crate::invoice::Amount::Bitcoin { amount_msat } => amount_msat,
-            crate::invoice::Amount::Currency { .. } => currency_amount_msat,
-        })
-        .unwrap_or(10000);
-
-    FetchInvoiceResponse {
-        bolt12: "".to_string(),
-        changes: None,
-    }
 }
 
 /// [OpeningFeeParams] that are valid for more than 48h

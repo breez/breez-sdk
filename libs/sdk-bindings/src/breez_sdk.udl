@@ -838,7 +838,7 @@ interface BlockingBreezServices {
    [Throws=SdkError]
    string create_offer(CreateOfferRequest req);
 
-   [Throws=SdkError]
+   [Throws=SendPaymentError]
    SendPaymentResponse pay_offer(PayOfferRequest req);
 };
 

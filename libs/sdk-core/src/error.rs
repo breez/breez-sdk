@@ -588,6 +588,9 @@ pub enum SendPaymentError {
 
     #[error("Service connectivity: {err}")]
     ServiceConnectivity { err: String },
+
+    #[error("Amount has changed: {new_amount}")]
+    OfferAmountChanged { new_amount: u64 },
 }
 
 impl From<anyhow::Error> for SendPaymentError {

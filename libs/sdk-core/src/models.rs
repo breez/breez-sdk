@@ -816,12 +816,6 @@ pub struct RefundResponse {
     pub refund_tx_id: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub enum FetchInvoiceRequiredField {
-    Quantity,
-    Amount,
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct FetchInvoiceRequest {
     pub offer: String,
@@ -832,25 +826,9 @@ pub struct FetchInvoiceRequest {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub struct FetchInvoiceChanges {
-    pub description_appended: Option<String>,
-    pub description: Option<String>,
-    pub vendor_removed: Option<String>,
-    pub vendor: Option<String>,
-    pub amount_msat: Option<u64>,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct FetchInvoiceResponse {
     pub bolt12: String,
-    pub changes: Option<FetchInvoiceChanges>,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub enum OfferChange {
-    Amount { new_amount: u64 },
-    Vendor { new_vendor: String },
-    Description { new_description: String }
+    pub new_amount_msat: Option<u64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

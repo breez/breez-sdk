@@ -993,27 +993,10 @@ impl NodeAPI for Greenlight {
     }
 
     async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> NodeResult<FetchInvoiceResponse> {
-        // Parse the offer and check the required fields locally, to avoid any unnecessary calls to the recipient
-        let parsed_offer = match req.offer.parse::<Offer>() {
-            Ok(offer) => offer,
-            Err(_) => {
-                return Err(NodeError::InvalidOffer(anyhow!("Invalid offer")));
-            }
+        // Parse the offer locally, to avoid any unnecessary calls to the recipient
+        if let Err(_parse_error) = req.offer.parse::<Offer>() {
+            return Err(NodeError::InvalidOffer(anyhow!("Invalid offer")));
         };
-
-        let mut field_errors: Vec<FetchInvoiceRequiredField> = vec![];
-
-        if parsed_offer.expects_quantity() && req.quantity.is_none() {
-            field_errors.push(FetchInvoiceRequiredField::Quantity);
-        }
-
-        if parsed_offer.amount().is_some() && req.amount_msat.is_none() {
-            field_errors.push(FetchInvoiceRequiredField::Amount);
-        }
-
-        if field_errors.len() > 0 {
-            return Err(NodeError::FetchInvoiceRequestMissingFields(field_errors));
-        }
 
         // Fetch the invoice from the recipient's node
         let mut client = self.get_node_client().await?;
@@ -1024,13 +1007,10 @@ impl NodeAPI for Greenlight {
 
         Ok(FetchInvoiceResponse {
             bolt12: response.invoice,
-            changes: response.changes.map(|changes| FetchInvoiceChanges {
-                description: changes.description,
-                description_appended: changes.description_appended,
-                vendor: changes.vendor,
-                vendor_removed: changes.vendor_removed,
-                amount_msat: changes.amount_msat.map(|amount| amount.msat),
-            }),
+            new_amount_msat: match response.changes {
+                Some(changes) => changes.amount_msat.map(|amount| amount.msat),
+                None => None
+            },
         })
     }
 
@@ -1062,38 +1042,6 @@ impl NodeAPI for Greenlight {
         .into_inner();
          
         Ok(offer.bolt12)
-    }
-
-    async fn pay_offer(&self, req: PayOfferRequest) -> NodeResult<PaymentResponse> {
-        let fetched_invoice = self.fetch_invoice(FetchInvoiceRequest {
-            offer: req.offer.clone(),
-            amount_msat: req.amount_msat,
-            quantity: req.quantity,
-            timeout: req.timeout,
-            payer_note: req.payer_note.to_owned()
-        }).await?;
-
-        if let Some(changes) = fetched_invoice.changes {
-            let mut changed_fields: Vec<OfferChange> = vec![];
-
-            if let Some(new_amount) = get_changed_offer_amount(&changes, &req) {
-                changed_fields.push(OfferChange::Amount { new_amount });
-            }
-
-            if let Some(new_description) = changes.description {
-                changed_fields.push(OfferChange::Description { new_description });
-            }
-
-            if let Some(new_vendor) = changes.vendor {
-                changed_fields.push(OfferChange::Vendor { new_vendor });
-            }
-
-            if changed_fields.len() > 0 {
-                return Err(NodeError::OfferChanged(changed_fields));
-            }
-        }
-
-        Ok(self.send_payment(fetched_invoice.bolt12, req.amount_msat).await?)
     }
 }
 
@@ -1509,7 +1457,7 @@ impl TryFrom<cln::ListclosedchannelsClosedchannels> for Channel {
 
 impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
     fn from(request: FetchInvoiceRequest) -> Self {
-        gl_client::pb::cln::FetchinvoiceRequest {
+        cln::FetchinvoiceRequest {
             offer: request.offer,
             amount_msat: request.amount_msat.map(|msat| cln::Amount { msat }),
             quantity: request.quantity,
@@ -1520,49 +1468,6 @@ impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
             recurrence_start: None,
             recurrence_label: None,
         }
-    }
-}
-
-impl std::string::ToString for FetchInvoiceRequiredField {
-    fn to_string(&self) -> String {
-        match self {
-            FetchInvoiceRequiredField::Quantity => "quantity",
-            FetchInvoiceRequiredField::Amount => "amount",
-        }.to_string()
-    }
-}
-
-impl std::string::ToString for OfferChange {
-    fn to_string(&self) -> String {
-        match self {
-            OfferChange::Description { new_description } => format!("New description: {new_description}"),
-            OfferChange::Amount{ new_amount } => format!("New amount: {new_amount}"),
-            OfferChange::Vendor{ new_vendor } => format!("New vendor: {new_vendor}"),
-        }.to_string()
-    }
-}
-
-fn get_changed_offer_amount(
-    changes: &FetchInvoiceChanges, 
-    req: &PayOfferRequest
-) -> Option<u64> {
-    let new_amount = match changes.amount_msat {
-        Some(amount) => amount,
-        None => {
-            return None;
-        }
-    };
-    
-    let expected_amount = match req.amount_msat {
-        Some(amount) => amount * req.quantity.unwrap_or(1),
-        None => {
-            return None;
-        }
-    };
-    
-    match new_amount != expected_amount {
-        true => Some(new_amount),
-        false => None,
     }
 }
 

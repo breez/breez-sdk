@@ -1369,16 +1369,6 @@ impl BreezServices {
         })
     }
 
-    pub async fn fetch_invoice(&self, req: FetchInvoiceRequest) -> Result<FetchInvoiceResponse> {
-        self.start_node().await?;
-        Ok(
-            self
-                .node_api
-                .fetch_invoice(req)
-                .await?
-        )
-    }
-
     pub async fn create_offer(&self, req: CreateOfferRequest) -> Result<String> {
         self.start_node().await?;
         Ok(
@@ -1387,6 +1377,29 @@ impl BreezServices {
                 .create_offer(req)
                 .await?
         )
+    }
+
+    pub async fn pay_offer(&self, req: PayOfferRequest) -> Result<SendPaymentResponse, SendPaymentError> {
+        self.start_node().await?;
+
+        let fetch_invoice_response = self.node_api
+            .fetch_invoice(FetchInvoiceRequest {
+                offer: req.offer.clone(),
+                amount_msat: req.amount_msat,
+                quantity: req.quantity,
+                timeout: req.timeout,
+                payer_note: req.payer_note.to_owned()
+            })
+            .await?;
+
+        if let Some(new_amount) = fetch_invoice_response.new_amount_msat {
+            return Err(SendPaymentError::OfferAmountChanged { new_amount });
+        }
+
+        Ok(self.send_payment(SendPaymentRequest {
+            invoice: fetch_invoice_response.bolt12,
+            amount_msat: req.amount_msat
+        }).await?)
     }
 }
 
