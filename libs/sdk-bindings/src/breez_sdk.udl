@@ -410,7 +410,6 @@ dictionary CreateOfferRequest {
     u64? absolute_expiry;
     string? issuer;
     u64? supported_quantity;
-    string? label;
 };
 
 dictionary PayOfferRequest {
