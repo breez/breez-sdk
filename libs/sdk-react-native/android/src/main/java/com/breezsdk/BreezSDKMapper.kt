@@ -458,26 +458,11 @@ fun asCreateOfferRequest(createOfferRequest: ReadableMap): CreateOfferRequest? {
             null
         }
     val issuer = if (hasNonNullKey(createOfferRequest, "issuer")) createOfferRequest.getString("issuer") else null
-    val supportedQuantity =
-        if (hasNonNullKey(
-                createOfferRequest,
-                "supportedQuantity",
-            )
-        ) {
-            createOfferRequest.getDouble("supportedQuantity").toULong()
-        } else {
-            null
-        }
-    val label = if (hasNonNullKey(createOfferRequest, "label")) createOfferRequest.getString("label") else null
-    val singleUse = if (hasNonNullKey(createOfferRequest, "singleUse")) createOfferRequest.getBoolean("singleUse") else null
     return CreateOfferRequest(
         amountMsat,
         description,
         absoluteExpiry,
         issuer,
-        supportedQuantity,
-        label,
-        singleUse,
     )
 }
 
@@ -487,9 +472,6 @@ fun readableMapOf(createOfferRequest: CreateOfferRequest): ReadableMap {
         "description" to createOfferRequest.description,
         "absoluteExpiry" to createOfferRequest.absoluteExpiry,
         "issuer" to createOfferRequest.issuer,
-        "supportedQuantity" to createOfferRequest.supportedQuantity,
-        "label" to createOfferRequest.label,
-        "singleUse" to createOfferRequest.singleUse,
     )
 }
 
@@ -730,6 +712,7 @@ fun asLnInvoice(lnInvoice: ReadableMap): LnInvoice? {
     if (!validateMandatoryFields(
             lnInvoice,
             arrayOf(
+                "bolt11",
                 "payeePubkey",
                 "paymentHash",
                 "timestamp",
@@ -741,8 +724,7 @@ fun asLnInvoice(lnInvoice: ReadableMap): LnInvoice? {
     ) {
         return null
     }
-    val bolt11 = if (hasNonNullKey(lnInvoice, "bolt11")) lnInvoice.getString("bolt11") else null
-    val bolt12 = if (hasNonNullKey(lnInvoice, "bolt12")) lnInvoice.getString("bolt12") else null
+    val bolt11 = lnInvoice.getString("bolt11")!!
     val payeePubkey = lnInvoice.getString("payeePubkey")!!
     val paymentHash = lnInvoice.getString("paymentHash")!!
     val description = if (hasNonNullKey(lnInvoice, "description")) lnInvoice.getString("description") else null
@@ -754,7 +736,6 @@ fun asLnInvoice(lnInvoice: ReadableMap): LnInvoice? {
     val paymentSecret = lnInvoice.getArray("paymentSecret")?.let { asUByteList(it) }!!
     return LnInvoice(
         bolt11,
-        bolt12,
         payeePubkey,
         paymentHash,
         description,
@@ -770,7 +751,6 @@ fun asLnInvoice(lnInvoice: ReadableMap): LnInvoice? {
 fun readableMapOf(lnInvoice: LnInvoice): ReadableMap {
     return readableMapOf(
         "bolt11" to lnInvoice.bolt11,
-        "bolt12" to lnInvoice.bolt12,
         "payeePubkey" to lnInvoice.payeePubkey,
         "paymentHash" to lnInvoice.paymentHash,
         "description" to lnInvoice.description,
@@ -801,7 +781,6 @@ fun asLnOffer(lnOffer: ReadableMap): LnOffer? {
                 "bolt12",
                 "chains",
                 "description",
-                "supportedQuantity",
                 "signingPubkey",
             ),
         )
@@ -811,22 +790,18 @@ fun asLnOffer(lnOffer: ReadableMap): LnOffer? {
     val bolt12 = lnOffer.getString("bolt12")!!
     val chains = lnOffer.getArray("chains")?.let { asStringList(it) }!!
     val description = lnOffer.getString("description")!!
-    val supportedQuantity = lnOffer.getMap("supportedQuantity")?.let { asQuantity(it) }!!
     val signingPubkey = lnOffer.getString("signingPubkey")!!
     val amount = if (hasNonNullKey(lnOffer, "amount")) lnOffer.getMap("amount")?.let { asAmount(it) } else null
     val absoluteExpiry = if (hasNonNullKey(lnOffer, "absoluteExpiry")) lnOffer.getDouble("absoluteExpiry").toULong() else null
     val issuer = if (hasNonNullKey(lnOffer, "issuer")) lnOffer.getString("issuer") else null
-    val metadata = if (hasNonNullKey(lnOffer, "metadata")) lnOffer.getArray("metadata")?.let { asUByteList(it) } else null
     return LnOffer(
         bolt12,
         chains,
         description,
-        supportedQuantity,
         signingPubkey,
         amount,
         absoluteExpiry,
         issuer,
-        metadata,
     )
 }
 
@@ -835,12 +810,10 @@ fun readableMapOf(lnOffer: LnOffer): ReadableMap {
         "bolt12" to lnOffer.bolt12,
         "chains" to readableArrayOf(lnOffer.chains),
         "description" to lnOffer.description,
-        "supportedQuantity" to readableMapOf(lnOffer.supportedQuantity),
         "signingPubkey" to lnOffer.signingPubkey,
         "amount" to lnOffer.amount?.let { readableMapOf(it) },
         "absoluteExpiry" to lnOffer.absoluteExpiry,
         "issuer" to lnOffer.issuer,
-        "metadata" to lnOffer.metadata?.let { readableArrayOf(it) },
     )
 }
 
@@ -1897,13 +1870,11 @@ fun asPayOfferRequest(payOfferRequest: ReadableMap): PayOfferRequest? {
     }
     val offer = payOfferRequest.getString("offer")!!
     val amountMsat = if (hasNonNullKey(payOfferRequest, "amountMsat")) payOfferRequest.getDouble("amountMsat").toULong() else null
-    val quantity = if (hasNonNullKey(payOfferRequest, "quantity")) payOfferRequest.getDouble("quantity").toULong() else null
     val timeout = if (hasNonNullKey(payOfferRequest, "timeout")) payOfferRequest.getDouble("timeout") else null
     val payerNote = if (hasNonNullKey(payOfferRequest, "payerNote")) payOfferRequest.getString("payerNote") else null
     return PayOfferRequest(
         offer,
         amountMsat,
-        quantity,
         timeout,
         payerNote,
     )
@@ -1913,7 +1884,6 @@ fun readableMapOf(payOfferRequest: PayOfferRequest): ReadableMap {
     return readableMapOf(
         "offer" to payOfferRequest.offer,
         "amountMsat" to payOfferRequest.amountMsat,
-        "quantity" to payOfferRequest.quantity,
         "timeout" to payOfferRequest.timeout,
         "payerNote" to payOfferRequest.payerNote,
     )
@@ -3908,49 +3878,6 @@ fun asPaymentTypeFilterList(arr: ReadableArray): List<PaymentTypeFilter> {
     for (value in arr.toArrayList()) {
         when (value) {
             is String -> list.add(asPaymentTypeFilter(value)!!)
-            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
-        }
-    }
-    return list
-}
-
-fun asQuantity(quantity: ReadableMap): Quantity? {
-    val type = quantity.getString("type")
-
-    if (type == "bounded") {
-        return Quantity.Bounded(quantity.getDouble("amount").toULong())
-    }
-    if (type == "unbounded") {
-        return Quantity.Unbounded
-    }
-    if (type == "one") {
-        return Quantity.One
-    }
-    return null
-}
-
-fun readableMapOf(quantity: Quantity): ReadableMap? {
-    val map = Arguments.createMap()
-    when (quantity) {
-        is Quantity.Bounded -> {
-            pushToMap(map, "type", "bounded")
-            pushToMap(map, "amount", quantity.amount)
-        }
-        is Quantity.Unbounded -> {
-            pushToMap(map, "type", "unbounded")
-        }
-        is Quantity.One -> {
-            pushToMap(map, "type", "one")
-        }
-    }
-    return map
-}
-
-fun asQuantityList(arr: ReadableArray): List<Quantity> {
-    val list = ArrayList<Quantity>()
-    for (value in arr.toArrayList()) {
-        when (value) {
-            is ReadableMap -> list.add(asQuantity(value)!!)
             else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
         }
     }

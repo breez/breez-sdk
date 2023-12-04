@@ -820,7 +820,6 @@ pub struct RefundResponse {
 pub struct FetchInvoiceRequest {
     pub offer: String,
     pub amount_msat: Option<u64>,
-    pub quantity: Option<u64>,
     pub timeout: Option<f64>,
     pub payer_note: Option<String>,
 }
@@ -835,7 +834,6 @@ pub struct FetchInvoiceResponse {
 pub struct PayOfferRequest {
     pub offer: String,
     pub amount_msat: Option<u64>,
-    pub quantity: Option<u64>,
     pub timeout: Option<f64>,
     pub payer_note: Option<String>,
 }
@@ -846,7 +844,6 @@ pub struct CreateOfferRequest {
     pub description: String,
     pub absolute_expiry: Option<u64>,
     pub issuer: Option<String>,
-    pub supported_quantity: Option<u64>,
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

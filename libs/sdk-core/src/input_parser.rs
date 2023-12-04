@@ -187,9 +187,7 @@ pub async fn parse(input: &str) -> Result<InputType> {
                 description: offer.description().to_string(),
                 absolute_expiry: offer.absolute_expiry().map(|expiry| expiry.as_secs()),
                 issuer: offer.issuer().map(|s| s.to_string()),
-                supported_quantity: offer.supported_quantity().into(),
                 signing_pubkey: offer.signing_pubkey().to_string(),
-                metadata: offer.metadata().cloned(),
             },
         });
     }

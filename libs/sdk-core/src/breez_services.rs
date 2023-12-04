@@ -1386,7 +1386,6 @@ impl BreezServices {
             .fetch_invoice(FetchInvoiceRequest {
                 offer: req.offer.clone(),
                 amount_msat: req.amount_msat,
-                quantity: req.quantity,
                 timeout: req.timeout,
                 payer_note: req.payer_note.to_owned()
             })

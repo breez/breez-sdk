@@ -44,7 +44,6 @@ use crate::input_parser::LnUrlWithdrawRequestData;
 use crate::invoice::Amount;
 use crate::invoice::LNInvoice;
 use crate::invoice::LNOffer;
-use crate::invoice::Quantity;
 use crate::invoice::RouteHint;
 use crate::invoice::RouteHintHop;
 use crate::lnurl::pay::model::AesSuccessActionDataDecrypted;
@@ -1166,9 +1165,7 @@ impl support::IntoDart for LNOffer {
             self.description.into_into_dart().into_dart(),
             self.absolute_expiry.into_dart(),
             self.issuer.into_dart(),
-            self.supported_quantity.into_into_dart().into_dart(),
             self.signing_pubkey.into_into_dart().into_dart(),
-            self.metadata.into_dart(),
         ]
         .into_dart()
     }
@@ -1681,23 +1678,6 @@ impl support::IntoDart for PrepareSweepResponse {
 }
 impl support::IntoDartExceptPrimitive for PrepareSweepResponse {}
 impl rust2dart::IntoIntoDart<PrepareSweepResponse> for PrepareSweepResponse {
-    fn into_into_dart(self) -> Self {
-        self
-    }
-}
-
-impl support::IntoDart for Quantity {
-    fn into_dart(self) -> support::DartAbi {
-        match self {
-            Self::Bounded { amount } => vec![0.into_dart(), amount.into_into_dart().into_dart()],
-            Self::Unbounded => vec![1.into_dart()],
-            Self::One => vec![2.into_dart()],
-        }
-        .into_dart()
-    }
-}
-impl support::IntoDartExceptPrimitive for Quantity {}
-impl rust2dart::IntoIntoDart<Quantity> for Quantity {
     fn into_into_dart(self) -> Self {
         self
     }

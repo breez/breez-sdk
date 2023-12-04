@@ -652,9 +652,7 @@ class LNOffer {
   final String description;
   final int? absoluteExpiry;
   final String? issuer;
-  final Quantity supportedQuantity;
   final String signingPubkey;
-  final Uint8List? metadata;
 
   const LNOffer({
     required this.bolt12,
@@ -663,9 +661,7 @@ class LNOffer {
     required this.description,
     this.absoluteExpiry,
     this.issuer,
-    required this.supportedQuantity,
     required this.signingPubkey,
-    this.metadata,
   });
 }
 
@@ -1223,15 +1219,6 @@ class PrepareSweepResponse {
     required this.sweepTxWeight,
     required this.sweepTxFeeSat,
   });
-}
-
-@freezed
-sealed class Quantity with _$Quantity {
-  const factory Quantity.bounded({
-    required int amount,
-  }) = Quantity_Bounded;
-  const factory Quantity.unbounded() = Quantity_Unbounded;
-  const factory Quantity.one() = Quantity_One;
 }
 
 /// Denominator in an exchange rate
@@ -2896,7 +2883,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   LNOffer _wire2api_ln_offer(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+    if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return LNOffer(
       bolt12: _wire2api_String(arr[0]),
       chains: _wire2api_StringList(arr[1]),
@@ -2904,9 +2891,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       description: _wire2api_String(arr[3]),
       absoluteExpiry: _wire2api_opt_box_autoadd_u64(arr[4]),
       issuer: _wire2api_opt_String(arr[5]),
-      supportedQuantity: _wire2api_quantity(arr[6]),
-      signingPubkey: _wire2api_String(arr[7]),
-      metadata: _wire2api_opt_uint_8_list(arr[8]),
+      signingPubkey: _wire2api_String(arr[6]),
     );
   }
 
@@ -3228,10 +3213,6 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     return raw == null ? null : _wire2api_list_localized_name(raw);
   }
 
-  Uint8List? _wire2api_opt_uint_8_list(dynamic raw) {
-    return raw == null ? null : _wire2api_uint_8_list(raw);
-  }
-
   Payment _wire2api_payment(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
@@ -3296,21 +3277,6 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       sweepTxWeight: _wire2api_u64(arr[0]),
       sweepTxFeeSat: _wire2api_u64(arr[1]),
     );
-  }
-
-  Quantity _wire2api_quantity(dynamic raw) {
-    switch (raw[0]) {
-      case 0:
-        return Quantity_Bounded(
-          amount: _wire2api_u64(raw[1]),
-        );
-      case 1:
-        return Quantity_Unbounded();
-      case 2:
-        return Quantity_One();
-      default:
-        throw Exception("unreachable");
-    }
   }
 
   Rate _wire2api_rate(dynamic raw) {

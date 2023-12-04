@@ -1460,10 +1460,10 @@ impl From<FetchInvoiceRequest> for gl_client::pb::cln::FetchinvoiceRequest {
         cln::FetchinvoiceRequest {
             offer: request.offer,
             amount_msat: request.amount_msat.map(|msat| cln::Amount { msat }),
-            quantity: request.quantity,
             timeout: request.timeout,
             payer_note: request.payer_note,
             // Not yet implemented
+            quantity: None,
             recurrence_counter: None,
             recurrence_start: None,
             recurrence_label: None,

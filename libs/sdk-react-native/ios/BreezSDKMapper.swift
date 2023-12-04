@@ -504,36 +504,12 @@ enum BreezSDKMapper {
             }
             issuer = issuerTmp
         }
-        var supportedQuantity: UInt64?
-        if hasNonNilKey(data: createOfferRequest, key: "supportedQuantity") {
-            guard let supportedQuantityTmp = createOfferRequest["supportedQuantity"] as? UInt64 else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "supportedQuantity"))
-            }
-            supportedQuantity = supportedQuantityTmp
-        }
-        var label: String?
-        if hasNonNilKey(data: createOfferRequest, key: "label") {
-            guard let labelTmp = createOfferRequest["label"] as? String else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "label"))
-            }
-            label = labelTmp
-        }
-        var singleUse: Bool?
-        if hasNonNilKey(data: createOfferRequest, key: "singleUse") {
-            guard let singleUseTmp = createOfferRequest["singleUse"] as? Bool else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "singleUse"))
-            }
-            singleUse = singleUseTmp
-        }
 
         return CreateOfferRequest(
             amountMsat: amountMsat,
             description: description,
             absoluteExpiry: absoluteExpiry,
-            issuer: issuer,
-            supportedQuantity: supportedQuantity,
-            label: label,
-            singleUse: singleUse
+            issuer: issuer
         )
     }
 
@@ -543,9 +519,6 @@ enum BreezSDKMapper {
             "description": createOfferRequest.description,
             "absoluteExpiry": createOfferRequest.absoluteExpiry == nil ? nil : createOfferRequest.absoluteExpiry,
             "issuer": createOfferRequest.issuer == nil ? nil : createOfferRequest.issuer,
-            "supportedQuantity": createOfferRequest.supportedQuantity == nil ? nil : createOfferRequest.supportedQuantity,
-            "label": createOfferRequest.label == nil ? nil : createOfferRequest.label,
-            "singleUse": createOfferRequest.singleUse == nil ? nil : createOfferRequest.singleUse,
         ]
     }
 
@@ -800,19 +773,8 @@ enum BreezSDKMapper {
     }
 
     static func asLnInvoice(lnInvoice: [String: Any?]) throws -> LnInvoice {
-        var bolt11: String?
-        if hasNonNilKey(data: lnInvoice, key: "bolt11") {
-            guard let bolt11Tmp = lnInvoice["bolt11"] as? String else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "bolt11"))
-            }
-            bolt11 = bolt11Tmp
-        }
-        var bolt12: String?
-        if hasNonNilKey(data: lnInvoice, key: "bolt12") {
-            guard let bolt12Tmp = lnInvoice["bolt12"] as? String else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "bolt12"))
-            }
-            bolt12 = bolt12Tmp
+        guard let bolt11 = lnInvoice["bolt11"] as? String else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "bolt11", typeName: "LnInvoice"))
         }
         guard let payeePubkey = lnInvoice["payeePubkey"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "payeePubkey", typeName: "LnInvoice"))
@@ -858,7 +820,6 @@ enum BreezSDKMapper {
 
         return LnInvoice(
             bolt11: bolt11,
-            bolt12: bolt12,
             payeePubkey: payeePubkey,
             paymentHash: paymentHash,
             description: description,
@@ -873,8 +834,7 @@ enum BreezSDKMapper {
 
     static func dictionaryOf(lnInvoice: LnInvoice) -> [String: Any?] {
         return [
-            "bolt11": lnInvoice.bolt11 == nil ? nil : lnInvoice.bolt11,
-            "bolt12": lnInvoice.bolt12 == nil ? nil : lnInvoice.bolt12,
+            "bolt11": lnInvoice.bolt11,
             "payeePubkey": lnInvoice.payeePubkey,
             "paymentHash": lnInvoice.paymentHash,
             "description": lnInvoice.description == nil ? nil : lnInvoice.description,
@@ -914,11 +874,6 @@ enum BreezSDKMapper {
         guard let description = lnOffer["description"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "description", typeName: "LnOffer"))
         }
-        guard let supportedQuantityTmp = lnOffer["supportedQuantity"] as? [String: Any?] else {
-            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "supportedQuantity", typeName: "LnOffer"))
-        }
-        let supportedQuantity = try asQuantity(quantity: supportedQuantityTmp)
-
         guard let signingPubkey = lnOffer["signingPubkey"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "signingPubkey", typeName: "LnOffer"))
         }
@@ -941,24 +896,15 @@ enum BreezSDKMapper {
             }
             issuer = issuerTmp
         }
-        var metadata: [UInt8]?
-        if hasNonNilKey(data: lnOffer, key: "metadata") {
-            guard let metadataTmp = lnOffer["metadata"] as? [UInt8] else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "metadata"))
-            }
-            metadata = metadataTmp
-        }
 
         return LnOffer(
             bolt12: bolt12,
             chains: chains,
             description: description,
-            supportedQuantity: supportedQuantity,
             signingPubkey: signingPubkey,
             amount: amount,
             absoluteExpiry: absoluteExpiry,
-            issuer: issuer,
-            metadata: metadata
+            issuer: issuer
         )
     }
 
@@ -967,12 +913,10 @@ enum BreezSDKMapper {
             "bolt12": lnOffer.bolt12,
             "chains": lnOffer.chains,
             "description": lnOffer.description,
-            "supportedQuantity": dictionaryOf(quantity: lnOffer.supportedQuantity),
             "signingPubkey": lnOffer.signingPubkey,
             "amount": lnOffer.amount == nil ? nil : dictionaryOf(amount: lnOffer.amount!),
             "absoluteExpiry": lnOffer.absoluteExpiry == nil ? nil : lnOffer.absoluteExpiry,
             "issuer": lnOffer.issuer == nil ? nil : lnOffer.issuer,
-            "metadata": lnOffer.metadata == nil ? nil : lnOffer.metadata,
         ]
     }
 
@@ -2134,13 +2078,6 @@ enum BreezSDKMapper {
             }
             amountMsat = amountMsatTmp
         }
-        var quantity: UInt64?
-        if hasNonNilKey(data: payOfferRequest, key: "quantity") {
-            guard let quantityTmp = payOfferRequest["quantity"] as? UInt64 else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "quantity"))
-            }
-            quantity = quantityTmp
-        }
         var timeout: Double?
         if hasNonNilKey(data: payOfferRequest, key: "timeout") {
             guard let timeoutTmp = payOfferRequest["timeout"] as? Double else {
@@ -2159,7 +2096,6 @@ enum BreezSDKMapper {
         return PayOfferRequest(
             offer: offer,
             amountMsat: amountMsat,
-            quantity: quantity,
             timeout: timeout,
             payerNote: payerNote
         )
@@ -2169,7 +2105,6 @@ enum BreezSDKMapper {
         return [
             "offer": payOfferRequest.offer,
             "amountMsat": payOfferRequest.amountMsat == nil ? nil : payOfferRequest.amountMsat,
-            "quantity": payOfferRequest.quantity == nil ? nil : payOfferRequest.quantity,
             "timeout": payOfferRequest.timeout == nil ? nil : payOfferRequest.timeout,
             "payerNote": payOfferRequest.payerNote == nil ? nil : payOfferRequest.payerNote,
         ]
@@ -4758,63 +4693,6 @@ enum BreezSDKMapper {
                 list.append(paymentTypeFilter)
             } else {
                 throw SdkError.Generic(message: errUnexpectedType(typeName: "PaymentTypeFilter"))
-            }
-        }
-        return list
-    }
-
-    static func asQuantity(quantity: [String: Any?]) throws -> Quantity {
-        let type = quantity["type"] as! String
-        if type == "bounded" {
-            guard let _amount = quantity["amount"] as? UInt64 else {
-                throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "amount", typeName: "Quantity"))
-            }
-            return Quantity.bounded(amount: _amount)
-        }
-        if type == "unbounded" {
-            return Quantity.unbounded
-        }
-        if type == "one" {
-            return Quantity.one
-        }
-
-        throw SdkError.Generic(message: "Unexpected type \(type) for enum Quantity")
-    }
-
-    static func dictionaryOf(quantity: Quantity) -> [String: Any?] {
-        switch quantity {
-        case let .bounded(
-            amount
-        ):
-            return [
-                "type": "bounded",
-                "amount": amount,
-            ]
-
-        case .unbounded:
-            return [
-                "type": "unbounded",
-            ]
-
-        case .one:
-            return [
-                "type": "one",
-            ]
-        }
-    }
-
-    static func arrayOf(quantityList: [Quantity]) -> [Any] {
-        return quantityList.map { v -> [String: Any?] in dictionaryOf(quantity: v) }
-    }
-
-    static func asQuantityList(arr: [Any]) throws -> [Quantity] {
-        var list = [Quantity]()
-        for value in arr {
-            if let val = value as? [String: Any?] {
-                var quantity = try asQuantity(quantity: val)
-                list.append(quantity)
-            } else {
-                throw SdkError.Generic(message: errUnexpectedType(typeName: "Quantity"))
             }
         }
         return list

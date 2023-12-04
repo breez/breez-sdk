@@ -20,7 +20,7 @@ use breez_sdk_core::{
     SendOnchainRequest, SendOnchainResponse, SendPaymentRequest, SendPaymentResponse,
     SendSpontaneousPaymentRequest, SignMessageRequest, SignMessageResponse, StaticBackupRequest,
     StaticBackupResponse, SuccessActionProcessed, SwapInfo, SwapStatus, SweepRequest,
-    SweepResponse, Symbol, UnspentTransactionOutput, UrlSuccessActionData, Amount, Quantity, LNOffer
+    SweepResponse, Symbol, UnspentTransactionOutput, UrlSuccessActionData, Amount, LNOffer, CreateOfferRequest, PayOfferRequest
 };
 use log::{Level, LevelFilter, Metadata, Record};
 use once_cell::sync::{Lazy, OnceCell};
@@ -295,6 +295,20 @@ impl BlockingBreezServices {
 
     pub fn prepare_sweep(&self, req: PrepareSweepRequest) -> SdkResult<PrepareSweepResponse> {
         rt().block_on(self.breez_services.prepare_sweep(req))
+    }
+
+    pub fn create_offer(
+        &self,
+        req: CreateOfferRequest,
+    ) -> Result<String> {
+        rt().block_on(self.breez_services.create_offer(req))
+    }
+
+    pub fn pay_offer(
+        &self,
+        req: PayOfferRequest,
+    ) -> Result<SendPaymentResponse, SendPaymentError> {
+        rt().block_on(self.breez_services.pay_offer(req))
     }
 }
 

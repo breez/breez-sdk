@@ -86,9 +86,6 @@ export type CreateOfferRequest = {
     description: string
     absoluteExpiry?: number
     issuer?: string
-    supportedQuantity?: number
-    label?: string
-    singleUse?: boolean
 }
 
 export type CurrencyInfo = {
@@ -122,8 +119,7 @@ export type InvoicePaidDetails = {
 }
 
 export type LnInvoice = {
-    bolt11?: string
-    bolt12?: string
+    bolt11: string
     payeePubkey: string
     paymentHash: string
     description?: string
@@ -139,12 +135,10 @@ export type LnOffer = {
     bolt12: string
     chains: string[]
     description: string
-    supportedQuantity: Quantity
     signingPubkey: string
     amount?: Amount
     absoluteExpiry?: number
     issuer?: string
-    metadata?: number[]
 }
 
 export type ListPaymentsRequest = {
@@ -305,7 +299,6 @@ export type OpeningFeeParamsMenu = {
 export type PayOfferRequest = {
     offer: string
     amountMsat?: number
-    quantity?: number
     timeout?: number
     payerNote?: string
 }
@@ -720,21 +713,6 @@ export enum PaymentTypeFilter {
     SENT = "sent",
     RECEIVED = "received",
     CLOSED_CHANNEL = "closedChannel"
-}
-
-export enum QuantityVariant {
-    BOUNDED = "bounded",
-    UNBOUNDED = "unbounded",
-    ONE = "one"
-}
-
-export type Quantity = {
-    type: QuantityVariant.BOUNDED,
-    amount: number
-} | {
-    type: QuantityVariant.UNBOUNDED
-} | {
-    type: QuantityVariant.ONE
 }
 
 export enum ReverseSwapStatus {

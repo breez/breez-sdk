@@ -86,6 +86,7 @@ enum SendPaymentError {
     "RouteNotFound",
     "RouteTooExpensive",
     "ServiceConnectivity",
+    "OfferAmountChanged",
 };
 
 enum EnvironmentType {
@@ -133,8 +134,7 @@ dictionary RouteHint {
 };
 
 dictionary LNInvoice {
-    string? bolt11;
-    string? bolt12;
+    string bolt11;
     string payee_pubkey;
     string payment_hash;
     string? description;
@@ -409,13 +409,11 @@ dictionary CreateOfferRequest {
     string description;
     u64? absolute_expiry;
     string? issuer;
-    u64? supported_quantity;
 };
 
 dictionary PayOfferRequest {
     string offer;
     u64? amount_msat;
-    u64? quantity;
     f64? timeout;
     string? payer_note;
 };
@@ -621,23 +619,14 @@ interface Amount {
     Currency(string iso4217_code, u64 fractional_amount);
 };
 
-[Enum]
-interface Quantity {
-    Bounded(u64 amount);
-    Unbounded();
-    One();
-};
-
 dictionary LNOffer {     
     string              bolt12;
     sequence<string>    chains;
     string              description;
-    Quantity            supported_quantity;
     string              signing_pubkey;
     Amount?             amount;  
     u64?                absolute_expiry;
     string?             issuer;
-    sequence<u8>?       metadata;
 };
 
 [Enum]

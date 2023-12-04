@@ -57,23 +57,6 @@ impl From<SystemTimeError> for InvoiceError {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum Quantity {
-    Bounded { amount: u64 },
-    Unbounded,
-    One,
-}
-
-impl From<lightning::offers::offer::Quantity> for Quantity {
-    fn from(value: lightning::offers::offer::Quantity) -> Self {
-        match value {
-            lightning::offers::offer::Quantity::One => Quantity::One,
-            lightning::offers::offer::Quantity::Unbounded => Quantity::Unbounded,
-            lightning::offers::offer::Quantity::Bounded(n) => Quantity::Bounded { amount: n.into() },
-        }
-    }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum Amount {
     Bitcoin {
         amount_msat: u64,
@@ -111,10 +94,7 @@ pub struct LNOffer {
     pub description: String,
     pub absolute_expiry: Option<u64>,
     pub issuer: Option<String>,
-    pub supported_quantity: Quantity,
     pub signing_pubkey: String,
-    pub metadata: Option<Vec<u8>>,
-    // pub features: Features<OfferContext>,
     // pub paths: Vec<BlindedPath>,
 }
 
