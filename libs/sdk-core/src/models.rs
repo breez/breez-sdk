@@ -816,18 +816,18 @@ pub struct RefundResponse {
     pub refund_tx_id: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FetchInvoiceRequest {
-    pub offer: String,
-    pub amount_msat: Option<u64>,
-    pub timeout: Option<f64>,
-    pub payer_note: Option<String>,
+    pub(crate) offer: String,
+    pub(crate) amount_msat: Option<u64>,
+    pub(crate) timeout: Option<f64>,
+    pub(crate) payer_note: Option<String>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FetchInvoiceResponse {
-    pub bolt12: String,
-    pub new_amount_msat: Option<u64>,
+    pub(crate) bolt12: String,
+    pub(crate) new_amount_msat: Option<u64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -838,7 +838,7 @@ pub struct PayOfferRequest {
     pub payer_note: Option<String>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CreateOfferRequest {
     pub amount_msat: Option<u64>,
     pub description: String,
