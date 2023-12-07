@@ -843,7 +843,6 @@ pub struct CreateOfferRequest {
     pub amount_msat: Option<u64>,
     pub description: String,
     pub absolute_expiry: Option<u64>,
-    pub issuer: Option<String>,
 }
 
 /// Dynamic fee parameters offered by the LSP for opening a new channel.

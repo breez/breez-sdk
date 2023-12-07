@@ -408,7 +408,6 @@ dictionary CreateOfferRequest {
     u64? amount_msat;
     string description;
     u64? absolute_expiry;
-    string? issuer;
 };
 
 dictionary PayOfferRequest {
