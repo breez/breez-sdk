@@ -405,16 +405,16 @@ dictionary StaticBackupResponse {
 };
 
 dictionary CreateOfferRequest {
-    u64? amount_msat;
+    u64? amount_msat = null;
     string description;
-    u64? absolute_expiry;
+    u64? absolute_expiry = null;
 };
 
 dictionary PayOfferRequest {
     string offer;
-    u64? amount_msat;
-    f64? timeout;
-    string? payer_note;
+    u64? amount_msat = null;
+    f64? timeout = null;
+    string? payer_note = null;
 };
 
 dictionary ReceiveOnchainRequest {
