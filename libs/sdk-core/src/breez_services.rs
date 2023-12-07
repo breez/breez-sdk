@@ -1397,7 +1397,9 @@ impl BreezServices {
 
         Ok(self.send_payment(SendPaymentRequest {
             invoice: fetch_invoice_response.bolt12,
-            amount_msat: req.amount_msat
+            // we expect amount_msat from the invoice to be the same as the one in the
+            // PayOfferRequest due to the above check, can omit
+            amount_msat: None
         }).await?)
     }
 }
