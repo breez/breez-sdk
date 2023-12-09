@@ -86,7 +86,7 @@ enum SendPaymentError {
     "RouteNotFound",
     "RouteTooExpensive",
     "ServiceConnectivity",
-    "OfferAmountChanged",
+    "OfferChanged",
 };
 
 enum EnvironmentType {

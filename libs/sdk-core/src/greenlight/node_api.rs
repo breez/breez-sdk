@@ -1007,10 +1007,11 @@ impl NodeAPI for Greenlight {
 
         Ok(FetchInvoiceResponse {
             bolt12: response.invoice,
-            new_amount_msat: match response.changes {
-                Some(changes) => changes.amount_msat.map(|amount| amount.msat),
-                None => None
-            },
+            changes: response.changes.map(|changes| FetchInvoiceChanges {
+                amount: changes.amount_msat.map(|amount| amount.msat),
+                vendor: changes.vendor,
+                description: changes.description
+            })
         })
     }
 

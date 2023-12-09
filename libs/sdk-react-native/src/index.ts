@@ -85,7 +85,6 @@ export type CreateOfferRequest = {
     amountMsat?: number
     description: string
     absoluteExpiry?: number
-    issuer?: string
 }
 
 export type CurrencyInfo = {

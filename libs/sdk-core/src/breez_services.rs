@@ -1391,8 +1391,8 @@ impl BreezServices {
             })
             .await?;
 
-        if let Some(new_amount) = fetch_invoice_response.new_amount_msat {
-            return Err(SendPaymentError::OfferAmountChanged { new_amount });
+        if let Some(changes) = fetch_invoice_response.changes {
+            return Err(SendPaymentError::OfferChanged { changes });
         }
 
         Ok(self.send_payment(SendPaymentRequest {

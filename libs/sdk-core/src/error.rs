@@ -4,7 +4,7 @@ use thiserror::Error;
 
 use crate::{
     invoice::InvoiceError, lnurl::error::LnUrlError, node_api::NodeError,
-    persist::error::PersistError, swap_in::error::SwapError, swap_out::error::ReverseSwapError,
+    persist::error::PersistError, swap_in::error::SwapError, swap_out::error::ReverseSwapError, FetchInvoiceChanges,
 };
 
 pub type SdkResult<T, E = SdkError> = Result<T, E>;
@@ -589,8 +589,8 @@ pub enum SendPaymentError {
     #[error("Service connectivity: {err}")]
     ServiceConnectivity { err: String },
 
-    #[error("Amount has changed: {new_amount}")]
-    OfferAmountChanged { new_amount: u64 },
+    #[error("Offer has changed: {changes:?}")]
+    OfferChanged { changes: FetchInvoiceChanges },
 }
 
 impl From<anyhow::Error> for SendPaymentError {

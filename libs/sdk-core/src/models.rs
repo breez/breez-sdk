@@ -825,9 +825,16 @@ pub struct FetchInvoiceRequest {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct FetchInvoiceChanges {
+    pub(crate) vendor: Option<String>,
+    pub(crate) description: Option<String>,
+    pub(crate) amount: Option<u64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FetchInvoiceResponse {
     pub(crate) bolt12: String,
-    pub(crate) new_amount_msat: Option<u64>,
+    pub(crate) changes: Option<FetchInvoiceChanges>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

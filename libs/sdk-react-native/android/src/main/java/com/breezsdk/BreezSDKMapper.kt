@@ -457,12 +457,10 @@ fun asCreateOfferRequest(createOfferRequest: ReadableMap): CreateOfferRequest? {
         } else {
             null
         }
-    val issuer = if (hasNonNullKey(createOfferRequest, "issuer")) createOfferRequest.getString("issuer") else null
     return CreateOfferRequest(
         amountMsat,
         description,
         absoluteExpiry,
-        issuer,
     )
 }
 
@@ -471,7 +469,6 @@ fun readableMapOf(createOfferRequest: CreateOfferRequest): ReadableMap {
         "amountMsat" to createOfferRequest.amountMsat,
         "description" to createOfferRequest.description,
         "absoluteExpiry" to createOfferRequest.absoluteExpiry,
-        "issuer" to createOfferRequest.issuer,
     )
 }
 

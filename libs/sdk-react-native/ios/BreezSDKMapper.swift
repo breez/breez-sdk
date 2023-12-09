@@ -497,19 +497,11 @@ enum BreezSDKMapper {
             }
             absoluteExpiry = absoluteExpiryTmp
         }
-        var issuer: String?
-        if hasNonNilKey(data: createOfferRequest, key: "issuer") {
-            guard let issuerTmp = createOfferRequest["issuer"] as? String else {
-                throw SdkError.Generic(message: errUnexpectedValue(fieldName: "issuer"))
-            }
-            issuer = issuerTmp
-        }
 
         return CreateOfferRequest(
             amountMsat: amountMsat,
             description: description,
-            absoluteExpiry: absoluteExpiry,
-            issuer: issuer
+            absoluteExpiry: absoluteExpiry
         )
     }
 
@@ -518,7 +510,6 @@ enum BreezSDKMapper {
             "amountMsat": createOfferRequest.amountMsat == nil ? nil : createOfferRequest.amountMsat,
             "description": createOfferRequest.description,
             "absoluteExpiry": createOfferRequest.absoluteExpiry == nil ? nil : createOfferRequest.absoluteExpiry,
-            "issuer": createOfferRequest.issuer == nil ? nil : createOfferRequest.issuer,
         ]
     }
 
