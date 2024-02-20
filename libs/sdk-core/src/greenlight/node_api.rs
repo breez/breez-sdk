@@ -8,6 +8,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use anyhow::{anyhow, Result};
 use ecies::symmetric::{sym_decrypt, sym_encrypt};
 use futures::Stream;
+use gl_client::credentials::{Credentials, Device};
 use gl_client::node::ClnClient;
 use gl_client::pb::cln::listinvoices_invoices::ListinvoicesInvoicesStatus;
 use gl_client::pb::cln::listpays_pays::ListpaysPaysStatus;
@@ -56,7 +57,7 @@ const MAX_INBOUND_LIQUIDITY_MSAT: u64 = 4000000000;
 pub(crate) struct Greenlight {
     sdk_config: Config,
     signer: Signer,
-    tls_config: TlsConfig,
+    creds: Credentials,
     gl_client: Mutex<Option<node::Client>>,
     node_client: Mutex<Option<ClnClient>>,
     persister: Arc<SqliteStorage>,
@@ -147,16 +148,22 @@ impl Greenlight {
         persister: Arc<SqliteStorage>,
     ) -> NodeResult<Greenlight> {
         let greenlight_network = sdk_config.network.into();
-        let tls_config = TlsConfig::new()?.identity(
-            connection_credentials.device_cert,
-            connection_credentials.device_key,
-        );
-        let signer = Signer::new(seed, greenlight_network, tls_config.clone())?;
+        let creds = Credentials::Device(Device {
+            cert: connection_credentials.device_cert,
+            key: connection_credentials.device_key,
+            ca: vec![],           // TODO
+            rune: "".to_string(), // TODO
+        });
+        let signer = Signer::new(
+            seed,
+            greenlight_network,
+            creds.tls_config().expect("Failed to extract tls config"),
+        )?;
 
         Ok(Greenlight {
             sdk_config,
             signer,
-            tls_config,
+            creds,
             gl_client: Mutex::new(None),
             node_client: Mutex::new(None),
             persister,
@@ -236,15 +243,16 @@ impl Greenlight {
     async fn get_client(&self) -> NodeResult<node::Client> {
         let mut gl_client = self.gl_client.lock().await;
         if gl_client.is_none() {
-            let scheduler = Scheduler::new(self.signer.node_id(), self.sdk_config.network.into())
-                .await
-                .map_err(NodeError::ServiceConnectivity)?;
-            *gl_client = Some(
-                scheduler
-                    .schedule(self.tls_config.clone())
-                    .await
-                    .map_err(NodeError::ServiceConnectivity)?,
-            );
+            let scheduled_node = node::Node::new(
+                self.signer.node_id(),
+                self.sdk_config.network.into(),
+                self.creds.clone(),
+            )?
+            .schedule()
+            .await
+            .map_err(NodeError::ServiceConnectivity)?;
+
+            *gl_client = Some(scheduled_node);
         }
         Ok(gl_client.clone().unwrap())
     }
@@ -252,15 +260,16 @@ impl Greenlight {
     pub(crate) async fn get_node_client(&self) -> NodeResult<node::ClnClient> {
         let mut node_client = self.node_client.lock().await;
         if node_client.is_none() {
-            let scheduler = Scheduler::new(self.signer.node_id(), self.sdk_config.network.into())
-                .await
-                .map_err(NodeError::ServiceConnectivity)?;
-            *node_client = Some(
-                scheduler
-                    .schedule(self.tls_config.clone())
-                    .await
-                    .map_err(NodeError::ServiceConnectivity)?,
-            );
+            let scheduled_node = node::Node::new(
+                self.signer.node_id(),
+                self.sdk_config.network.into(),
+                self.creds.clone(),
+            )?
+            .schedule()
+            .await
+            .map_err(NodeError::ServiceConnectivity)?;
+
+            *node_client = Some(scheduled_node);
         }
         Ok(node_client.clone().unwrap())
     }
