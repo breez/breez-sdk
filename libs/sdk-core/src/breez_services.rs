@@ -1,6 +1,4 @@
 use std::cmp::min;
-use std::fs::OpenOptions;
-use std::io::Write;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
@@ -10,9 +8,7 @@ use bip39::*;
 use bitcoin::hashes::hex::ToHex;
 use bitcoin::hashes::{sha256, Hash};
 use bitcoin::util::bip32::ChildNumber;
-use chrono::Local;
 use futures::TryFutureExt;
-use log::{LevelFilter, Metadata, Record};
 use reqwest::{header::CONTENT_TYPE, Body};
 use serde_json::json;
 use tokio::sync::{mpsc, watch, Mutex};
@@ -1620,86 +1616,6 @@ impl BreezServices {
         Ok(())
     }
 
-    /// Configures a global SDK logger that will log to file and will forward log events to
-    /// an optional application-specific logger.
-    ///
-    /// If called, it should be called before any SDK methods (for example, before `connect`).
-    ///
-    /// It must be called only once in the application lifecycle. Alternatively, If the application
-    /// already uses a globally-registered logger, this method shouldn't be called at all.
-    ///
-    /// ### Arguments
-    ///
-    /// - `log_dir`: Location where the the SDK log file will be created. The directory must already exist.
-    ///
-    /// - `app_logger`: Optional application logger.
-    ///
-    /// If the application is to use it's own logger, but would also like the SDK to log SDK-specific
-    /// log output to a file in the configured `log_dir`, then do not register the
-    /// app-specific logger as a global logger and instead call this method with the app logger as an arg.
-    ///
-    /// ### Logging Configuration
-    ///
-    /// Setting `breez_sdk_core::input_parser=debug` will include in the logs the raw payloads received
-    /// when interacting with JSON endpoints, for example those used during all LNURL workflows.
-    ///
-    /// ### Errors
-    ///
-    /// An error is thrown if the log file cannot be created in the working directory.
-    ///
-    /// An error is thrown if a global logger is already configured.
-    pub fn init_logging(log_dir: &str, app_logger: Option<Box<dyn log::Log>>) -> Result<()> {
-        let target_log_file = Box::new(
-            OpenOptions::new()
-                .create(true)
-                .append(true)
-                .open(format!("{log_dir}/sdk.log"))
-                .map_err(|e| anyhow!("Can't create log file: {e}"))?,
-        );
-        let logger = env_logger::Builder::new()
-            .target(env_logger::Target::Pipe(target_log_file))
-            .parse_filters(
-                r#"
-                debug,
-                breez_sdk_core::input_parser=warn,
-                breez_sdk_core::backup=info,
-                breez_sdk_core::persist::reverseswap=info,
-                breez_sdk_core::reverseswap=info,
-                gl_client=debug,
-                h2=warn,
-                hyper=warn,
-                lightning_signer=warn,
-                reqwest=warn,
-                rustls=warn,
-                rustyline=warn,
-                vls_protocol_signer=warn
-            "#,
-            )
-            .format(|buf, record| {
-                writeln!(
-                    buf,
-                    "[{} {} {}:{}] {}",
-                    Local::now().format("%Y-%m-%d %H:%M:%S%.3f"),
-                    record.level(),
-                    record.module_path().unwrap_or("unknown"),
-                    record.line().unwrap_or(0),
-                    record.args()
-                )
-            })
-            .build();
-
-        let global_logger = GlobalSdkLogger {
-            logger,
-            log_listener: app_logger,
-        };
-
-        log::set_boxed_logger(Box::new(global_logger))
-            .map_err(|e| anyhow!("Failed to set global logger: {e}"))?;
-        log::set_max_level(LevelFilter::Trace);
-
-        Ok(())
-    }
-
     async fn lookup_chain_service_closing_outspend(
         &self,
         channel: crate::models::Channel,
@@ -1878,32 +1794,6 @@ impl BreezServices {
                 err: format!("Failed to register for tx confirmation notifications: {err}"),
             })
     }
-}
-
-struct GlobalSdkLogger {
-    /// SDK internal logger, which logs to file
-    logger: env_logger::Logger,
-    /// Optional external log listener, that can receive a stream of log statements
-    log_listener: Option<Box<dyn log::Log>>,
-}
-impl log::Log for GlobalSdkLogger {
-    fn enabled(&self, metadata: &Metadata) -> bool {
-        metadata.level() <= log::Level::Trace
-    }
-
-    fn log(&self, record: &Record) {
-        if self.enabled(record.metadata()) {
-            self.logger.log(record);
-
-            if let Some(s) = &self.log_listener.as_ref() {
-                if s.enabled(record.metadata()) {
-                    s.log(record);
-                }
-            }
-        }
-    }
-
-    fn flush(&self) {}
 }
 
 /// A helper struct to configure and build BreezServices
