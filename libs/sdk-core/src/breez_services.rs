@@ -1533,7 +1533,12 @@ impl BreezServices {
                          log_message_res = log_stream.message() => {
                           match log_message_res {
                            Ok(Some(l)) => {
-                            info!("node-logs: {}", l.line);
+                            match l.line.to_ascii_lowercase() {
+                                s if s.starts_with("unusual") => error!("node-logs: {}", l.line.split_at(7).1.trim_start()),
+                                s if s.starts_with("info") => info!("node-logs: {}", l.line.split_at(4).1.trim_start()),
+                                s if s.starts_with("debug") => debug!("node-logs: {}", l.line.split_at(5).1.trim_start()),
+                                _ => trace!("node-logs: {}", l.line)
+                            }
                            },
                            // stream is closed, renew it
                            Ok(None) => {
