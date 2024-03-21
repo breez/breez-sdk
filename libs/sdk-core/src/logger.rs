@@ -142,9 +142,7 @@ impl Log for DartLogger {
     }
 
     fn log(&self, record: &Record) {
-        if self.enabled(record.metadata()) {
-            self.env_logger.log(record);
-
+        if self.env_logger.enabled(record.metadata()) {
             let entry = Self::record_to_entry(record);
             if let Some(sink) = &*DART_LOGGER_STREAM_SINK.read() {
                 sink.add(entry);
@@ -166,6 +164,7 @@ pub fn init_uniffi_logger(log_stream: Box<dyn LogStream>, filter_level: Option<L
 }
 
 pub struct UniFFILogger {
+    env_logger: env_logger::Logger,
     log_stream: Box<dyn LogStream>,
 }
 
@@ -183,7 +182,13 @@ impl UniFFILogger {
             STATIC_MAX_LEVEL,
             filter_level
         );
-        let uniffi_logger = UniFFILogger { log_stream };
+
+        let env_logger = init_env_logger(Some(Target::Stdout), Some(filter_level));
+
+        let uniffi_logger = UniFFILogger {
+            env_logger,
+            log_stream,
+        };
         set_boxed_logger(Box::new(uniffi_logger))
             .unwrap_or_else(|_| error!("Log stream already created."));
         set_max_level(filter_level);
@@ -205,8 +210,11 @@ impl Log for UniFFILogger {
     }
 
     fn log(&self, record: &Record) {
-        let entry = Self::record_to_entry(record);
-        self.log_stream.log(entry);
+        let metadata = record.metadata();
+        if self.enabled(metadata) && self.env_logger.enabled(metadata) {
+            let entry = Self::record_to_entry(record);
+            self.log_stream.log(entry);
+        }
     }
     fn flush(&self) {}
 }
