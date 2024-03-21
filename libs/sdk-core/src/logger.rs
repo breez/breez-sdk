@@ -83,36 +83,27 @@ fn init_env_logger(target: Option<Target>, filter_level: Option<LevelFilter>) ->
 
 static INIT_DART_LOGGER: Once = Once::new();
 
-pub fn init_dart_logger() {
+pub fn init_dart_logger(filter_level: Option<LevelFilter>) {
     INIT_DART_LOGGER.call_once(|| {
-        let level = LevelFilter::Info;
+        let filter_level = if filter_level.is_some() {
+            filter_level.unwrap()
+        } else {
+            LevelFilter::Trace
+        };
 
         assert!(
-            level <= STATIC_MAX_LEVEL,
+            filter_level <= STATIC_MAX_LEVEL,
             "Should respect STATIC_MAX_LEVEL={:?}, which is done in compile time. level{:?}",
             STATIC_MAX_LEVEL,
-            level
+            filter_level
         );
-        let env_logger = Builder::new()
-            .target(Target::Stdout)
-            .filter_level(level)
-            .format(|buf, record| {
-                writeln!(
-                    buf,
-                    "[{} {} {}:{}] {}",
-                    Local::now().format("%Y-%m-%d %H:%M:%S%.3f"),
-                    record.level(),
-                    record.module_path().unwrap_or("unknown"),
-                    record.line().unwrap_or(0),
-                    record.args()
-                )
-            })
-            .build();
 
-        let dart_logger = DartLogger { env_logger, level };
+        let env_logger = init_env_logger(Some(Target::Stdout), Some(filter_level));
+
+        let dart_logger = DartLogger { env_logger };
         set_boxed_logger(Box::new(dart_logger))
             .unwrap_or_else(|_| error!("Log stream already created."));
-        set_max_level(level);
+        set_max_level(filter_level);
     });
 }
 
@@ -121,7 +112,6 @@ lazy_static! {
 }
 
 pub struct DartLogger {
-    level: LevelFilter,
     env_logger: Logger,
 }
 
@@ -147,8 +137,8 @@ impl DartLogger {
 }
 
 impl Log for DartLogger {
-    fn enabled(&self, _metadata: &Metadata) -> bool {
-        _metadata.level() <= self.level
+    fn enabled(&self, metadata: &Metadata) -> bool {
+        metadata.level() <= max_level()
     }
 
     fn log(&self, record: &Record) {
@@ -162,18 +152,16 @@ impl Log for DartLogger {
         }
     }
 
-    fn flush(&self) {
-        // no need
-    }
+    fn flush(&self) {}
 }
 
 /* UniFFI */
 
 static INIT_UNIFFI_LOGGER: Once = Once::new();
 
-pub fn init_uniffi_logger(log_stream: Box<dyn LogStream>) {
+pub fn init_uniffi_logger(log_stream: Box<dyn LogStream>, filter_level: Option<LevelFilter>) {
     INIT_UNIFFI_LOGGER.call_once(|| {
-        UniFFILogger::set_log_stream(log_stream);
+        UniFFILogger::set_log_stream(log_stream, filter_level);
     });
 }
 
@@ -182,19 +170,23 @@ pub struct UniFFILogger {
 }
 
 impl UniFFILogger {
-    fn set_log_stream(log_stream: Box<dyn LogStream>) {
-        let level = LevelFilter::Trace;
+    fn set_log_stream(log_stream: Box<dyn LogStream>, filter_level: Option<LevelFilter>) {
+        let filter_level = if filter_level.is_some() {
+            filter_level.unwrap()
+        } else {
+            LevelFilter::Trace
+        };
 
         assert!(
-            level <= STATIC_MAX_LEVEL,
+            filter_level <= STATIC_MAX_LEVEL,
             "Should respect STATIC_MAX_LEVEL={:?}, which is done in compile time. level{:?}",
             STATIC_MAX_LEVEL,
-            level
+            filter_level
         );
         let uniffi_logger = UniFFILogger { log_stream };
         set_boxed_logger(Box::new(uniffi_logger))
             .unwrap_or_else(|_| error!("Log stream already created."));
-        set_max_level(level);
+        set_max_level(filter_level);
     }
 
     fn record_to_entry(record: &Record) -> LogEntry {
@@ -249,7 +241,24 @@ impl Log for UniFFILogger {
 /// An error is thrown if the log file cannot be created in the working directory.
 ///
 /// An error is thrown if a global logger is already configured.
-pub fn init_sdk_logger(log_dir: &str, app_logger: Option<Box<dyn Log>>) -> Result<()> {
+pub fn init_sdk_logger(
+    log_dir: &str,
+    app_logger: Option<Box<dyn Log>>,
+    filter_level: Option<LevelFilter>,
+) -> Result<()> {
+    let filter_level = if filter_level.is_some() {
+        filter_level.unwrap()
+    } else {
+        LevelFilter::Trace
+    };
+
+    assert!(
+        filter_level <= STATIC_MAX_LEVEL,
+        "Should respect STATIC_MAX_LEVEL={:?}, which is done in compile time. level{:?}",
+        STATIC_MAX_LEVEL,
+        filter_level
+    );
+
     let target_log_file = Box::new(
         OpenOptions::new()
             .create(true)
@@ -257,7 +266,8 @@ pub fn init_sdk_logger(log_dir: &str, app_logger: Option<Box<dyn Log>>) -> Resul
             .open(format!("{log_dir}/sdk.log"))
             .map_err(|e| anyhow!("Can't create log file: {e}"))?,
     );
-    let logger = init_env_logger(Some(target_log_file));
+    let target = env_logger::Target::Pipe(target_log_file);
+    let logger = init_env_logger(Some(target), Some(filter_level));
 
     let global_logger = GlobalSdkLogger {
         logger,
@@ -266,7 +276,7 @@ pub fn init_sdk_logger(log_dir: &str, app_logger: Option<Box<dyn Log>>) -> Resul
 
     set_boxed_logger(Box::new(global_logger))
         .map_err(|e| anyhow!("Failed to set global logger: {e}"))?;
-    set_max_level(LevelFilter::Trace);
+    set_max_level(filter_level);
 
     Ok(())
 }

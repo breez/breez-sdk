@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
         "Error: data directory doesn't exist"
     );
 
-    init_sdk_logger(&data_dir, None)?;
+    init_sdk_logger(&data_dir, None, None)?;
 
     let persistence = CliPersistence { data_dir };
     let history_file = &persistence.history_file();
