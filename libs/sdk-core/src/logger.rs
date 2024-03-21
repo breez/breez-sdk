@@ -1,3 +1,4 @@
+use crate::models::LevelFilter as BindingLevelFilter;
 use crate::{LogEntry, LogStream};
 use anyhow::{anyhow, Result};
 use chrono::Local;
@@ -83,13 +84,9 @@ fn init_env_logger(target: Option<Target>, filter_level: Option<LevelFilter>) ->
 
 static INIT_DART_LOGGER: Once = Once::new();
 
-pub fn init_dart_logger(filter_level: Option<LevelFilter>) {
+pub fn init_dart_logger(filter_level: Option<BindingLevelFilter>) {
     INIT_DART_LOGGER.call_once(|| {
-        let filter_level = if filter_level.is_some() {
-            filter_level.unwrap()
-        } else {
-            LevelFilter::Trace
-        };
+        let filter_level = get_filter_level(filter_level);
 
         assert!(
             filter_level <= STATIC_MAX_LEVEL,
@@ -157,7 +154,10 @@ impl Log for DartLogger {
 
 static INIT_UNIFFI_LOGGER: Once = Once::new();
 
-pub fn init_uniffi_logger(log_stream: Box<dyn LogStream>, filter_level: Option<LevelFilter>) {
+pub fn init_uniffi_logger(
+    log_stream: Box<dyn LogStream>,
+    filter_level: Option<BindingLevelFilter>,
+) {
     INIT_UNIFFI_LOGGER.call_once(|| {
         UniFFILogger::set_log_stream(log_stream, filter_level);
     });
@@ -169,13 +169,8 @@ pub struct UniFFILogger {
 }
 
 impl UniFFILogger {
-    fn set_log_stream(log_stream: Box<dyn LogStream>, filter_level: Option<LevelFilter>) {
-        let filter_level = if filter_level.is_some() {
-            filter_level.unwrap()
-        } else {
-            LevelFilter::Trace
-        };
-
+    fn set_log_stream(log_stream: Box<dyn LogStream>, filter_level: Option<BindingLevelFilter>) {
+        let filter_level = get_filter_level(filter_level);
         assert!(
             filter_level <= STATIC_MAX_LEVEL,
             "Should respect STATIC_MAX_LEVEL={:?}, which is done in compile time. level{:?}",
@@ -254,11 +249,7 @@ pub fn init_sdk_logger(
     app_logger: Option<Box<dyn Log>>,
     filter_level: Option<LevelFilter>,
 ) -> Result<()> {
-    let filter_level = if filter_level.is_some() {
-        filter_level.unwrap()
-    } else {
-        LevelFilter::Trace
-    };
+    let filter_level = filter_level.unwrap_or(LevelFilter::Trace);
 
     assert!(
         filter_level <= STATIC_MAX_LEVEL,
@@ -314,4 +305,17 @@ impl Log for GlobalSdkLogger {
     }
 
     fn flush(&self) {}
+}
+
+/* Binding LevelFilter */
+
+fn get_filter_level(filter_level: Option<BindingLevelFilter>) -> LevelFilter {
+    match filter_level.unwrap_or(BindingLevelFilter::Trace) {
+        BindingLevelFilter::Off => LevelFilter::Off,
+        BindingLevelFilter::Error => LevelFilter::Error,
+        BindingLevelFilter::Warn => LevelFilter::Warn,
+        BindingLevelFilter::Info => LevelFilter::Info,
+        BindingLevelFilter::Debug => LevelFilter::Debug,
+        BindingLevelFilter::Trace => LevelFilter::Trace,
+    }
 }
