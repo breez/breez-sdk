@@ -15,6 +15,7 @@ use std::sync::Arc;
 
 use anyhow::{anyhow, Result};
 use flutter_rust_bridge::StreamSink;
+use log::LevelFilter;
 use once_cell::sync::{Lazy, OnceCell};
 use tokio::sync::Mutex;
 
@@ -178,8 +179,8 @@ pub fn breez_events_stream(s: StreamSink<BreezEvent>) -> Result<()> {
 }
 
 /// If used, this must be called before `connect`. It can only be called once.
-pub fn breez_log_stream(s: StreamSink<LogEntry>) -> Result<()> {
-    init_dart_logger();
+pub fn breez_log_stream(s: StreamSink<LogEntry>, filter_level: Option<LevelFilter>) -> Result<()> {
+    init_dart_logger(filter_level);
     DartLogger::set_stream_sink(s);
     Ok(())
 }

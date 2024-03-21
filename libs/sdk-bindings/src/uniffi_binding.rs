@@ -78,8 +78,8 @@ pub fn connect(
 }
 
 /// If used, this must be called before `connect`
-pub fn set_log_stream(log_stream: Box<dyn LogStream>) -> SdkResult<()> {
-    init_uniffi_logger(log_stream);
+pub fn set_log_stream(log_stream: Box<dyn LogStream>, filter_level: Option<LevelFilter>) -> SdkResult<()> {
+    init_uniffi_logger(log_stream, filter_level);
     Ok(())
 }
 
