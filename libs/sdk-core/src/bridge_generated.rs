@@ -66,6 +66,7 @@ use crate::models::EnvironmentType;
 use crate::models::GreenlightCredentials;
 use crate::models::GreenlightNodeConfig;
 use crate::models::HealthCheckStatus;
+use crate::models::LevelFilter;
 use crate::models::ListPaymentsRequest;
 use crate::models::LnPaymentDetails;
 use crate::models::LnUrlCallbackStatus;
@@ -311,14 +312,22 @@ fn wire_breez_events_stream_impl(port_: MessagePort) {
         },
     )
 }
-fn wire_breez_log_stream_impl(port_: MessagePort) {
+fn wire_breez_log_stream_impl(
+    port_: MessagePort,
+    filter_level: impl Wire2Api<Option<LevelFilter>> + UnwindSafe,
+) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
         WrapInfo {
             debug_name: "breez_log_stream",
             port: Some(port_),
             mode: FfiCallMode::Stream,
         },
-        move || move |task_callback| breez_log_stream(task_callback.stream_sink::<_, LogEntry>()),
+        move || {
+            let api_filter_level = filter_level.wire2api();
+            move |task_callback| {
+                breez_log_stream(task_callback.stream_sink::<_, LogEntry>(), api_filter_level)
+            }
+        },
     )
 }
 fn wire_list_lsps_impl(port_: MessagePort) {
@@ -947,6 +956,19 @@ impl Wire2Api<i32> for i32 {
 impl Wire2Api<i64> for i64 {
     fn wire2api(self) -> i64 {
         self
+    }
+}
+impl Wire2Api<LevelFilter> for i32 {
+    fn wire2api(self) -> LevelFilter {
+        match self {
+            0 => LevelFilter::Off,
+            1 => LevelFilter::Error,
+            2 => LevelFilter::Warn,
+            3 => LevelFilter::Info,
+            4 => LevelFilter::Debug,
+            5 => LevelFilter::Trace,
+            _ => unreachable!("Invalid variant for LevelFilter: {}", self),
+        }
     }
 }
 

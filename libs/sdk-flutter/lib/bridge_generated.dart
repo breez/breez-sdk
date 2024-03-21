@@ -89,7 +89,7 @@ abstract class BreezSdkCore {
   FlutterRustBridgeTaskConstMeta get kBreezEventsStreamConstMeta;
 
   /// If used, this must be called before `connect`. It can only be called once.
-  Stream<LogEntry> breezLogStream({dynamic hint});
+  Stream<LogEntry> breezLogStream({LevelFilter? filterLevel, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kBreezLogStreamConstMeta;
 
@@ -701,6 +701,38 @@ class InvoicePaidDetails {
     required this.bolt11,
     this.payment,
   });
+}
+
+/// An enum representing the available verbosity level filters of the logger.
+enum LevelFilter {
+  ///
+  /// A level lower than all log levels.
+  Off,
+
+  /// The "error" level.
+  ///
+  /// Designates very serious errors.
+  Error,
+
+  /// The "warn" level.
+  ///
+  /// Designates hazardous situations.
+  Warn,
+
+  /// The "info" level.
+  ///
+  /// Designates useful information.
+  Info,
+
+  /// The "debug" level.
+  ///
+  /// Designates lower priority information.
+  Debug,
+
+  /// The "trace" level.
+  ///
+  /// Designates very low priority, often extremely verbose, information.
+  Trace,
 }
 
 /// Represents a list payments request.
@@ -2296,20 +2328,21 @@ class BreezSdkCoreImpl implements BreezSdkCore {
         argNames: [],
       );
 
-  Stream<LogEntry> breezLogStream({dynamic hint}) {
+  Stream<LogEntry> breezLogStream({LevelFilter? filterLevel, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_box_autoadd_level_filter(filterLevel);
     return _platform.executeStream(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_breez_log_stream(port_),
+      callFfi: (port_) => _platform.inner.wire_breez_log_stream(port_, arg0),
       parseSuccessData: _wire2api_log_entry,
       parseErrorData: _wire2api_FrbAnyhowException,
       constMeta: kBreezLogStreamConstMeta,
-      argValues: [],
+      argValues: [filterLevel],
       hint: hint,
     ));
   }
 
   FlutterRustBridgeTaskConstMeta get kBreezLogStreamConstMeta => const FlutterRustBridgeTaskConstMeta(
         debugName: "breez_log_stream",
-        argNames: [],
+        argNames: ["filterLevel"],
       );
 
   Future<List<LspInformation>> listLsps({dynamic hint}) {
@@ -4231,6 +4264,11 @@ int api2wire_i32(int raw) {
 }
 
 @protected
+int api2wire_level_filter(LevelFilter raw) {
+  return api2wire_i32(raw.index);
+}
+
+@protected
 int api2wire_network(Network raw) {
   return api2wire_i32(raw.index);
 }
@@ -4325,6 +4363,11 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
   @protected
   ffi.Pointer<ffi.Int64> api2wire_box_autoadd_i64(int raw) {
     return inner.new_box_autoadd_i64_0(api2wire_i64(raw));
+  }
+
+  @protected
+  ffi.Pointer<ffi.Int32> api2wire_box_autoadd_level_filter(LevelFilter raw) {
+    return inner.new_box_autoadd_level_filter_0(api2wire_level_filter(raw));
   }
 
   @protected
@@ -4561,6 +4604,11 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
   @protected
   ffi.Pointer<ffi.Int64> api2wire_opt_box_autoadd_i64(int? raw) {
     return raw == null ? ffi.nullptr : api2wire_box_autoadd_i64(raw);
+  }
+
+  @protected
+  ffi.Pointer<ffi.Int32> api2wire_opt_box_autoadd_level_filter(LevelFilter? raw) {
+    return raw == null ? ffi.nullptr : api2wire_box_autoadd_level_filter(raw);
   }
 
   @protected
@@ -5295,15 +5343,19 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
 
   void wire_breez_log_stream(
     int port_,
+    ffi.Pointer<ffi.Int32> filter_level,
   ) {
     return _wire_breez_log_stream(
       port_,
+      filter_level,
     );
   }
 
   late final _wire_breez_log_streamPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_breez_log_stream');
-  late final _wire_breez_log_stream = _wire_breez_log_streamPtr.asFunction<void Function(int)>();
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<ffi.Int32>)>>(
+          'wire_breez_log_stream');
+  late final _wire_breez_log_stream =
+      _wire_breez_log_streamPtr.asFunction<void Function(int, ffi.Pointer<ffi.Int32>)>();
 
   void wire_list_lsps(
     int port_,
@@ -6032,6 +6084,20 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int64> Function(ffi.Int64)>>('new_box_autoadd_i64_0');
   late final _new_box_autoadd_i64_0 =
       _new_box_autoadd_i64_0Ptr.asFunction<ffi.Pointer<ffi.Int64> Function(int)>();
+
+  ffi.Pointer<ffi.Int32> new_box_autoadd_level_filter_0(
+    int value,
+  ) {
+    return _new_box_autoadd_level_filter_0(
+      value,
+    );
+  }
+
+  late final _new_box_autoadd_level_filter_0Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int32> Function(ffi.Int32)>>(
+          'new_box_autoadd_level_filter_0');
+  late final _new_box_autoadd_level_filter_0 =
+      _new_box_autoadd_level_filter_0Ptr.asFunction<ffi.Pointer<ffi.Int32> Function(int)>();
 
   ffi.Pointer<wire_ListPaymentsRequest> new_box_autoadd_list_payments_request_0() {
     return _new_box_autoadd_list_payments_request_0();

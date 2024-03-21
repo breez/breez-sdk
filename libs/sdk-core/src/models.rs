@@ -1659,6 +1659,36 @@ impl PaymentPathEdge {
     }
 }
 
+/// An enum representing the available verbosity level filters of the logger.
+#[repr(usize)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
+pub enum LevelFilter {
+    // The "off" level.
+    ///
+    /// A level lower than all log levels.
+    Off,
+    /// The "error" level.
+    ///
+    /// Designates very serious errors.
+    Error,
+    /// The "warn" level.
+    ///
+    /// Designates hazardous situations.
+    Warn,
+    /// The "info" level.
+    ///
+    /// Designates useful information.
+    Info,
+    /// The "debug" level.
+    ///
+    /// Designates lower priority information.
+    Debug,
+    /// The "trace" level.
+    ///
+    /// Designates very low priority, often extremely verbose, information.
+    Trace,
+}
+
 #[cfg(test)]
 mod tests {
     use anyhow::Result;

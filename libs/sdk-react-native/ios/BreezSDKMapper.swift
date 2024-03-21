@@ -4696,6 +4696,69 @@ enum BreezSDKMapper {
         return list
     }
 
+    static func asLevelFilter(levelFilter: String) throws -> LevelFilter {
+        switch levelFilter {
+        case "off":
+            return LevelFilter.off
+
+        case "error":
+            return LevelFilter.error
+
+        case "warn":
+            return LevelFilter.warn
+
+        case "info":
+            return LevelFilter.info
+
+        case "debug":
+            return LevelFilter.debug
+
+        case "trace":
+            return LevelFilter.trace
+
+        default: throw SdkError.Generic(message: "Invalid variant \(levelFilter) for enum LevelFilter")
+        }
+    }
+
+    static func valueOf(levelFilter: LevelFilter) -> String {
+        switch levelFilter {
+        case .off:
+            return "off"
+
+        case .error:
+            return "error"
+
+        case .warn:
+            return "warn"
+
+        case .info:
+            return "info"
+
+        case .debug:
+            return "debug"
+
+        case .trace:
+            return "trace"
+        }
+    }
+
+    static func arrayOf(levelFilterList: [LevelFilter]) -> [String] {
+        return levelFilterList.map { v -> String in valueOf(levelFilter: v) }
+    }
+
+    static func asLevelFilterList(arr: [Any]) throws -> [LevelFilter] {
+        var list = [LevelFilter]()
+        for value in arr {
+            if let val = value as? String {
+                var levelFilter = try asLevelFilter(levelFilter: val)
+                list.append(levelFilter)
+            } else {
+                throw SdkError.Generic(message: errUnexpectedType(typeName: "LevelFilter"))
+            }
+        }
+        return list
+    }
+
     static func asLnUrlCallbackStatus(lnUrlCallbackStatus: [String: Any?]) throws -> LnUrlCallbackStatus {
         let type = lnUrlCallbackStatus["type"] as! String
         if type == "ok" {
