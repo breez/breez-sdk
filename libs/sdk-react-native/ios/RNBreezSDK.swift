@@ -130,10 +130,14 @@ class RNBreezSDK: RCTEventEmitter {
         }
     }
 
-    @objc(setLogStream:reject:)
-    func setLogStream(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(setLogStream:resolve:reject:)
+    func setLogStream(_ filterLevel: String?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         do {
-            try BreezSDK.setLogStream(logStream: BreezSDKLogStream())
+            var levelFilter: LevelFilter? = nil
+            if filterLevel != nil {
+                levelFilter = try BreezSDKMapper.asLevelFilter(levelFilter: filterLevel!)
+            }
+            try BreezSDK.setLogStream(logStream: BreezSDKLogStream(), filterLevel: levelFilter)
             resolve(["status": "ok"])
         } catch let err {
             rejectErr(err: err, reject: reject)
