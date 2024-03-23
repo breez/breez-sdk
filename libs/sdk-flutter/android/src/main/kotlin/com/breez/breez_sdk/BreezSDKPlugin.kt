@@ -22,7 +22,7 @@ class BreezSDKPlugin : FlutterPlugin, MethodCallHandler, EventChannel.StreamHand
         channel.setMethodCallHandler(this)
 
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "breez_sdk_node_logs")
-        val nodeLogStream = SdkLogInitializer.initializeNodeLogStream()
+        val nodeLogStream = SdkLogInitializer.initializeNodeLogStream(null)
         nodeLogStream.subscribe(scope) { l: LogEntry ->
             val data = mapOf("level" to l.level, "line" to l.line)
             eventSink?.success(data)

@@ -19,9 +19,7 @@ class SdkLogListener : LogStream {
     private val logEvents: SharedFlow<LogEntry> = _logEvents.asSharedFlow()
 
     override fun log(l: LogEntry) {
-        scope.launch {
-            _logEvents.emit(l)
-        }
+        scope.launch { _logEvents.emit(l) }
     }
 
     fun subscribe(scope: CoroutineScope, block: suspend (LogEntry) -> Unit) =
