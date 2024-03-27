@@ -7,7 +7,7 @@ mod persist;
 
 use crate::command_handlers::CliHelper;
 use anyhow::{anyhow, ensure, Result};
-use breez_sdk_core::BreezServices;
+use breez_sdk_core::logger::init_sdk_logger;
 use clap::Parser;
 use command_handlers::handle_command;
 use commands::{Commands, SdkCli};
@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
         "Error: data directory doesn't exist"
     );
 
-    BreezServices::init_logging(&data_dir, None)?;
+    init_sdk_logger(&data_dir, None, None)?;
 
     let persistence = CliPersistence { data_dir };
     let history_file = &persistence.history_file();

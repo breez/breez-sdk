@@ -533,6 +533,7 @@ dependencies = [
  "mockito",
  "once_cell",
  "openssl",
+ "parking_lot",
  "prost",
  "querystring",
  "rand",

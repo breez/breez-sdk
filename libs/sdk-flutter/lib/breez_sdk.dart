@@ -25,9 +25,9 @@ class BreezSDK {
   Stream<Payment> get paymentResultStream => _paymentResultStream.stream;
 
   /// Initializes SDK events & log streams
-  void initialize() {
+  void initialize({LevelFilter? filterLevel}) {
     _initializeEventsStream();
-    _initializeLogStream();
+    _initializeLogStream(filterLevel: filterLevel);
   }
 
   /// Listen to BreezEvent's(new block, invoice paid, synced)
@@ -62,7 +62,7 @@ class BreezSDK {
   }
 
   /// Listen to node logs
-  void _initializeLogStream() {
+  void _initializeLogStream({LevelFilter? filterLevel}) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       const EventChannel('breez_sdk_node_logs')
           .receiveBroadcastStream()
@@ -72,7 +72,7 @@ class BreezSDK {
             onError: (e) => _logStreamController.addError(e),
           );
     } else {
-      _lnToolkit.breezLogStream().listen((logEntry) {
+      _lnToolkit.breezLogStream(filterLevel: filterLevel).listen((logEntry) {
         _logStreamController.add(logEntry);
       }, onError: (e) {
         _logStreamController.addError(e);

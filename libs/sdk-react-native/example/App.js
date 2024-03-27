@@ -71,7 +71,7 @@ const App = () => {
 
         const asyncFn = async () => {
             try {
-                logSubscription = await setLogStream(logHandler)
+                logSubscription = await setLogStream(logHandler, null)
 
                 let mnemonic = await getSecureItem(MNEMONIC_STORE)
 

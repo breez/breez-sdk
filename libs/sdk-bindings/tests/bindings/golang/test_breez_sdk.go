@@ -22,7 +22,7 @@ func (BreezListener) OnEvent(e breez_sdk.BreezEvent) {
 func main() {
 	breezListener := BreezListener{}
 
-	breez_sdk.SetLogStream(breezListener)
+	breez_sdk.SetLogStream(breezListener, breez_sdk.LevelFilterTrace)
 
 	seed, err := breez_sdk.MnemonicToSeed("cruise clever syrup coil cute execute laundry general cover prevent law sheriff")
 

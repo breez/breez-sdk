@@ -1,4 +1,5 @@
 use anyhow::Result;
+use breez_sdk_core::logger::init_uniffi_logger;
 use breez_sdk_core::{
     error::*, mnemonic_to_seed as sdk_mnemonic_to_seed, parse as sdk_parse_input,
     parse_invoice as sdk_parse_invoice, AesSuccessActionDataDecrypted, AesSuccessActionDataResult,
@@ -7,59 +8,30 @@ use breez_sdk_core::{
     CheckMessageResponse, ClosedChannelPaymentDetails, Config, ConfigureNodeRequest,
     ConnectRequest, CurrencyInfo, EnvironmentType, EventListener, FeeratePreset, FiatCurrency,
     GreenlightCredentials, GreenlightNodeConfig, HealthCheckStatus, InputType, InvoicePaidDetails,
-    LNInvoice, ListPaymentsRequest, LnPaymentDetails, LnUrlAuthRequestData, LnUrlCallbackStatus,
-    LnUrlErrorData, LnUrlPayErrorData, LnUrlPayRequest, LnUrlPayRequestData, LnUrlPayResult,
-    LnUrlPaySuccessData, LnUrlWithdrawRequest, LnUrlWithdrawRequestData, LnUrlWithdrawResult,
-    LnUrlWithdrawSuccessData, LocaleOverrides, LocalizedName, LogEntry, LogStream, LspInformation,
-    MaxReverseSwapAmountResponse, MessageSuccessActionData, MetadataFilter, MetadataItem, Network,
-    NodeConfig, NodeCredentials, NodeState, OnchainPaymentLimitsResponse, OpenChannelFeeRequest,
-    OpenChannelFeeResponse, OpeningFeeParams, OpeningFeeParamsMenu, PayOnchainRequest,
-    PayOnchainResponse, Payment, PaymentDetails, PaymentFailedData, PaymentStatus, PaymentType,
-    PaymentTypeFilter, PrepareOnchainPaymentRequest, PrepareOnchainPaymentResponse,
-    PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, PrepareRefundRequest,
-    PrepareRefundResponse, Rate, ReceiveOnchainRequest, ReceivePaymentRequest,
-    ReceivePaymentResponse, RecommendedFees, RedeemOnchainFundsRequest, RedeemOnchainFundsResponse,
-    RefundRequest, RefundResponse, ReportIssueRequest, ReportPaymentFailureDetails,
-    ReverseSwapFeesRequest, ReverseSwapInfo, ReverseSwapPairInfo, ReverseSwapStatus, RouteHint,
-    RouteHintHop, SendOnchainRequest, SendOnchainResponse, SendPaymentRequest, SendPaymentResponse,
-    SendSpontaneousPaymentRequest, ServiceHealthCheckResponse, SignMessageRequest,
-    SignMessageResponse, StaticBackupRequest, StaticBackupResponse, SuccessActionProcessed,
-    SwapAmountType, SwapInfo, SwapStatus, Symbol, TlvEntry, UnspentTransactionOutput,
-    UrlSuccessActionData,
+    LNInvoice, LevelFilter, ListPaymentsRequest, LnPaymentDetails, LnUrlAuthRequestData,
+    LnUrlCallbackStatus, LnUrlErrorData, LnUrlPayErrorData, LnUrlPayRequest, LnUrlPayRequestData,
+    LnUrlPayResult, LnUrlPaySuccessData, LnUrlWithdrawRequest, LnUrlWithdrawRequestData,
+    LnUrlWithdrawResult, LnUrlWithdrawSuccessData, LocaleOverrides, LocalizedName, LogEntry,
+    LogStream, LspInformation, MaxReverseSwapAmountResponse, MessageSuccessActionData,
+    MetadataFilter, MetadataItem, Network, NodeConfig, NodeCredentials, NodeState,
+    OnchainPaymentLimitsResponse, OpenChannelFeeRequest, OpenChannelFeeResponse, OpeningFeeParams,
+    OpeningFeeParamsMenu, PayOnchainRequest, PayOnchainResponse, Payment, PaymentDetails,
+    PaymentFailedData, PaymentStatus, PaymentType, PaymentTypeFilter, PrepareOnchainPaymentRequest,
+    PrepareOnchainPaymentResponse, PrepareRedeemOnchainFundsRequest,
+    PrepareRedeemOnchainFundsResponse, PrepareRefundRequest, PrepareRefundResponse, Rate,
+    ReceiveOnchainRequest, ReceivePaymentRequest, ReceivePaymentResponse, RecommendedFees,
+    RedeemOnchainFundsRequest, RedeemOnchainFundsResponse, RefundRequest, RefundResponse,
+    ReportIssueRequest, ReportPaymentFailureDetails, ReverseSwapFeesRequest, ReverseSwapInfo,
+    ReverseSwapPairInfo, ReverseSwapStatus, RouteHint, RouteHintHop, SendOnchainRequest,
+    SendOnchainResponse, SendPaymentRequest, SendPaymentResponse, SendSpontaneousPaymentRequest,
+    ServiceHealthCheckResponse, SignMessageRequest, SignMessageResponse, StaticBackupRequest,
+    StaticBackupResponse, SuccessActionProcessed, SwapAmountType, SwapInfo, SwapStatus, Symbol,
+    TlvEntry, UnspentTransactionOutput, UrlSuccessActionData,
 };
-use log::{Level, LevelFilter, Metadata, Record};
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::Lazy;
 use std::sync::Arc;
 
 static RT: Lazy<tokio::runtime::Runtime> = Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
-static LOG_INIT: OnceCell<bool> = OnceCell::new();
-
-struct BindingLogger {
-    log_stream: Box<dyn LogStream>,
-}
-
-impl BindingLogger {
-    fn init(log_stream: Box<dyn LogStream>) {
-        let binding_logger = BindingLogger { log_stream };
-        log::set_boxed_logger(Box::new(binding_logger)).unwrap();
-        log::set_max_level(LevelFilter::Trace);
-    }
-}
-
-impl log::Log for BindingLogger {
-    fn enabled(&self, m: &Metadata) -> bool {
-        // ignore the internal uniffi log to prevent infinite loop.
-        return m.level() <= Level::Trace && *m.target() != *"breez_sdk_bindings::uniffi_binding";
-    }
-
-    fn log(&self, record: &Record) {
-        self.log_stream.log(LogEntry {
-            line: record.args().to_string(),
-            level: record.level().as_str().to_string(),
-        });
-    }
-    fn flush(&self) {}
-}
 
 /// Create a new SDK config with default values
 pub fn default_config(
@@ -106,11 +78,11 @@ pub fn connect(
 }
 
 /// If used, this must be called before `connect`
-pub fn set_log_stream(log_stream: Box<dyn LogStream>) -> SdkResult<()> {
-    LOG_INIT.set(true).map_err(|_| SdkError::Generic {
-        err: "Log stream already created".into(),
-    })?;
-    BindingLogger::init(log_stream);
+pub fn set_log_stream(
+    log_stream: Box<dyn LogStream>,
+    filter_level: Option<LevelFilter>,
+) -> SdkResult<()> {
+    init_uniffi_logger(log_stream, filter_level);
     Ok(())
 }
 

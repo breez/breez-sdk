@@ -800,6 +800,15 @@ dictionary RefundResponse {
     string refund_tx_id;
 };
 
+enum LevelFilter {
+    "Off",
+    "Error",
+    "Warn",
+    "Info",
+    "Debug",
+    "Trace",
+};
+
 interface BlockingBreezServices {
 
    [Throws=SdkError]
@@ -956,7 +965,7 @@ namespace breez_sdk {
  BlockingBreezServices connect(ConnectRequest req, EventListener listener);
 
  [Throws=SdkError]
- void set_log_stream(LogStream log_stream);
+ void set_log_stream(LogStream log_stream, LevelFilter? filter_level);
 
  [Throws=SdkError]
  LNInvoice parse_invoice(string invoice);

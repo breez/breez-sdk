@@ -15,7 +15,6 @@ use std::sync::Arc;
 
 use anyhow::{anyhow, Result};
 use flutter_rust_bridge::StreamSink;
-use log::{Level, LevelFilter, Metadata, Record};
 use once_cell::sync::{Lazy, OnceCell};
 use tokio::sync::Mutex;
 
@@ -29,11 +28,12 @@ use crate::fiat::{FiatCurrency, Rate};
 use crate::input_parser::{self, InputType, LnUrlAuthRequestData};
 use crate::invoice::{self, LNInvoice};
 use crate::lnurl::pay::model::LnUrlPayResult;
+use crate::logger::{init_dart_logger, DartLogger};
 use crate::lsp::LspInformation;
 use crate::models::{Config, LogEntry, NodeState, Payment, SwapInfo};
 use crate::{
     BackupStatus, BuyBitcoinRequest, BuyBitcoinResponse, CheckMessageRequest, CheckMessageResponse,
-    ConfigureNodeRequest, ConnectRequest, EnvironmentType, ListPaymentsRequest,
+    ConfigureNodeRequest, ConnectRequest, EnvironmentType, LevelFilter, ListPaymentsRequest,
     LnUrlCallbackStatus, LnUrlPayRequest, LnUrlWithdrawRequest, LnUrlWithdrawResult,
     MaxReverseSwapAmountResponse, NodeConfig, NodeCredentials, OnchainPaymentLimitsResponse,
     OpenChannelFeeRequest, OpenChannelFeeResponse, PayOnchainRequest, PayOnchainResponse,
@@ -55,7 +55,6 @@ static BREEZ_SERVICES_INSTANCE: Lazy<Mutex<Option<Arc<BreezServices>>>> =
     Lazy::new(|| Mutex::new(None));
 static NOTIFICATION_STREAM: OnceCell<StreamSink<BreezEvent>> = OnceCell::new();
 static RT: Lazy<tokio::runtime::Runtime> = Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
-static LOG_INIT: OnceCell<bool> = OnceCell::new();
 
 /*  Breez Services API's */
 
@@ -179,11 +178,9 @@ pub fn breez_events_stream(s: StreamSink<BreezEvent>) -> Result<()> {
 }
 
 /// If used, this must be called before `connect`. It can only be called once.
-pub fn breez_log_stream(s: StreamSink<LogEntry>) -> Result<()> {
-    LOG_INIT
-        .set(true)
-        .map_err(|_| anyhow!("Log stream already created"))?;
-    BindingLogger::init(s);
+pub fn breez_log_stream(s: StreamSink<LogEntry>, filter_level: Option<LevelFilter>) -> Result<()> {
+    init_dart_logger(filter_level);
+    DartLogger::set_stream_sink(s);
     Ok(())
 }
 
@@ -533,34 +530,6 @@ impl EventListener for BindingEventListener {
             stream.add(e);
         }
     }
-}
-
-struct BindingLogger {
-    log_stream: StreamSink<LogEntry>,
-}
-
-impl BindingLogger {
-    fn init(log_stream: StreamSink<LogEntry>) {
-        let binding_logger = BindingLogger { log_stream };
-        log::set_boxed_logger(Box::new(binding_logger)).unwrap();
-        log::set_max_level(LevelFilter::Trace);
-    }
-}
-
-impl log::Log for BindingLogger {
-    fn enabled(&self, m: &Metadata) -> bool {
-        m.level() <= Level::Trace
-    }
-
-    fn log(&self, record: &Record) {
-        if self.enabled(record.metadata()) {
-            self.log_stream.add(LogEntry {
-                line: record.args().to_string(),
-                level: record.level().as_str().to_string(),
-            });
-        }
-    }
-    fn flush(&self) {}
 }
 
 async fn get_breez_services() -> Result<Arc<BreezServices>, SdkError> {

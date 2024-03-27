@@ -4,7 +4,7 @@ using Breez.Sdk;
 try
 {
  var seed = BreezSdkMethods.MnemonicToSeed("cruise clever syrup coil cute execute laundry general cover prevent law sheriff");
- BreezSdkMethods.SetLogStream(new LogStreamListener());
+ BreezSdkMethods.SetLogStream(new LogStreamListener(), null);
  var config = BreezSdkMethods.DefaultConfig(EnvironmentType.STAGING, "code", new NodeConfig.Greenlight(new GreenlightNodeConfig(null, "")));
  BlockingBreezServices sdkServices = BreezSdkMethods.Connect(config, seed, new SDKListener());
  NodeState? nodeInfo = sdkServices.NodeInfo();

@@ -77,8 +77,8 @@ pub extern "C" fn wire_breez_events_stream(port_: i64) {
 }
 
 #[no_mangle]
-pub extern "C" fn wire_breez_log_stream(port_: i64) {
-    wire_breez_log_stream_impl(port_)
+pub extern "C" fn wire_breez_log_stream(port_: i64, filter_level: *mut i32) {
+    wire_breez_log_stream_impl(port_, filter_level)
 }
 
 #[no_mangle]
@@ -357,6 +357,11 @@ pub extern "C" fn new_box_autoadd_i64_0(value: i64) -> *mut i64 {
 }
 
 #[no_mangle]
+pub extern "C" fn new_box_autoadd_level_filter_0(value: i32) -> *mut i32 {
+    support::new_leak_box_ptr(value)
+}
+
+#[no_mangle]
 pub extern "C" fn new_box_autoadd_list_payments_request_0() -> *mut wire_ListPaymentsRequest {
     support::new_leak_box_ptr(wire_ListPaymentsRequest::new_with_null_ptr())
 }
@@ -578,6 +583,12 @@ impl Wire2Api<GreenlightNodeConfig> for *mut wire_GreenlightNodeConfig {
 impl Wire2Api<i64> for *mut i64 {
     fn wire2api(self) -> i64 {
         unsafe { *support::box_from_leak_ptr(self) }
+    }
+}
+impl Wire2Api<LevelFilter> for *mut i32 {
+    fn wire2api(self) -> LevelFilter {
+        let wrap = unsafe { support::box_from_leak_ptr(self) };
+        Wire2Api::<LevelFilter>::wire2api(*wrap).into()
     }
 }
 impl Wire2Api<ListPaymentsRequest> for *mut wire_ListPaymentsRequest {

@@ -4064,6 +4064,21 @@ fun asInputTypeList(arr: ReadableArray): List<InputType> {
     return list
 }
 
+fun asLevelFilter(type: String): LevelFilter {
+    return LevelFilter.valueOf(type.uppercase())
+}
+
+fun asLevelFilterList(arr: ReadableArray): List<LevelFilter> {
+    val list = ArrayList<LevelFilter>()
+    for (value in arr.toArrayList()) {
+        when (value) {
+            is String -> list.add(asLevelFilter(value)!!)
+            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
+        }
+    }
+    return list
+}
+
 fun asLnUrlCallbackStatus(lnUrlCallbackStatus: ReadableMap): LnUrlCallbackStatus? {
     val type = lnUrlCallbackStatus.getString("type")
 
