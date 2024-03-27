@@ -56,6 +56,9 @@ use crate::{
 const MAX_PAYMENT_AMOUNT_MSAT: u64 = 4294967000;
 const MAX_INBOUND_LIQUIDITY_MSAT: u64 = 4000000000;
 
+const TCP_KEEPALIVE: Duration = Duration::from_secs(5);
+const TCP_KEEPALIVE_TIMEOUT: Duration = Duration::from_secs(90);
+
 pub(crate) struct Greenlight {
     sdk_config: Config,
     signer: Signer,
@@ -175,9 +178,9 @@ impl Greenlight {
     async fn run_forever(&self, mut shutdown: mpsc::Receiver<()>) -> Result<(), anyhow::Error> {
         let channel = Endpoint::from_shared(utils::scheduler_uri())?
             .tls_config(self.tls_config.client_tls_config())?
-            .tcp_keepalive(Some(Duration::from_secs(30)))
-            .http2_keep_alive_interval(Duration::from_secs(30))
-            .keep_alive_timeout(Duration::from_secs(90))
+            .tcp_keepalive(Some(TCP_KEEPALIVE))
+            .http2_keep_alive_interval(TCP_KEEPALIVE)
+            .keep_alive_timeout(TCP_KEEPALIVE_TIMEOUT)
             .keep_alive_while_idle(true)
             .connect_lazy();
         let mut scheduler = SchedulerClient::new(channel);
