@@ -202,7 +202,7 @@ impl BTCSendSwap {
 
             // Validate onchain_amount
             let lockup_fee_sat = req.prepare_res.fees_lockup;
-            let service_fee_sat = super::calculate_service_fee_sat(
+            let service_fee_sat = super::get_service_fee_sat(
                 req.prepare_res.sender_amount_sat,
                 req.prepare_res.fees_percentage,
             );
@@ -713,6 +713,7 @@ impl BTCSendSwap {
 mod tests {
     use anyhow::Result;
 
+    use crate::swap_out::get_service_fee_sat;
     use crate::test_utils::{MOCK_REVERSE_SWAP_MAX, MOCK_REVERSE_SWAP_MIN};
     use crate::{PrepareOnchainPaymentRequest, PrepareOnchainPaymentResponse, SwapAmountType};
 
@@ -811,7 +812,7 @@ mod tests {
         let total_fees = res.total_fees;
         assert_eq!(send_amount_sat - total_fees, receive_amount_sat);
 
-        let service_fees = ((send_amount_sat as f64) * res.fees_percentage / 100.0) as u64;
+        let service_fees = get_service_fee_sat(send_amount_sat, res.fees_percentage);
         let expected_total_fees = res.fees_lockup + res.fees_claim + service_fees;
         assert_eq!(expected_total_fees, total_fees);
 
