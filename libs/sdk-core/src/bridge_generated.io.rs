@@ -314,6 +314,11 @@ pub extern "C" fn wire_execute_command(port_: i64, command: *mut wire_uint_8_lis
     wire_execute_command_impl(port_, command)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_generate_diagnostic_data(port_: i64) {
+    wire_generate_diagnostic_data_impl(port_)
+}
+
 // Section: allocate functions
 
 #[no_mangle]

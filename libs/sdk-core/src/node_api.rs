@@ -7,9 +7,12 @@ use tonic::Streaming;
 
 use crate::{
     bitcoin::util::bip32::{ChildNumber, ExtendedPrivKey},
-    invoice::InvoiceError, lightning_invoice::RawBolt11Invoice, persist::error::PersistError, CustomMessage, MaxChannelAmount,
-    NodeCredentials, Payment, PaymentResponse, Peer, PrepareRedeemOnchainFundsRequest,
-    PrepareRedeemOnchainFundsResponse, RouteHint, RouteHintHop, SyncResponse, TlvEntry,
+    invoice::InvoiceError,
+    lightning_invoice::RawBolt11Invoice,
+    persist::error::PersistError,
+    CustomMessage, MaxChannelAmount, NodeCredentials, Payment, PaymentResponse, Peer,
+    PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, RouteHint, RouteHintHop,
+    SyncResponse, TlvEntry,
 };
 
 pub type NodeResult<T, E = NodeError> = Result<T, E>;
@@ -65,7 +68,7 @@ pub struct CreateInvoiceRequest {
 
 pub struct FetchBolt11Result {
     pub bolt11: String,
-    pub payer_amount_msat: Option<u64>
+    pub payer_amount_msat: Option<u64>,
 }
 
 /// Trait covering functions affecting the LN node
@@ -73,10 +76,7 @@ pub struct FetchBolt11Result {
 pub trait NodeAPI: Send + Sync {
     fn node_credentials(&self) -> NodeResult<Option<NodeCredentials>>;
     async fn configure_node(&self, close_to_address: Option<String>) -> NodeResult<()>;
-    async fn create_invoice(
-        &self,
-        request: CreateInvoiceRequest,
-    ) -> NodeResult<String>;
+    async fn create_invoice(&self, request: CreateInvoiceRequest) -> NodeResult<String>;
     /// Fetches an existing BOLT11 invoice from the node
     async fn fetch_bolt11(&self, payment_hash: Vec<u8>) -> NodeResult<Option<FetchBolt11Result>>;
     async fn pull_changed(
@@ -128,6 +128,7 @@ pub trait NodeAPI: Send + Sync {
     ) -> NodeResult<Streaming<gl_client::signer::model::greenlight::LogEntry>>;
     async fn static_backup(&self) -> NodeResult<Vec<String>>;
     async fn execute_command(&self, command: String) -> NodeResult<String>;
+    async fn generate_diagnostic_data(&self) -> NodeResult<String>;
     async fn sign_message(&self, message: &str) -> NodeResult<String>;
     async fn check_message(&self, message: &str, pubkey: &str, signature: &str)
         -> NodeResult<bool>;

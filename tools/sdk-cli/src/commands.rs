@@ -49,7 +49,10 @@ pub(crate) enum Commands {
     },
 
     /// [pay] Send a spontaneous (keysend) payment
-    SendSpontaneousPayment { node_id: String, amount_msat: u64 },
+    SendSpontaneousPayment {
+        node_id: String,
+        amount_msat: u64,
+    },
 
     /// [pay] Generate a bolt11 invoice
     ReceivePayment {
@@ -76,13 +79,19 @@ pub(crate) enum Commands {
     },
 
     /// [lnurl] Pay using lnurl pay
-    LnurlPay { lnurl: String },
+    LnurlPay {
+        lnurl: String,
+    },
 
     /// [lnurl] Withdraw using lnurl withdraw
-    LnurlWithdraw { lnurl: String },
+    LnurlWithdraw {
+        lnurl: String,
+    },
 
     /// [lnurl] Authenticate using lnurl auth
-    LnurlAuth { lnurl: String },
+    LnurlAuth {
+        lnurl: String,
+    },
 
     /// [swap-in] Generate address to receive onchain
     ReceiveOnchain {},
@@ -169,7 +178,9 @@ pub(crate) enum Commands {
     },
 
     /// [sign] Sign a message with the node's private key
-    SignMessage { message: String },
+    SignMessage {
+        message: String,
+    },
 
     /// [sign] Verify a message with a node's public key
     CheckMessage {
@@ -269,7 +280,9 @@ pub(crate) enum Commands {
     },
 
     /// [node-mgmt] Retrieve a payment by its hash
-    PaymentByHash { hash: String },
+    PaymentByHash {
+        hash: String,
+    },
 
     /// [node-mgmt] The node credentials
     NodeCredentials {},
@@ -288,10 +301,14 @@ pub(crate) enum Commands {
     Disconnect {},
 
     /// [node-mgmt] Register a webhook URL, where the SDK will trigger a callback on specific events.
-    RegisterWebhook { url: String },
+    RegisterWebhook {
+        url: String,
+    },
 
     /// [buy] Generates an URL to buy bitcoin from a 3rd party provider
-    BuyBitcoin { provider: BuyBitcoinProvider },
+    BuyBitcoin {
+        provider: BuyBitcoinProvider,
+    },
 
     /// [fiat] List fiat currencies
     ListFiat {},
@@ -300,5 +317,9 @@ pub(crate) enum Commands {
     FetchFiatRates {},
 
     /// [dev] Execute a low level node command (used for debugging)
-    ExecuteDevCommand { command: String },
+    ExecuteDevCommand {
+        command: String,
+    },
+
+    GenerateDiagnosticData {},
 }

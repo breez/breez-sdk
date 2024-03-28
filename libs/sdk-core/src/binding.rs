@@ -523,6 +523,12 @@ pub fn execute_command(command: String) -> Result<String> {
     .map_err(anyhow::Error::new::<SdkError>)
 }
 
+/// See [BreezServices::generate_diagnostic_data]
+pub fn generate_diagnostic_data() -> Result<String> {
+    block_on(async { get_breez_services().await?.generate_diagnostic_data().await })
+        .map_err(anyhow::Error::new::<SdkError>)
+}
+
 /*  Binding Related Logic */
 
 struct BindingEventListener;

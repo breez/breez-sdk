@@ -346,6 +346,10 @@ impl BlockingBreezServices {
         rt().block_on(self.breez_services.execute_dev_command(command))
     }
 
+    pub fn generate_diagnostic_data(&self) -> SdkResult<String> {
+        rt().block_on(self.breez_services.generate_diagnostic_data())
+    }
+
     pub fn sync(&self) -> SdkResult<()> {
         rt().block_on(self.breez_services.sync())
     }

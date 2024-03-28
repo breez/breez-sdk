@@ -938,6 +938,9 @@ interface BlockingBreezServices {
    string execute_dev_command(string command);
 
    [Throws=SdkError]
+   string generate_diagnostic_data();
+
+   [Throws=SdkError]
    void sync();
 
    [Throws=SdkError]

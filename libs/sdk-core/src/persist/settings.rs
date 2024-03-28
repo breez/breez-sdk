@@ -1,6 +1,9 @@
+use serde::Serialize;
+
 use super::{db::SqliteStorage, error::PersistResult};
 
 #[allow(dead_code)]
+#[derive(Serialize)]
 pub struct SettingItem {
     key: String,
     value: String,

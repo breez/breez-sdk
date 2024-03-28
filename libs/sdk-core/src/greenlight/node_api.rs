@@ -1381,6 +1381,24 @@ impl NodeAPI for Greenlight {
         Ok(hex_vec)
     }
 
+    async fn generate_diagnostic_data(&self) -> NodeResult<String> {
+        let all_commands = vec![
+            NodeCommand::GetInfo.to_string(),
+            NodeCommand::ListPeerChannels.to_string(),
+            NodeCommand::ListFunds.to_string(),
+            NodeCommand::ListPayments.to_string(),
+            NodeCommand::ListInvoices.to_string(),
+        ];
+
+        let mut result = String::new();
+        for command in all_commands {
+            let command_name = command.clone();
+            let res = self.execute_command(command).await?;
+            result += &format!("***{command_name}:***\n\n {res}\n\n");
+        }
+        Ok(result)
+    }
+
     async fn execute_command(&self, command: String) -> NodeResult<String> {
         let node_cmd =
             NodeCommand::from_str(&command).map_err(|_| anyhow!("Command not found: {command}"))?;

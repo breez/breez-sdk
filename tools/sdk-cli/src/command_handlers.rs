@@ -561,6 +561,7 @@ pub(crate) async fn handle_command(
             serde_json::to_string_pretty(&sdk()?.execute_dev_command(command).await?)
                 .map_err(|e| e.into())
         }
+        Commands::GenerateDiagnosticData {} => Ok(sdk()?.generate_diagnostic_data().await?),
         Commands::BuyBitcoin { provider } => {
             let res = sdk()?
                 .buy_bitcoin(BuyBitcoinRequest {

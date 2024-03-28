@@ -8,10 +8,10 @@ use chrono::{SecondsFormat, Utc};
 use gl_client::signer::model::greenlight::amount::Unit;
 use gl_client::signer::model::greenlight::Amount;
 use gl_client::signer::model::greenlight::PayStatus;
+use rand::distributions::uniform::{SampleRange, SampleUniform};
 use rand::distributions::{Alphanumeric, DistString, Standard};
 use rand::rngs::OsRng;
 use rand::{random, Rng};
-use rand::distributions::uniform::{SampleRange, SampleUniform};
 use tokio::sync::{mpsc, Mutex};
 use tokio::time::sleep;
 use tokio_stream::Stream;
@@ -34,14 +34,22 @@ use crate::invoice::{InvoiceError, InvoiceResult};
 use crate::lightning::ln::PaymentSecret;
 use crate::lightning_invoice::{Currency, InvoiceBuilder, RawBolt11Invoice};
 use crate::lsp::LspInformation;
-use crate::models::{FiatAPI, LspAPI, NodeState, Payment, ReverseSwapServiceAPI, Swap, SwapperAPI, SyncResponse, TlvEntry};
+use crate::models::{
+    FiatAPI, LspAPI, NodeState, Payment, ReverseSwapServiceAPI, Swap, SwapperAPI, SyncResponse,
+    TlvEntry,
+};
 use crate::moonpay::MoonPayApi;
 use crate::node_api::{CreateInvoiceRequest, FetchBolt11Result, NodeAPI, NodeError, NodeResult};
 use crate::swap_in::error::SwapResult;
 use crate::swap_in::swap::create_submarine_swap_script;
-use crate::{parse_invoice, Config, CustomMessage, LNInvoice, MaxChannelAmount, NodeCredentials, OpeningFeeParams, OpeningFeeParamsMenu, PaymentResponse, Peer, PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, ReceivePaymentRequest, RouteHint, RouteHintHop, SwapInfo, ReverseSwapPairInfo};
 use crate::swap_out::boltzswap::{BoltzApiCreateReverseSwapResponse, BoltzApiReverseSwapStatus};
 use crate::swap_out::error::{ReverseSwapError, ReverseSwapResult};
+use crate::{
+    parse_invoice, Config, CustomMessage, LNInvoice, MaxChannelAmount, NodeCredentials,
+    OpeningFeeParams, OpeningFeeParamsMenu, PaymentResponse, Peer,
+    PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, ReceivePaymentRequest,
+    ReverseSwapPairInfo, RouteHint, RouteHintHop, SwapInfo,
+};
 
 pub const MOCK_REVERSE_SWAP_MIN: u64 = 50_000;
 pub const MOCK_REVERSE_SWAP_MAX: u64 = 1_000_000;
@@ -152,13 +160,13 @@ pub struct MockReverseSwapperAPI {}
 impl ReverseSwapServiceAPI for MockReverseSwapperAPI {
     async fn fetch_reverse_swap_fees(&self) -> ReverseSwapResult<ReverseSwapPairInfo> {
         Ok(ReverseSwapPairInfo {
-                min: MOCK_REVERSE_SWAP_MIN,
-                max: MOCK_REVERSE_SWAP_MAX,
-                fees_hash: rand_string(5),
-                fees_percentage: 0.5,
-                fees_lockup: 3_000 + rand_int_in_range(1..1_000),
-                fees_claim: 3_000 + rand_int_in_range(1..1_000),
-                total_fees: None,
+            min: MOCK_REVERSE_SWAP_MIN,
+            max: MOCK_REVERSE_SWAP_MAX,
+            fees_hash: rand_string(5),
+            fees_percentage: 0.5,
+            fees_lockup: 3_000 + rand_int_in_range(1..1_000),
+            fees_claim: 3_000 + rand_int_in_range(1..1_000),
+            total_fees: None,
         })
     }
 
@@ -168,7 +176,7 @@ impl ReverseSwapServiceAPI for MockReverseSwapperAPI {
         _preimage_hash_hex: String,
         _claim_pubkey: String,
         _pair_hash: String,
-        _routing_node: String
+        _routing_node: String,
     ) -> ReverseSwapResult<BoltzApiCreateReverseSwapResponse> {
         Err(ReverseSwapError::Generic(anyhow!("Not implemented")))
     }
@@ -331,11 +339,13 @@ impl NodeAPI for MockNodeAPI {
         Ok(())
     }
 
-    async fn create_invoice(
-        &self,
-        request: CreateInvoiceRequest,
-    ) -> NodeResult<String> {
-        let invoice = create_invoice(request.description, request.amount_msat, vec![], request.preimage);
+    async fn create_invoice(&self, request: CreateInvoiceRequest) -> NodeResult<String> {
+        let invoice = create_invoice(
+            request.description,
+            request.amount_msat,
+            vec![],
+            request.preimage,
+        );
         Ok(invoice.bolt11)
     }
 
@@ -444,6 +454,10 @@ impl NodeAPI for MockNodeAPI {
 
     async fn execute_command(&self, _command: String) -> NodeResult<String> {
         Err(NodeError::Generic(anyhow!("Not implemented")))
+    }
+
+    async fn generate_diagnostic_data(&self) -> NodeResult<String> {
+        Ok("".to_string())
     }
 
     async fn max_sendable_amount(
@@ -727,9 +741,9 @@ pub fn rand_vec_u8(len: usize) -> Vec<u8> {
 }
 
 pub fn rand_int_in_range<T, R>(range: R) -> T
-    where
-        T: SampleUniform,
-        R: SampleRange<T>
+where
+    T: SampleUniform,
+    R: SampleRange<T>,
 {
     rand::thread_rng().gen_range(range)
 }

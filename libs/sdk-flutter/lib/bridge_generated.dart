@@ -313,6 +313,11 @@ abstract class BreezSdkCore {
   Future<String> executeCommand({required String command, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kExecuteCommandConstMeta;
+
+  /// See [BreezServices::generate_diagnostic_data]
+  Future<String> generateDiagnosticData({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGenerateDiagnosticDataConstMeta;
 }
 
 /// Wrapper for the decrypted [AesSuccessActionData] payload
@@ -3049,6 +3054,22 @@ class BreezSdkCoreImpl implements BreezSdkCore {
   FlutterRustBridgeTaskConstMeta get kExecuteCommandConstMeta => const FlutterRustBridgeTaskConstMeta(
         debugName: "execute_command",
         argNames: ["command"],
+      );
+
+  Future<String> generateDiagnosticData({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_generate_diagnostic_data(port_),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: _wire2api_FrbAnyhowException,
+      constMeta: kGenerateDiagnosticDataConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGenerateDiagnosticDataConstMeta => const FlutterRustBridgeTaskConstMeta(
+        debugName: "generate_diagnostic_data",
+        argNames: [],
       );
 
   void dispose() {
@@ -5946,6 +5967,19 @@ class BreezSdkCoreWire implements FlutterRustBridgeWireBase {
           'wire_execute_command');
   late final _wire_execute_command =
       _wire_execute_commandPtr.asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_generate_diagnostic_data(
+    int port_,
+  ) {
+    return _wire_generate_diagnostic_data(
+      port_,
+    );
+  }
+
+  late final _wire_generate_diagnostic_dataPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_generate_diagnostic_data');
+  late final _wire_generate_diagnostic_data =
+      _wire_generate_diagnostic_dataPtr.asFunction<void Function(int)>();
 
   ffi.Pointer<ffi.Bool> new_box_autoadd_bool_0(
     bool value,
