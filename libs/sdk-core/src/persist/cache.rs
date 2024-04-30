@@ -1,10 +1,11 @@
-use crate::models::NodeState;
+use crate::{models::NodeState, LspInformation};
 
 use super::{db::SqliteStorage, error::PersistResult};
 
 const KEY_GL_CREDENTIALS: &str = "gl_credentials";
 const KEY_LAST_BACKUP_TIME: &str = "last_backup_time";
 const KEY_LAST_SYNC_TIME: &str = "last_sync_time";
+const KEY_LSP_INFORMATION: &str = "lsp_information";
 const KEY_NODE_STATE: &str = "node_state";
 const KEY_STATIC_BACKUP: &str = "static_backup";
 const KEY_WEBHOOK_URL: &str = "webhook_url";
@@ -43,6 +44,23 @@ impl SqliteStorage {
     pub fn get_node_state(&self) -> PersistResult<Option<NodeState>> {
         let state_str = self.get_cached_item(KEY_NODE_STATE)?;
         Ok(match state_str {
+            Some(str) => serde_json::from_str(str.as_str())?,
+            None => None,
+        })
+    }
+
+    pub fn remove_lsp_information(&self) -> PersistResult<()> {
+        self.delete_cached_item(KEY_LSP_INFORMATION)
+    }
+
+    pub fn set_lsp_information(&self, lsp_info: &LspInformation) -> PersistResult<()> {
+        let serialized_lsp_info = serde_json::to_string(lsp_info)?;
+        self.update_cached_item(KEY_LSP_INFORMATION, serialized_lsp_info)
+    }
+
+    pub fn get_lsp_information(&self) -> PersistResult<Option<LspInformation>> {
+        let lsp_info_str = self.get_cached_item(KEY_LSP_INFORMATION)?;
+        Ok(match lsp_info_str {
             Some(str) => serde_json::from_str(str.as_str())?,
             None => None,
         })

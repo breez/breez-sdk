@@ -238,7 +238,7 @@ impl BlockingBreezServices {
     }
 
     pub fn lsp_info(&self) -> SdkResult<LspInformation> {
-        rt().block_on(self.breez_services.lsp_info())
+        rt().block_on(self.breez_services.lsp_info(false))
     }
 
     pub fn open_channel_fee(

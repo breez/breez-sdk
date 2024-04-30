@@ -349,7 +349,7 @@ pub(crate) async fn handle_command(
             serde_json::to_string_pretty(&lsps).map_err(|e| e.into())
         }
         Commands::LspInfo {} => {
-            let lsp_info = sdk()?.lsp_info().await?;
+            let lsp_info = sdk()?.lsp_info(false).await?;
             serde_json::to_string_pretty(&lsp_info).map_err(|e| e.into())
         }
         Commands::ConnectLSP { lsp_id } => {

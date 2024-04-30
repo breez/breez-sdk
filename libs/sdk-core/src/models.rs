@@ -1219,6 +1219,10 @@ impl OpeningFeeParamsMenu {
         Ok(())
     }
 
+    pub fn is_valid(&self) -> bool {
+        self.validate().is_ok()
+    }
+
     pub fn get_cheapest_opening_fee_params(&self) -> Result<OpeningFeeParams> {
         self.values.first().cloned().ok_or_else(|| {
             anyhow!("The LSP doesn't support opening new channels: Dynamic fees menu contains no values")

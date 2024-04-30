@@ -215,7 +215,7 @@ pub fn fetch_lsp_info(id: String) -> Result<Option<LspInformation>> {
 
 /// See [BreezServices::lsp_info]
 pub fn lsp_info() -> Result<LspInformation> {
-    block_on(async { get_breez_services().await?.lsp_info().await })
+    block_on(async { get_breez_services().await?.lsp_info(false).await })
         .map_err(anyhow::Error::new::<SdkError>)
 }
 

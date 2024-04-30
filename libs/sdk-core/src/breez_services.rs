@@ -676,6 +676,7 @@ impl BreezServices {
         match self.list_lsps().await?.iter().any(|lsp| lsp.id == lsp_id) {
             true => {
                 self.persister.set_lsp_id(lsp_id)?;
+                self.persister.remove_lsp_information()?;
                 self.sync().await?;
                 if let Some(webhook_url) = self.persister.get_webhook_url()? {
                     self.register_payment_notifications(webhook_url).await?
@@ -704,7 +705,7 @@ impl BreezServices {
         &self,
         req: OpenChannelFeeRequest,
     ) -> SdkResult<OpenChannelFeeResponse> {
-        let lsp_info = self.lsp_info().await?;
+        let lsp_info = self.lsp_info(false).await?;
         let fee_params = lsp_info
             .cheapest_open_channel_fee(req.expiry.unwrap_or(INVOICE_PAYMENT_FEE_EXPIRY_SECONDS))?
             .clone();
@@ -730,7 +731,7 @@ impl BreezServices {
     /// Should be called  when the user wants to close all the channels.
     pub async fn close_lsp_channels(&self) -> SdkResult<Vec<String>> {
         self.start_node().await?;
-        let lsp = self.lsp_info().await?;
+        let lsp = self.lsp_info(false).await?;
         let tx_ids = self.node_api.close_peer_channels(lsp.pubkey).await?;
         self.sync().await?;
         Ok(tx_ids)
@@ -758,7 +759,7 @@ impl BreezServices {
                 )});
         }
         let channel_opening_fees = req.opening_fee_params.unwrap_or(
-            self.lsp_info()
+            self.lsp_info(true)
                 .await?
                 .cheapest_open_channel_fee(SWAP_PAYMENT_FEE_EXPIRY_SECONDS)?
                 .clone(),
@@ -1137,16 +1138,17 @@ impl BreezServices {
     /// If not or no LSP is selected, it selects the first LSP in [`list_lsps`].
     async fn connect_lsp_peer(&self, node_pubkey: String) -> SdkResult<()> {
         let lsps = self.lsp_api.list_lsps(node_pubkey).await?;
-        if let Some(lsp) = self
+        if let Some(lsp_info) = self
             .persister
             .get_lsp_id()?
             .and_then(|lsp_id| lsps.clone().into_iter().find(|lsp| lsp.id == lsp_id))
             .or_else(|| lsps.first().cloned())
         {
-            self.persister.set_lsp_id(lsp.id)?;
+            self.persister.set_lsp_id(lsp_info.id.clone())?;
+            self.persister.set_lsp_information(&lsp_info)?;
             if let Ok(node_state) = self.node_info() {
-                let node_id = lsp.pubkey;
-                let address = lsp.host;
+                let node_id = lsp_info.pubkey;
+                let address = lsp_info.host;
                 let lsp_connected = node_state
                     .connected_peers
                     .iter()
@@ -1284,8 +1286,8 @@ impl BreezServices {
     }
 
     /// Convenience method to look up LSP info based on current LSP ID
-    pub async fn lsp_info(&self) -> SdkResult<LspInformation> {
-        Ok(get_lsp(self.persister.clone(), self.lsp_api.clone()).await?)
+    pub async fn lsp_info(&self, skip_cache: bool) -> SdkResult<LspInformation> {
+        Ok(get_lsp(self.persister.clone(), self.lsp_api.clone(), skip_cache).await?)
     }
 
     pub(crate) async fn start_node(&self) -> Result<()> {
@@ -1865,7 +1867,7 @@ impl BreezServices {
         let message = webhook_url.clone();
         let sign_request = SignMessageRequest { message };
         let sign_response = self.sign_message(sign_request).await?;
-        let lsp_info = self.lsp_info().await?;
+        let lsp_info = self.lsp_info(false).await?;
         self.lsp_api
             .register_payment_notifications(
                 lsp_info.id,
@@ -2379,7 +2381,6 @@ impl Receiver for PaymentReceiver {
         req: ReceivePaymentRequest,
     ) -> Result<ReceivePaymentResponse, ReceivePaymentError> {
         self.node_api.start().await?;
-        let lsp_info = get_lsp(self.persister.clone(), self.lsp.clone()).await?;
         let node_state = self
             .persister
             .get_node_state()?
@@ -2399,6 +2400,12 @@ impl Receiver for PaymentReceiver {
 
         // check if we need to open channel
         let open_channel_needed = node_state.inbound_liquidity_msats < req.amount_msat;
+        let lsp_info = get_lsp(
+            self.persister.clone(),
+            self.lsp.clone(),
+            open_channel_needed,
+        )
+        .await?;
         if open_channel_needed {
             info!("We need to open a channel");
 
@@ -2479,7 +2486,7 @@ impl Receiver for PaymentReceiver {
     ) -> Result<String, ReceivePaymentError> {
         let lsp_info = match lsp_info {
             Some(lsp_info) => lsp_info,
-            None => get_lsp(self.persister.clone(), self.lsp.clone()).await?,
+            None => get_lsp(self.persister.clone(), self.lsp.clone(), true).await?,
         };
 
         match params {
@@ -2621,12 +2628,34 @@ impl PaymentReceiver {
 async fn get_lsp(
     persister: Arc<SqliteStorage>,
     lsp_api: Arc<dyn LspAPI>,
+    skip_cache: bool,
 ) -> Result<LspInformation> {
-    let lsp_id = persister.get_lsp_id()?.ok_or(anyhow!("No LSP ID found"))?;
-
-    get_lsp_by_id(persister, lsp_api, lsp_id.as_str())
-        .await?
-        .ok_or_else(|| anyhow!("No LSP found for id {lsp_id}"))
+    let persisted_lsp_info =
+        persister.get_lsp_information()?.and_then(|lsp_info| {
+            match !skip_cache && lsp_info.opening_fee_params_list.is_valid() {
+                true => Some(lsp_info),
+                false => {
+                    debug!("Ignoring LSP information: {:?} {:?}", skip_cache, lsp_info);
+                    None
+                }
+            }
+        });
+    match persisted_lsp_info {
+        Some(lsp_info) => {
+            debug!("Using persisted LSP information");
+            Ok(lsp_info)
+        }
+        None => {
+            let lsp_id = persister.get_lsp_id()?.ok_or(anyhow!("No LSP ID found"))?;
+            match get_lsp_by_id(persister.clone(), lsp_api, lsp_id.as_str()).await? {
+                Some(lsp_info) => {
+                    persister.set_lsp_information(&lsp_info)?;
+                    Ok(lsp_info)
+                }
+                None => Err(anyhow!("No LSP found for id {lsp_id}")),
+            }
+        }
+    }
 }
 
 async fn get_lsp_by_id(
