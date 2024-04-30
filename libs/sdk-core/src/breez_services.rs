@@ -328,32 +328,31 @@ impl BreezServices {
                 self.notify_event_listeners(BreezEvent::payment_started(pending_payment.clone()))
                     .await?;
 
-                let pending_timeout_sec = req.pending_timeout_sec.unwrap_or(u64::MAX);
-                let (tx, rx) = std::sync::mpsc::channel();
+                let (tx, rx) = tokio::sync::oneshot::channel();
                 let cloned = self.clone();
                 tokio::spawn(async move {
+                    let label = req.label;
+                    let payee_pk = parsed_invoice.payee_pubkey.clone();
+                    let bolt11 = parsed_invoice.bolt11.clone();
+
                     let payment_res = cloned
                         .node_api
-                        .send_payment(
-                            parsed_invoice.bolt11.clone(),
-                            req.amount_msat,
-                            req.label.clone(),
-                        )
+                        .send_payment(bolt11, req.amount_msat, label.clone())
                         .map_err(Into::into)
                         .await;
                     let result = cloned
-                        .on_payment_completed(
-                            parsed_invoice.payee_pubkey.clone(),
-                            Some(parsed_invoice),
-                            req.label,
-                            payment_res,
-                        )
+                        .on_payment_completed(payee_pk, Some(parsed_invoice), label, payment_res)
                         .await;
                     let _ = tx.send(result);
                 });
 
-                match rx.recv_timeout(Duration::from_secs(pending_timeout_sec)) {
-                    Ok(result) => result.map(SendPaymentResponse::from_payment),
+                let pending_timeout_sec = req.pending_timeout_sec.unwrap_or(u64::MAX);
+                match tokio::time::timeout(Duration::from_secs(pending_timeout_sec), rx).await {
+                    Ok(Ok(result)) => result.map(SendPaymentResponse::from_payment),
+                    Ok(Err(_)) => {
+                        error!("The send_payment sender (tx) dropped without sending a message");
+                        Err(SendPaymentError::payment_failed("Payment call interrupted"))
+                    }
                     Err(_) => Ok(SendPaymentResponse::from_payment(pending_payment)),
                 }
             }

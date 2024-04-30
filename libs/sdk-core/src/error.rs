@@ -765,6 +765,13 @@ pub enum SendPaymentError {
     #[error("Service connectivity: {err}")]
     ServiceConnectivity { err: String },
 }
+impl SendPaymentError {
+    pub(crate) fn payment_failed(err: &str) -> Self {
+        Self::PaymentFailed {
+            err: err.to_string(),
+        }
+    }
+}
 
 impl From<anyhow::Error> for SendPaymentError {
     fn from(err: anyhow::Error) -> Self {
