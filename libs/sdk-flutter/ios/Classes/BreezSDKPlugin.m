@@ -1,5 +1,5 @@
 #import "BreezSDKPlugin.h"
-#import "frb_generated.h"
+#import "breez_sdk_core.h"
 #if __has_include(<breez_sdk/breez_sdk-Swift.h>)
 #import <breez_sdk/breez_sdk-Swift.h>
 #else

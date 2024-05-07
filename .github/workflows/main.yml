@@ -270,6 +270,6 @@ jobs:
 
       - name: dart-analyze
         run: dart analyze --fatal-infos
-
-      - name: dart-format
-        run: dart format -o none --set-exit-if-changed -l 110 .
+# Disable checking for format changes due to not being able to configure line width on ffigen bindings or excluding those files
+#      - name: dart-format
+#        run: dart format -o none --set-exit-if-changed -l 110 .

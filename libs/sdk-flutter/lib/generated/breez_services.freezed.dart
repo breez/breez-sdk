@@ -100,14 +100,12 @@ mixin _$BreezEvent {
 
 /// @nodoc
 abstract class $BreezEventCopyWith<$Res> {
-  factory $BreezEventCopyWith(
-          BreezEvent value, $Res Function(BreezEvent) then) =
+  factory $BreezEventCopyWith(BreezEvent value, $Res Function(BreezEvent) then) =
       _$BreezEventCopyWithImpl<$Res, BreezEvent>;
 }
 
 /// @nodoc
-class _$BreezEventCopyWithImpl<$Res, $Val extends BreezEvent>
-    implements $BreezEventCopyWith<$Res> {
+class _$BreezEventCopyWithImpl<$Res, $Val extends BreezEvent> implements $BreezEventCopyWith<$Res> {
   _$BreezEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -118,8 +116,8 @@ class _$BreezEventCopyWithImpl<$Res, $Val extends BreezEvent>
 
 /// @nodoc
 abstract class _$$BreezEvent_NewBlockImplCopyWith<$Res> {
-  factory _$$BreezEvent_NewBlockImplCopyWith(_$BreezEvent_NewBlockImpl value,
-          $Res Function(_$BreezEvent_NewBlockImpl) then) =
+  factory _$$BreezEvent_NewBlockImplCopyWith(
+          _$BreezEvent_NewBlockImpl value, $Res Function(_$BreezEvent_NewBlockImpl) then) =
       __$$BreezEvent_NewBlockImplCopyWithImpl<$Res>;
   @useResult
   $Res call({int block});
@@ -129,8 +127,8 @@ abstract class _$$BreezEvent_NewBlockImplCopyWith<$Res> {
 class __$$BreezEvent_NewBlockImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_NewBlockImpl>
     implements _$$BreezEvent_NewBlockImplCopyWith<$Res> {
-  __$$BreezEvent_NewBlockImplCopyWithImpl(_$BreezEvent_NewBlockImpl _value,
-      $Res Function(_$BreezEvent_NewBlockImpl) _then)
+  __$$BreezEvent_NewBlockImplCopyWithImpl(
+      _$BreezEvent_NewBlockImpl _value, $Res Function(_$BreezEvent_NewBlockImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -175,8 +173,7 @@ class _$BreezEvent_NewBlockImpl extends BreezEvent_NewBlock {
   @override
   @pragma('vm:prefer-inline')
   _$$BreezEvent_NewBlockImplCopyWith<_$BreezEvent_NewBlockImpl> get copyWith =>
-      __$$BreezEvent_NewBlockImplCopyWithImpl<_$BreezEvent_NewBlockImpl>(
-          this, _$identity);
+      __$$BreezEvent_NewBlockImplCopyWithImpl<_$BreezEvent_NewBlockImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -284,8 +281,7 @@ class _$BreezEvent_NewBlockImpl extends BreezEvent_NewBlock {
 }
 
 abstract class BreezEvent_NewBlock extends BreezEvent {
-  const factory BreezEvent_NewBlock({required final int block}) =
-      _$BreezEvent_NewBlockImpl;
+  const factory BreezEvent_NewBlock({required final int block}) = _$BreezEvent_NewBlockImpl;
   const BreezEvent_NewBlock._() : super._();
 
   int get block;
@@ -297,8 +293,7 @@ abstract class BreezEvent_NewBlock extends BreezEvent {
 /// @nodoc
 abstract class _$$BreezEvent_InvoicePaidImplCopyWith<$Res> {
   factory _$$BreezEvent_InvoicePaidImplCopyWith(
-          _$BreezEvent_InvoicePaidImpl value,
-          $Res Function(_$BreezEvent_InvoicePaidImpl) then) =
+          _$BreezEvent_InvoicePaidImpl value, $Res Function(_$BreezEvent_InvoicePaidImpl) then) =
       __$$BreezEvent_InvoicePaidImplCopyWithImpl<$Res>;
   @useResult
   $Res call({InvoicePaidDetails details});
@@ -309,8 +304,7 @@ class __$$BreezEvent_InvoicePaidImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_InvoicePaidImpl>
     implements _$$BreezEvent_InvoicePaidImplCopyWith<$Res> {
   __$$BreezEvent_InvoicePaidImplCopyWithImpl(
-      _$BreezEvent_InvoicePaidImpl _value,
-      $Res Function(_$BreezEvent_InvoicePaidImpl) _then)
+      _$BreezEvent_InvoicePaidImpl _value, $Res Function(_$BreezEvent_InvoicePaidImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -354,9 +348,8 @@ class _$BreezEvent_InvoicePaidImpl extends BreezEvent_InvoicePaid {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$BreezEvent_InvoicePaidImplCopyWith<_$BreezEvent_InvoicePaidImpl>
-      get copyWith => __$$BreezEvent_InvoicePaidImplCopyWithImpl<
-          _$BreezEvent_InvoicePaidImpl>(this, _$identity);
+  _$$BreezEvent_InvoicePaidImplCopyWith<_$BreezEvent_InvoicePaidImpl> get copyWith =>
+      __$$BreezEvent_InvoicePaidImplCopyWithImpl<_$BreezEvent_InvoicePaidImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -464,21 +457,20 @@ class _$BreezEvent_InvoicePaidImpl extends BreezEvent_InvoicePaid {
 }
 
 abstract class BreezEvent_InvoicePaid extends BreezEvent {
-  const factory BreezEvent_InvoicePaid(
-          {required final InvoicePaidDetails details}) =
+  const factory BreezEvent_InvoicePaid({required final InvoicePaidDetails details}) =
       _$BreezEvent_InvoicePaidImpl;
   const BreezEvent_InvoicePaid._() : super._();
 
   InvoicePaidDetails get details;
   @JsonKey(ignore: true)
-  _$$BreezEvent_InvoicePaidImplCopyWith<_$BreezEvent_InvoicePaidImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$BreezEvent_InvoicePaidImplCopyWith<_$BreezEvent_InvoicePaidImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$BreezEvent_SyncedImplCopyWith<$Res> {
-  factory _$$BreezEvent_SyncedImplCopyWith(_$BreezEvent_SyncedImpl value,
-          $Res Function(_$BreezEvent_SyncedImpl) then) =
+  factory _$$BreezEvent_SyncedImplCopyWith(
+          _$BreezEvent_SyncedImpl value, $Res Function(_$BreezEvent_SyncedImpl) then) =
       __$$BreezEvent_SyncedImplCopyWithImpl<$Res>;
 }
 
@@ -486,8 +478,8 @@ abstract class _$$BreezEvent_SyncedImplCopyWith<$Res> {
 class __$$BreezEvent_SyncedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_SyncedImpl>
     implements _$$BreezEvent_SyncedImplCopyWith<$Res> {
-  __$$BreezEvent_SyncedImplCopyWithImpl(_$BreezEvent_SyncedImpl _value,
-      $Res Function(_$BreezEvent_SyncedImpl) _then)
+  __$$BreezEvent_SyncedImplCopyWithImpl(
+      _$BreezEvent_SyncedImpl _value, $Res Function(_$BreezEvent_SyncedImpl) _then)
       : super(_value, _then);
 }
 
@@ -503,8 +495,7 @@ class _$BreezEvent_SyncedImpl extends BreezEvent_Synced {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$BreezEvent_SyncedImpl);
+    return identical(this, other) || (other.runtimeType == runtimeType && other is _$BreezEvent_SyncedImpl);
   }
 
   @override
@@ -623,8 +614,7 @@ abstract class BreezEvent_Synced extends BreezEvent {
 /// @nodoc
 abstract class _$$BreezEvent_PaymentSucceedImplCopyWith<$Res> {
   factory _$$BreezEvent_PaymentSucceedImplCopyWith(
-          _$BreezEvent_PaymentSucceedImpl value,
-          $Res Function(_$BreezEvent_PaymentSucceedImpl) then) =
+          _$BreezEvent_PaymentSucceedImpl value, $Res Function(_$BreezEvent_PaymentSucceedImpl) then) =
       __$$BreezEvent_PaymentSucceedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Payment details});
@@ -635,8 +625,7 @@ class __$$BreezEvent_PaymentSucceedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_PaymentSucceedImpl>
     implements _$$BreezEvent_PaymentSucceedImplCopyWith<$Res> {
   __$$BreezEvent_PaymentSucceedImplCopyWithImpl(
-      _$BreezEvent_PaymentSucceedImpl _value,
-      $Res Function(_$BreezEvent_PaymentSucceedImpl) _then)
+      _$BreezEvent_PaymentSucceedImpl _value, $Res Function(_$BreezEvent_PaymentSucceedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -680,9 +669,8 @@ class _$BreezEvent_PaymentSucceedImpl extends BreezEvent_PaymentSucceed {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$BreezEvent_PaymentSucceedImplCopyWith<_$BreezEvent_PaymentSucceedImpl>
-      get copyWith => __$$BreezEvent_PaymentSucceedImplCopyWithImpl<
-          _$BreezEvent_PaymentSucceedImpl>(this, _$identity);
+  _$$BreezEvent_PaymentSucceedImplCopyWith<_$BreezEvent_PaymentSucceedImpl> get copyWith =>
+      __$$BreezEvent_PaymentSucceedImplCopyWithImpl<_$BreezEvent_PaymentSucceedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -790,21 +778,19 @@ class _$BreezEvent_PaymentSucceedImpl extends BreezEvent_PaymentSucceed {
 }
 
 abstract class BreezEvent_PaymentSucceed extends BreezEvent {
-  const factory BreezEvent_PaymentSucceed({required final Payment details}) =
-      _$BreezEvent_PaymentSucceedImpl;
+  const factory BreezEvent_PaymentSucceed({required final Payment details}) = _$BreezEvent_PaymentSucceedImpl;
   const BreezEvent_PaymentSucceed._() : super._();
 
   Payment get details;
   @JsonKey(ignore: true)
-  _$$BreezEvent_PaymentSucceedImplCopyWith<_$BreezEvent_PaymentSucceedImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$BreezEvent_PaymentSucceedImplCopyWith<_$BreezEvent_PaymentSucceedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$BreezEvent_PaymentFailedImplCopyWith<$Res> {
   factory _$$BreezEvent_PaymentFailedImplCopyWith(
-          _$BreezEvent_PaymentFailedImpl value,
-          $Res Function(_$BreezEvent_PaymentFailedImpl) then) =
+          _$BreezEvent_PaymentFailedImpl value, $Res Function(_$BreezEvent_PaymentFailedImpl) then) =
       __$$BreezEvent_PaymentFailedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PaymentFailedData details});
@@ -815,8 +801,7 @@ class __$$BreezEvent_PaymentFailedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_PaymentFailedImpl>
     implements _$$BreezEvent_PaymentFailedImplCopyWith<$Res> {
   __$$BreezEvent_PaymentFailedImplCopyWithImpl(
-      _$BreezEvent_PaymentFailedImpl _value,
-      $Res Function(_$BreezEvent_PaymentFailedImpl) _then)
+      _$BreezEvent_PaymentFailedImpl _value, $Res Function(_$BreezEvent_PaymentFailedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -860,9 +845,8 @@ class _$BreezEvent_PaymentFailedImpl extends BreezEvent_PaymentFailed {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$BreezEvent_PaymentFailedImplCopyWith<_$BreezEvent_PaymentFailedImpl>
-      get copyWith => __$$BreezEvent_PaymentFailedImplCopyWithImpl<
-          _$BreezEvent_PaymentFailedImpl>(this, _$identity);
+  _$$BreezEvent_PaymentFailedImplCopyWith<_$BreezEvent_PaymentFailedImpl> get copyWith =>
+      __$$BreezEvent_PaymentFailedImplCopyWithImpl<_$BreezEvent_PaymentFailedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -970,22 +954,20 @@ class _$BreezEvent_PaymentFailedImpl extends BreezEvent_PaymentFailed {
 }
 
 abstract class BreezEvent_PaymentFailed extends BreezEvent {
-  const factory BreezEvent_PaymentFailed(
-          {required final PaymentFailedData details}) =
+  const factory BreezEvent_PaymentFailed({required final PaymentFailedData details}) =
       _$BreezEvent_PaymentFailedImpl;
   const BreezEvent_PaymentFailed._() : super._();
 
   PaymentFailedData get details;
   @JsonKey(ignore: true)
-  _$$BreezEvent_PaymentFailedImplCopyWith<_$BreezEvent_PaymentFailedImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$BreezEvent_PaymentFailedImplCopyWith<_$BreezEvent_PaymentFailedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$BreezEvent_BackupStartedImplCopyWith<$Res> {
   factory _$$BreezEvent_BackupStartedImplCopyWith(
-          _$BreezEvent_BackupStartedImpl value,
-          $Res Function(_$BreezEvent_BackupStartedImpl) then) =
+          _$BreezEvent_BackupStartedImpl value, $Res Function(_$BreezEvent_BackupStartedImpl) then) =
       __$$BreezEvent_BackupStartedImplCopyWithImpl<$Res>;
 }
 
@@ -994,8 +976,7 @@ class __$$BreezEvent_BackupStartedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_BackupStartedImpl>
     implements _$$BreezEvent_BackupStartedImplCopyWith<$Res> {
   __$$BreezEvent_BackupStartedImplCopyWithImpl(
-      _$BreezEvent_BackupStartedImpl _value,
-      $Res Function(_$BreezEvent_BackupStartedImpl) _then)
+      _$BreezEvent_BackupStartedImpl _value, $Res Function(_$BreezEvent_BackupStartedImpl) _then)
       : super(_value, _then);
 }
 
@@ -1012,8 +993,7 @@ class _$BreezEvent_BackupStartedImpl extends BreezEvent_BackupStarted {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$BreezEvent_BackupStartedImpl);
+        (other.runtimeType == runtimeType && other is _$BreezEvent_BackupStartedImpl);
   }
 
   @override
@@ -1132,8 +1112,7 @@ abstract class BreezEvent_BackupStarted extends BreezEvent {
 /// @nodoc
 abstract class _$$BreezEvent_BackupSucceededImplCopyWith<$Res> {
   factory _$$BreezEvent_BackupSucceededImplCopyWith(
-          _$BreezEvent_BackupSucceededImpl value,
-          $Res Function(_$BreezEvent_BackupSucceededImpl) then) =
+          _$BreezEvent_BackupSucceededImpl value, $Res Function(_$BreezEvent_BackupSucceededImpl) then) =
       __$$BreezEvent_BackupSucceededImplCopyWithImpl<$Res>;
 }
 
@@ -1142,8 +1121,7 @@ class __$$BreezEvent_BackupSucceededImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_BackupSucceededImpl>
     implements _$$BreezEvent_BackupSucceededImplCopyWith<$Res> {
   __$$BreezEvent_BackupSucceededImplCopyWithImpl(
-      _$BreezEvent_BackupSucceededImpl _value,
-      $Res Function(_$BreezEvent_BackupSucceededImpl) _then)
+      _$BreezEvent_BackupSucceededImpl _value, $Res Function(_$BreezEvent_BackupSucceededImpl) _then)
       : super(_value, _then);
 }
 
@@ -1160,8 +1138,7 @@ class _$BreezEvent_BackupSucceededImpl extends BreezEvent_BackupSucceeded {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$BreezEvent_BackupSucceededImpl);
+        (other.runtimeType == runtimeType && other is _$BreezEvent_BackupSucceededImpl);
   }
 
   @override
@@ -1280,8 +1257,7 @@ abstract class BreezEvent_BackupSucceeded extends BreezEvent {
 /// @nodoc
 abstract class _$$BreezEvent_BackupFailedImplCopyWith<$Res> {
   factory _$$BreezEvent_BackupFailedImplCopyWith(
-          _$BreezEvent_BackupFailedImpl value,
-          $Res Function(_$BreezEvent_BackupFailedImpl) then) =
+          _$BreezEvent_BackupFailedImpl value, $Res Function(_$BreezEvent_BackupFailedImpl) then) =
       __$$BreezEvent_BackupFailedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({BackupFailedData details});
@@ -1292,8 +1268,7 @@ class __$$BreezEvent_BackupFailedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_BackupFailedImpl>
     implements _$$BreezEvent_BackupFailedImplCopyWith<$Res> {
   __$$BreezEvent_BackupFailedImplCopyWithImpl(
-      _$BreezEvent_BackupFailedImpl _value,
-      $Res Function(_$BreezEvent_BackupFailedImpl) _then)
+      _$BreezEvent_BackupFailedImpl _value, $Res Function(_$BreezEvent_BackupFailedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1337,9 +1312,8 @@ class _$BreezEvent_BackupFailedImpl extends BreezEvent_BackupFailed {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$BreezEvent_BackupFailedImplCopyWith<_$BreezEvent_BackupFailedImpl>
-      get copyWith => __$$BreezEvent_BackupFailedImplCopyWithImpl<
-          _$BreezEvent_BackupFailedImpl>(this, _$identity);
+  _$$BreezEvent_BackupFailedImplCopyWith<_$BreezEvent_BackupFailedImpl> get copyWith =>
+      __$$BreezEvent_BackupFailedImplCopyWithImpl<_$BreezEvent_BackupFailedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1447,22 +1421,20 @@ class _$BreezEvent_BackupFailedImpl extends BreezEvent_BackupFailed {
 }
 
 abstract class BreezEvent_BackupFailed extends BreezEvent {
-  const factory BreezEvent_BackupFailed(
-          {required final BackupFailedData details}) =
+  const factory BreezEvent_BackupFailed({required final BackupFailedData details}) =
       _$BreezEvent_BackupFailedImpl;
   const BreezEvent_BackupFailed._() : super._();
 
   BackupFailedData get details;
   @JsonKey(ignore: true)
-  _$$BreezEvent_BackupFailedImplCopyWith<_$BreezEvent_BackupFailedImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$BreezEvent_BackupFailedImplCopyWith<_$BreezEvent_BackupFailedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$BreezEvent_SwapUpdatedImplCopyWith<$Res> {
   factory _$$BreezEvent_SwapUpdatedImplCopyWith(
-          _$BreezEvent_SwapUpdatedImpl value,
-          $Res Function(_$BreezEvent_SwapUpdatedImpl) then) =
+          _$BreezEvent_SwapUpdatedImpl value, $Res Function(_$BreezEvent_SwapUpdatedImpl) then) =
       __$$BreezEvent_SwapUpdatedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({SwapInfo details});
@@ -1473,8 +1445,7 @@ class __$$BreezEvent_SwapUpdatedImplCopyWithImpl<$Res>
     extends _$BreezEventCopyWithImpl<$Res, _$BreezEvent_SwapUpdatedImpl>
     implements _$$BreezEvent_SwapUpdatedImplCopyWith<$Res> {
   __$$BreezEvent_SwapUpdatedImplCopyWithImpl(
-      _$BreezEvent_SwapUpdatedImpl _value,
-      $Res Function(_$BreezEvent_SwapUpdatedImpl) _then)
+      _$BreezEvent_SwapUpdatedImpl _value, $Res Function(_$BreezEvent_SwapUpdatedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1518,9 +1489,8 @@ class _$BreezEvent_SwapUpdatedImpl extends BreezEvent_SwapUpdated {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$BreezEvent_SwapUpdatedImplCopyWith<_$BreezEvent_SwapUpdatedImpl>
-      get copyWith => __$$BreezEvent_SwapUpdatedImplCopyWithImpl<
-          _$BreezEvent_SwapUpdatedImpl>(this, _$identity);
+  _$$BreezEvent_SwapUpdatedImplCopyWith<_$BreezEvent_SwapUpdatedImpl> get copyWith =>
+      __$$BreezEvent_SwapUpdatedImplCopyWithImpl<_$BreezEvent_SwapUpdatedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1628,12 +1598,11 @@ class _$BreezEvent_SwapUpdatedImpl extends BreezEvent_SwapUpdated {
 }
 
 abstract class BreezEvent_SwapUpdated extends BreezEvent {
-  const factory BreezEvent_SwapUpdated({required final SwapInfo details}) =
-      _$BreezEvent_SwapUpdatedImpl;
+  const factory BreezEvent_SwapUpdated({required final SwapInfo details}) = _$BreezEvent_SwapUpdatedImpl;
   const BreezEvent_SwapUpdated._() : super._();
 
   SwapInfo get details;
   @JsonKey(ignore: true)
-  _$$BreezEvent_SwapUpdatedImplCopyWith<_$BreezEvent_SwapUpdatedImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$BreezEvent_SwapUpdatedImplCopyWith<_$BreezEvent_SwapUpdatedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

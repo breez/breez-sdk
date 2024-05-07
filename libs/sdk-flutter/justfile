@@ -1,0 +1,121 @@
+curr_version := "breez_sdk-v" + `awk '/^version: /{print $2}' pubspec.yaml`
+
+default:
+  just --list --unsorted
+
+# Initializes the workspace
+bootstrap:
+	just clean
+	just init
+	just gen
+	just build
+	just link
+	just check
+
+# Prints package version
+version:
+	echo {{curr_version}}
+
+# Cleans the current workspace
+clean:
+	rm -rf ./lib/generated/
+	flutter clean
+	cargo clean --package breez-sdk-core --manifest-path ../Cargo.toml
+
+# Initializes the current workspace
+init:
+	cargo install cargo-ndk
+	just frb
+	cargo check --package breez-sdk-core --manifest-path ../Cargo.toml
+	flutter pub get
+
+# Install flutter_rust_bridge_codegen dependencies
+frb:
+	cargo install cargo-expand
+	cargo install flutter_rust_bridge_codegen --version 2.0.0-dev.33
+	dart pub global activate ffigen
+	dart pub global activate ffi
+	cargo install cargo-xcode
+
+# Generate bindings
+gen: codegen && ffigen
+
+# Generate Dart/Flutter bindings
+codegen:
+	mkdir -p ./lib/generated
+	flutter_rust_bridge_codegen generate
+	dart format -l 110 ./lib/generated
+
+# Generate FFI bindings
+ffigen:
+	flutter pub run ffigen --config ffigen.yaml
+	dart format -l 110 ./lib/breez_sdk_core_bindings_generated.dart
+
+# Builds local library
+build:
+	just build-crate
+	just build-ios
+	just build-android
+
+# Builds Rust crate
+build-crate:
+	cargo build --package breez-sdk-core --manifest-path ../Cargo.toml
+	
+# Builds iOS framework
+build-ios: 
+	#!/usr/bin/env bash
+	rustup target add aarch64-apple-ios
+	rustup target add x86_64-apple-ios
+	rustup target add aarch64-apple-ios-sim
+	rustup target add x86_64-apple-darwin
+	rustup target add aarch64-apple-darwin
+	mkdir -p platform-build
+	set -euxo pipefail
+	cd platform-build
+	pwd
+	cargo build --package breez-sdk-core  --manifest-path ../../Cargo.toml --target=aarch64-apple-ios
+	cargo build --package breez-sdk-core  --manifest-path ../../Cargo.toml --target=x86_64-apple-ios
+	cargo build --package breez-sdk-core  --manifest-path ../../Cargo.toml --target=aarch64-apple-ios-sim
+	cargo build --package breez-sdk-core  --manifest-path ../../Cargo.toml --target=x86_64-apple-darwin
+	cargo build --package breez-sdk-core  --manifest-path ../../Cargo.toml --target=aarch64-apple-darwin
+	mkdir -p ios-sim-lipo
+	lipo -create -output ios-sim-lipo/libbreez_sdk_core.a ../../target/aarch64-apple-ios/debug/libbreez_sdk_core.a
+	lipo -create -output ios-sim-lipo/libbreez_sdk_core.a ../../target/x86_64-apple-ios/debug/libbreez_sdk_core.a
+	lipo -create -output ios-sim-lipo/libbreez_sdk_core.a ../../target/aarch64-apple-ios-sim/debug/libbreez_sdk_core.a
+	lipo -create -output ios-sim-lipo/libbreez_sdk_core.a ../../target/x86_64-apple-darwin/debug/libbreez_sdk_core.a
+	lipo -create -output ios-sim-lipo/libbreez_sdk_core.a ../../target/aarch64-apple-darwin/debug/libbreez_sdk_core.a
+	xcodebuild -create-xcframework -library ios-sim-lipo/libbreez_sdk_core.a -headers ../ios/Classes/breez_sdk_core.h -output breez_sdk_core.xcframework
+	zip -ry  breez_sdk_core.xcframework.zip breez_sdk_core.xcframework
+	rm -rf ios-sim-lipo
+	rm -rf breez_sdk_core.xcframework
+
+# Builds Android library
+build-android:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	cd platform-build
+	pwd
+	rustup target add aarch64-linux-android
+	rustup target add armv7-linux-androideabi
+	rustup target add x86_64-linux-android
+	rustup target add i686-linux-android
+	mkdir -p jniLibs
+	cargo ndk -o jniLibs \
+		--manifest-path ../../sdk-core/Cargo.toml \
+		-t armeabi-v7a \
+		-t arm64-v8a \
+		-t x86 \
+		-t x86_64 \
+		build "$@"
+	cd jniLibs && tar -czvf ../android.tar.gz *
+	rm -rf jniLibs
+
+# Softlinks library archives from platform-build to their expected locations
+link:
+	-ln -sf $(pwd)/platform-build/breez_sdk_core.xcframework.zip ios/Frameworks/{{curr_version}}.zip
+	-ln -sf $(pwd)/platform-build/android.tar.gz android/{{curr_version}}.tar.gz
+
+# Static code analysis
+check:
+	flutter analyze --fatal-infos .
+	dart format -o none --set-exit-if-changed -l 110 .

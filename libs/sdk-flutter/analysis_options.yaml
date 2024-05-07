@@ -25,3 +25,4 @@ linter:
 analyzer:
   exclude:
     - lib/generated/**
+    - lib/breez_sdk_core_bindings_generated.dart

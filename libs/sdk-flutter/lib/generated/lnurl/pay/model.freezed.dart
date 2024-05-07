@@ -37,17 +37,14 @@ mixin _$AesSuccessActionDataResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AesSuccessActionDataResult_Decrypted value)
-        decrypted,
-    required TResult Function(AesSuccessActionDataResult_ErrorStatus value)
-        errorStatus,
+    required TResult Function(AesSuccessActionDataResult_Decrypted value) decrypted,
+    required TResult Function(AesSuccessActionDataResult_ErrorStatus value) errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AesSuccessActionDataResult_Decrypted value)? decrypted,
-    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)?
-        errorStatus,
+    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)? errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -61,15 +58,13 @@ mixin _$AesSuccessActionDataResult {
 
 /// @nodoc
 abstract class $AesSuccessActionDataResultCopyWith<$Res> {
-  factory $AesSuccessActionDataResultCopyWith(AesSuccessActionDataResult value,
-          $Res Function(AesSuccessActionDataResult) then) =
-      _$AesSuccessActionDataResultCopyWithImpl<$Res,
-          AesSuccessActionDataResult>;
+  factory $AesSuccessActionDataResultCopyWith(
+          AesSuccessActionDataResult value, $Res Function(AesSuccessActionDataResult) then) =
+      _$AesSuccessActionDataResultCopyWithImpl<$Res, AesSuccessActionDataResult>;
 }
 
 /// @nodoc
-class _$AesSuccessActionDataResultCopyWithImpl<$Res,
-        $Val extends AesSuccessActionDataResult>
+class _$AesSuccessActionDataResultCopyWithImpl<$Res, $Val extends AesSuccessActionDataResult>
     implements $AesSuccessActionDataResultCopyWith<$Res> {
   _$AesSuccessActionDataResultCopyWithImpl(this._value, this._then);
 
@@ -91,11 +86,9 @@ abstract class _$$AesSuccessActionDataResult_DecryptedImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$AesSuccessActionDataResult_DecryptedImplCopyWithImpl<$Res>
-    extends _$AesSuccessActionDataResultCopyWithImpl<$Res,
-        _$AesSuccessActionDataResult_DecryptedImpl>
+    extends _$AesSuccessActionDataResultCopyWithImpl<$Res, _$AesSuccessActionDataResult_DecryptedImpl>
     implements _$$AesSuccessActionDataResult_DecryptedImplCopyWith<$Res> {
-  __$$AesSuccessActionDataResult_DecryptedImplCopyWithImpl(
-      _$AesSuccessActionDataResult_DecryptedImpl _value,
+  __$$AesSuccessActionDataResult_DecryptedImplCopyWithImpl(_$AesSuccessActionDataResult_DecryptedImpl _value,
       $Res Function(_$AesSuccessActionDataResult_DecryptedImpl) _then)
       : super(_value, _then);
 
@@ -115,10 +108,8 @@ class __$$AesSuccessActionDataResult_DecryptedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AesSuccessActionDataResult_DecryptedImpl
-    extends AesSuccessActionDataResult_Decrypted {
-  const _$AesSuccessActionDataResult_DecryptedImpl({required this.data})
-      : super._();
+class _$AesSuccessActionDataResult_DecryptedImpl extends AesSuccessActionDataResult_Decrypted {
+  const _$AesSuccessActionDataResult_DecryptedImpl({required this.data}) : super._();
 
   @override
   final AesSuccessActionDataDecrypted data;
@@ -142,8 +133,7 @@ class _$AesSuccessActionDataResult_DecryptedImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AesSuccessActionDataResult_DecryptedImplCopyWith<
-          _$AesSuccessActionDataResult_DecryptedImpl>
+  _$$AesSuccessActionDataResult_DecryptedImplCopyWith<_$AesSuccessActionDataResult_DecryptedImpl>
       get copyWith => __$$AesSuccessActionDataResult_DecryptedImplCopyWithImpl<
           _$AesSuccessActionDataResult_DecryptedImpl>(this, _$identity);
 
@@ -181,10 +171,8 @@ class _$AesSuccessActionDataResult_DecryptedImpl
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AesSuccessActionDataResult_Decrypted value)
-        decrypted,
-    required TResult Function(AesSuccessActionDataResult_ErrorStatus value)
-        errorStatus,
+    required TResult Function(AesSuccessActionDataResult_Decrypted value) decrypted,
+    required TResult Function(AesSuccessActionDataResult_ErrorStatus value) errorStatus,
   }) {
     return decrypted(this);
   }
@@ -193,8 +181,7 @@ class _$AesSuccessActionDataResult_DecryptedImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AesSuccessActionDataResult_Decrypted value)? decrypted,
-    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)?
-        errorStatus,
+    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)? errorStatus,
   }) {
     return decrypted?.call(this);
   }
@@ -213,17 +200,14 @@ class _$AesSuccessActionDataResult_DecryptedImpl
   }
 }
 
-abstract class AesSuccessActionDataResult_Decrypted
-    extends AesSuccessActionDataResult {
-  const factory AesSuccessActionDataResult_Decrypted(
-          {required final AesSuccessActionDataDecrypted data}) =
+abstract class AesSuccessActionDataResult_Decrypted extends AesSuccessActionDataResult {
+  const factory AesSuccessActionDataResult_Decrypted({required final AesSuccessActionDataDecrypted data}) =
       _$AesSuccessActionDataResult_DecryptedImpl;
   const AesSuccessActionDataResult_Decrypted._() : super._();
 
   AesSuccessActionDataDecrypted get data;
   @JsonKey(ignore: true)
-  _$$AesSuccessActionDataResult_DecryptedImplCopyWith<
-          _$AesSuccessActionDataResult_DecryptedImpl>
+  _$$AesSuccessActionDataResult_DecryptedImplCopyWith<_$AesSuccessActionDataResult_DecryptedImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -239,8 +223,7 @@ abstract class _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$AesSuccessActionDataResult_ErrorStatusImplCopyWithImpl<$Res>
-    extends _$AesSuccessActionDataResultCopyWithImpl<$Res,
-        _$AesSuccessActionDataResult_ErrorStatusImpl>
+    extends _$AesSuccessActionDataResultCopyWithImpl<$Res, _$AesSuccessActionDataResult_ErrorStatusImpl>
     implements _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<$Res> {
   __$$AesSuccessActionDataResult_ErrorStatusImplCopyWithImpl(
       _$AesSuccessActionDataResult_ErrorStatusImpl _value,
@@ -263,10 +246,8 @@ class __$$AesSuccessActionDataResult_ErrorStatusImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AesSuccessActionDataResult_ErrorStatusImpl
-    extends AesSuccessActionDataResult_ErrorStatus {
-  const _$AesSuccessActionDataResult_ErrorStatusImpl({required this.reason})
-      : super._();
+class _$AesSuccessActionDataResult_ErrorStatusImpl extends AesSuccessActionDataResult_ErrorStatus {
+  const _$AesSuccessActionDataResult_ErrorStatusImpl({required this.reason}) : super._();
 
   @override
   final String reason;
@@ -290,11 +271,9 @@ class _$AesSuccessActionDataResult_ErrorStatusImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<
-          _$AesSuccessActionDataResult_ErrorStatusImpl>
-      get copyWith =>
-          __$$AesSuccessActionDataResult_ErrorStatusImplCopyWithImpl<
-              _$AesSuccessActionDataResult_ErrorStatusImpl>(this, _$identity);
+  _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<_$AesSuccessActionDataResult_ErrorStatusImpl>
+      get copyWith => __$$AesSuccessActionDataResult_ErrorStatusImplCopyWithImpl<
+          _$AesSuccessActionDataResult_ErrorStatusImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -330,10 +309,8 @@ class _$AesSuccessActionDataResult_ErrorStatusImpl
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(AesSuccessActionDataResult_Decrypted value)
-        decrypted,
-    required TResult Function(AesSuccessActionDataResult_ErrorStatus value)
-        errorStatus,
+    required TResult Function(AesSuccessActionDataResult_Decrypted value) decrypted,
+    required TResult Function(AesSuccessActionDataResult_ErrorStatus value) errorStatus,
   }) {
     return errorStatus(this);
   }
@@ -342,8 +319,7 @@ class _$AesSuccessActionDataResult_ErrorStatusImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(AesSuccessActionDataResult_Decrypted value)? decrypted,
-    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)?
-        errorStatus,
+    TResult? Function(AesSuccessActionDataResult_ErrorStatus value)? errorStatus,
   }) {
     return errorStatus?.call(this);
   }
@@ -362,17 +338,14 @@ class _$AesSuccessActionDataResult_ErrorStatusImpl
   }
 }
 
-abstract class AesSuccessActionDataResult_ErrorStatus
-    extends AesSuccessActionDataResult {
-  const factory AesSuccessActionDataResult_ErrorStatus(
-          {required final String reason}) =
+abstract class AesSuccessActionDataResult_ErrorStatus extends AesSuccessActionDataResult {
+  const factory AesSuccessActionDataResult_ErrorStatus({required final String reason}) =
       _$AesSuccessActionDataResult_ErrorStatusImpl;
   const AesSuccessActionDataResult_ErrorStatus._() : super._();
 
   String get reason;
   @JsonKey(ignore: true)
-  _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<
-          _$AesSuccessActionDataResult_ErrorStatusImpl>
+  _$$AesSuccessActionDataResult_ErrorStatusImplCopyWith<_$AesSuccessActionDataResult_ErrorStatusImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -403,8 +376,7 @@ mixin _$LnUrlPayResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(LnUrlPayResult_EndpointSuccess value)
-        endpointSuccess,
+    required TResult Function(LnUrlPayResult_EndpointSuccess value) endpointSuccess,
     required TResult Function(LnUrlPayResult_EndpointError value) endpointError,
     required TResult Function(LnUrlPayResult_PayError value) payError,
   }) =>
@@ -428,8 +400,7 @@ mixin _$LnUrlPayResult {
 
 /// @nodoc
 abstract class $LnUrlPayResultCopyWith<$Res> {
-  factory $LnUrlPayResultCopyWith(
-          LnUrlPayResult value, $Res Function(LnUrlPayResult) then) =
+  factory $LnUrlPayResultCopyWith(LnUrlPayResult value, $Res Function(LnUrlPayResult) then) =
       _$LnUrlPayResultCopyWithImpl<$Res, LnUrlPayResult>;
 }
 
@@ -446,8 +417,7 @@ class _$LnUrlPayResultCopyWithImpl<$Res, $Val extends LnUrlPayResult>
 
 /// @nodoc
 abstract class _$$LnUrlPayResult_EndpointSuccessImplCopyWith<$Res> {
-  factory _$$LnUrlPayResult_EndpointSuccessImplCopyWith(
-          _$LnUrlPayResult_EndpointSuccessImpl value,
+  factory _$$LnUrlPayResult_EndpointSuccessImplCopyWith(_$LnUrlPayResult_EndpointSuccessImpl value,
           $Res Function(_$LnUrlPayResult_EndpointSuccessImpl) then) =
       __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl<$Res>;
   @useResult
@@ -456,12 +426,10 @@ abstract class _$$LnUrlPayResult_EndpointSuccessImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl<$Res>
-    extends _$LnUrlPayResultCopyWithImpl<$Res,
-        _$LnUrlPayResult_EndpointSuccessImpl>
+    extends _$LnUrlPayResultCopyWithImpl<$Res, _$LnUrlPayResult_EndpointSuccessImpl>
     implements _$$LnUrlPayResult_EndpointSuccessImplCopyWith<$Res> {
   __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl(
-      _$LnUrlPayResult_EndpointSuccessImpl _value,
-      $Res Function(_$LnUrlPayResult_EndpointSuccessImpl) _then)
+      _$LnUrlPayResult_EndpointSuccessImpl _value, $Res Function(_$LnUrlPayResult_EndpointSuccessImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -480,8 +448,7 @@ class __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LnUrlPayResult_EndpointSuccessImpl
-    extends LnUrlPayResult_EndpointSuccess {
+class _$LnUrlPayResult_EndpointSuccessImpl extends LnUrlPayResult_EndpointSuccess {
   const _$LnUrlPayResult_EndpointSuccessImpl({required this.data}) : super._();
 
   @override
@@ -506,10 +473,9 @@ class _$LnUrlPayResult_EndpointSuccessImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$LnUrlPayResult_EndpointSuccessImplCopyWith<
-          _$LnUrlPayResult_EndpointSuccessImpl>
-      get copyWith => __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl<
-          _$LnUrlPayResult_EndpointSuccessImpl>(this, _$identity);
+  _$$LnUrlPayResult_EndpointSuccessImplCopyWith<_$LnUrlPayResult_EndpointSuccessImpl> get copyWith =>
+      __$$LnUrlPayResult_EndpointSuccessImplCopyWithImpl<_$LnUrlPayResult_EndpointSuccessImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -548,8 +514,7 @@ class _$LnUrlPayResult_EndpointSuccessImpl
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(LnUrlPayResult_EndpointSuccess value)
-        endpointSuccess,
+    required TResult Function(LnUrlPayResult_EndpointSuccess value) endpointSuccess,
     required TResult Function(LnUrlPayResult_EndpointError value) endpointError,
     required TResult Function(LnUrlPayResult_PayError value) payError,
   }) {
@@ -582,24 +547,21 @@ class _$LnUrlPayResult_EndpointSuccessImpl
 }
 
 abstract class LnUrlPayResult_EndpointSuccess extends LnUrlPayResult {
-  const factory LnUrlPayResult_EndpointSuccess(
-          {required final LnUrlPaySuccessData data}) =
+  const factory LnUrlPayResult_EndpointSuccess({required final LnUrlPaySuccessData data}) =
       _$LnUrlPayResult_EndpointSuccessImpl;
   const LnUrlPayResult_EndpointSuccess._() : super._();
 
   @override
   LnUrlPaySuccessData get data;
   @JsonKey(ignore: true)
-  _$$LnUrlPayResult_EndpointSuccessImplCopyWith<
-          _$LnUrlPayResult_EndpointSuccessImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$LnUrlPayResult_EndpointSuccessImplCopyWith<_$LnUrlPayResult_EndpointSuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$LnUrlPayResult_EndpointErrorImplCopyWith<$Res> {
   factory _$$LnUrlPayResult_EndpointErrorImplCopyWith(
-          _$LnUrlPayResult_EndpointErrorImpl value,
-          $Res Function(_$LnUrlPayResult_EndpointErrorImpl) then) =
+          _$LnUrlPayResult_EndpointErrorImpl value, $Res Function(_$LnUrlPayResult_EndpointErrorImpl) then) =
       __$$LnUrlPayResult_EndpointErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlErrorData data});
@@ -607,12 +569,10 @@ abstract class _$$LnUrlPayResult_EndpointErrorImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LnUrlPayResult_EndpointErrorImplCopyWithImpl<$Res>
-    extends _$LnUrlPayResultCopyWithImpl<$Res,
-        _$LnUrlPayResult_EndpointErrorImpl>
+    extends _$LnUrlPayResultCopyWithImpl<$Res, _$LnUrlPayResult_EndpointErrorImpl>
     implements _$$LnUrlPayResult_EndpointErrorImplCopyWith<$Res> {
   __$$LnUrlPayResult_EndpointErrorImplCopyWithImpl(
-      _$LnUrlPayResult_EndpointErrorImpl _value,
-      $Res Function(_$LnUrlPayResult_EndpointErrorImpl) _then)
+      _$LnUrlPayResult_EndpointErrorImpl _value, $Res Function(_$LnUrlPayResult_EndpointErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -656,10 +616,8 @@ class _$LnUrlPayResult_EndpointErrorImpl extends LnUrlPayResult_EndpointError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$LnUrlPayResult_EndpointErrorImplCopyWith<
-          _$LnUrlPayResult_EndpointErrorImpl>
-      get copyWith => __$$LnUrlPayResult_EndpointErrorImplCopyWithImpl<
-          _$LnUrlPayResult_EndpointErrorImpl>(this, _$identity);
+  _$$LnUrlPayResult_EndpointErrorImplCopyWith<_$LnUrlPayResult_EndpointErrorImpl> get copyWith =>
+      __$$LnUrlPayResult_EndpointErrorImplCopyWithImpl<_$LnUrlPayResult_EndpointErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -698,8 +656,7 @@ class _$LnUrlPayResult_EndpointErrorImpl extends LnUrlPayResult_EndpointError {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(LnUrlPayResult_EndpointSuccess value)
-        endpointSuccess,
+    required TResult Function(LnUrlPayResult_EndpointSuccess value) endpointSuccess,
     required TResult Function(LnUrlPayResult_EndpointError value) endpointError,
     required TResult Function(LnUrlPayResult_PayError value) payError,
   }) {
@@ -732,24 +689,21 @@ class _$LnUrlPayResult_EndpointErrorImpl extends LnUrlPayResult_EndpointError {
 }
 
 abstract class LnUrlPayResult_EndpointError extends LnUrlPayResult {
-  const factory LnUrlPayResult_EndpointError(
-          {required final LnUrlErrorData data}) =
+  const factory LnUrlPayResult_EndpointError({required final LnUrlErrorData data}) =
       _$LnUrlPayResult_EndpointErrorImpl;
   const LnUrlPayResult_EndpointError._() : super._();
 
   @override
   LnUrlErrorData get data;
   @JsonKey(ignore: true)
-  _$$LnUrlPayResult_EndpointErrorImplCopyWith<
-          _$LnUrlPayResult_EndpointErrorImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$LnUrlPayResult_EndpointErrorImplCopyWith<_$LnUrlPayResult_EndpointErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$LnUrlPayResult_PayErrorImplCopyWith<$Res> {
   factory _$$LnUrlPayResult_PayErrorImplCopyWith(
-          _$LnUrlPayResult_PayErrorImpl value,
-          $Res Function(_$LnUrlPayResult_PayErrorImpl) then) =
+          _$LnUrlPayResult_PayErrorImpl value, $Res Function(_$LnUrlPayResult_PayErrorImpl) then) =
       __$$LnUrlPayResult_PayErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlPayErrorData data});
@@ -760,8 +714,7 @@ class __$$LnUrlPayResult_PayErrorImplCopyWithImpl<$Res>
     extends _$LnUrlPayResultCopyWithImpl<$Res, _$LnUrlPayResult_PayErrorImpl>
     implements _$$LnUrlPayResult_PayErrorImplCopyWith<$Res> {
   __$$LnUrlPayResult_PayErrorImplCopyWithImpl(
-      _$LnUrlPayResult_PayErrorImpl _value,
-      $Res Function(_$LnUrlPayResult_PayErrorImpl) _then)
+      _$LnUrlPayResult_PayErrorImpl _value, $Res Function(_$LnUrlPayResult_PayErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -805,9 +758,8 @@ class _$LnUrlPayResult_PayErrorImpl extends LnUrlPayResult_PayError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$LnUrlPayResult_PayErrorImplCopyWith<_$LnUrlPayResult_PayErrorImpl>
-      get copyWith => __$$LnUrlPayResult_PayErrorImplCopyWithImpl<
-          _$LnUrlPayResult_PayErrorImpl>(this, _$identity);
+  _$$LnUrlPayResult_PayErrorImplCopyWith<_$LnUrlPayResult_PayErrorImpl> get copyWith =>
+      __$$LnUrlPayResult_PayErrorImplCopyWithImpl<_$LnUrlPayResult_PayErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -846,8 +798,7 @@ class _$LnUrlPayResult_PayErrorImpl extends LnUrlPayResult_PayError {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(LnUrlPayResult_EndpointSuccess value)
-        endpointSuccess,
+    required TResult Function(LnUrlPayResult_EndpointSuccess value) endpointSuccess,
     required TResult Function(LnUrlPayResult_EndpointError value) endpointError,
     required TResult Function(LnUrlPayResult_PayError value) payError,
   }) {
@@ -880,15 +831,15 @@ class _$LnUrlPayResult_PayErrorImpl extends LnUrlPayResult_PayError {
 }
 
 abstract class LnUrlPayResult_PayError extends LnUrlPayResult {
-  const factory LnUrlPayResult_PayError(
-      {required final LnUrlPayErrorData data}) = _$LnUrlPayResult_PayErrorImpl;
+  const factory LnUrlPayResult_PayError({required final LnUrlPayErrorData data}) =
+      _$LnUrlPayResult_PayErrorImpl;
   const LnUrlPayResult_PayError._() : super._();
 
   @override
   LnUrlPayErrorData get data;
   @JsonKey(ignore: true)
-  _$$LnUrlPayResult_PayErrorImplCopyWith<_$LnUrlPayResult_PayErrorImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$LnUrlPayResult_PayErrorImplCopyWith<_$LnUrlPayResult_PayErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -941,14 +892,13 @@ mixin _$SuccessActionProcessed {
 
 /// @nodoc
 abstract class $SuccessActionProcessedCopyWith<$Res> {
-  factory $SuccessActionProcessedCopyWith(SuccessActionProcessed value,
-          $Res Function(SuccessActionProcessed) then) =
+  factory $SuccessActionProcessedCopyWith(
+          SuccessActionProcessed value, $Res Function(SuccessActionProcessed) then) =
       _$SuccessActionProcessedCopyWithImpl<$Res, SuccessActionProcessed>;
 }
 
 /// @nodoc
-class _$SuccessActionProcessedCopyWithImpl<$Res,
-        $Val extends SuccessActionProcessed>
+class _$SuccessActionProcessedCopyWithImpl<$Res, $Val extends SuccessActionProcessed>
     implements $SuccessActionProcessedCopyWith<$Res> {
   _$SuccessActionProcessedCopyWithImpl(this._value, this._then);
 
@@ -961,8 +911,7 @@ class _$SuccessActionProcessedCopyWithImpl<$Res,
 /// @nodoc
 abstract class _$$SuccessActionProcessed_AesImplCopyWith<$Res> {
   factory _$$SuccessActionProcessed_AesImplCopyWith(
-          _$SuccessActionProcessed_AesImpl value,
-          $Res Function(_$SuccessActionProcessed_AesImpl) then) =
+          _$SuccessActionProcessed_AesImpl value, $Res Function(_$SuccessActionProcessed_AesImpl) then) =
       __$$SuccessActionProcessed_AesImplCopyWithImpl<$Res>;
   @useResult
   $Res call({AesSuccessActionDataResult result});
@@ -972,12 +921,10 @@ abstract class _$$SuccessActionProcessed_AesImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SuccessActionProcessed_AesImplCopyWithImpl<$Res>
-    extends _$SuccessActionProcessedCopyWithImpl<$Res,
-        _$SuccessActionProcessed_AesImpl>
+    extends _$SuccessActionProcessedCopyWithImpl<$Res, _$SuccessActionProcessed_AesImpl>
     implements _$$SuccessActionProcessed_AesImplCopyWith<$Res> {
   __$$SuccessActionProcessed_AesImplCopyWithImpl(
-      _$SuccessActionProcessed_AesImpl _value,
-      $Res Function(_$SuccessActionProcessed_AesImpl) _then)
+      _$SuccessActionProcessed_AesImpl _value, $Res Function(_$SuccessActionProcessed_AesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1029,9 +976,8 @@ class _$SuccessActionProcessed_AesImpl extends SuccessActionProcessed_Aes {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SuccessActionProcessed_AesImplCopyWith<_$SuccessActionProcessed_AesImpl>
-      get copyWith => __$$SuccessActionProcessed_AesImplCopyWithImpl<
-          _$SuccessActionProcessed_AesImpl>(this, _$identity);
+  _$$SuccessActionProcessed_AesImplCopyWith<_$SuccessActionProcessed_AesImpl> get copyWith =>
+      __$$SuccessActionProcessed_AesImplCopyWithImpl<_$SuccessActionProcessed_AesImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1103,21 +1049,19 @@ class _$SuccessActionProcessed_AesImpl extends SuccessActionProcessed_Aes {
 }
 
 abstract class SuccessActionProcessed_Aes extends SuccessActionProcessed {
-  const factory SuccessActionProcessed_Aes(
-          {required final AesSuccessActionDataResult result}) =
+  const factory SuccessActionProcessed_Aes({required final AesSuccessActionDataResult result}) =
       _$SuccessActionProcessed_AesImpl;
   const SuccessActionProcessed_Aes._() : super._();
 
   AesSuccessActionDataResult get result;
   @JsonKey(ignore: true)
-  _$$SuccessActionProcessed_AesImplCopyWith<_$SuccessActionProcessed_AesImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$SuccessActionProcessed_AesImplCopyWith<_$SuccessActionProcessed_AesImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$SuccessActionProcessed_MessageImplCopyWith<$Res> {
-  factory _$$SuccessActionProcessed_MessageImplCopyWith(
-          _$SuccessActionProcessed_MessageImpl value,
+  factory _$$SuccessActionProcessed_MessageImplCopyWith(_$SuccessActionProcessed_MessageImpl value,
           $Res Function(_$SuccessActionProcessed_MessageImpl) then) =
       __$$SuccessActionProcessed_MessageImplCopyWithImpl<$Res>;
   @useResult
@@ -1126,12 +1070,10 @@ abstract class _$$SuccessActionProcessed_MessageImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SuccessActionProcessed_MessageImplCopyWithImpl<$Res>
-    extends _$SuccessActionProcessedCopyWithImpl<$Res,
-        _$SuccessActionProcessed_MessageImpl>
+    extends _$SuccessActionProcessedCopyWithImpl<$Res, _$SuccessActionProcessed_MessageImpl>
     implements _$$SuccessActionProcessed_MessageImplCopyWith<$Res> {
   __$$SuccessActionProcessed_MessageImplCopyWithImpl(
-      _$SuccessActionProcessed_MessageImpl _value,
-      $Res Function(_$SuccessActionProcessed_MessageImpl) _then)
+      _$SuccessActionProcessed_MessageImpl _value, $Res Function(_$SuccessActionProcessed_MessageImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1150,8 +1092,7 @@ class __$$SuccessActionProcessed_MessageImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SuccessActionProcessed_MessageImpl
-    extends SuccessActionProcessed_Message {
+class _$SuccessActionProcessed_MessageImpl extends SuccessActionProcessed_Message {
   const _$SuccessActionProcessed_MessageImpl({required this.data}) : super._();
 
   @override
@@ -1176,10 +1117,9 @@ class _$SuccessActionProcessed_MessageImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SuccessActionProcessed_MessageImplCopyWith<
-          _$SuccessActionProcessed_MessageImpl>
-      get copyWith => __$$SuccessActionProcessed_MessageImplCopyWithImpl<
-          _$SuccessActionProcessed_MessageImpl>(this, _$identity);
+  _$$SuccessActionProcessed_MessageImplCopyWith<_$SuccessActionProcessed_MessageImpl> get copyWith =>
+      __$$SuccessActionProcessed_MessageImplCopyWithImpl<_$SuccessActionProcessed_MessageImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1251,23 +1191,20 @@ class _$SuccessActionProcessed_MessageImpl
 }
 
 abstract class SuccessActionProcessed_Message extends SuccessActionProcessed {
-  const factory SuccessActionProcessed_Message(
-          {required final MessageSuccessActionData data}) =
+  const factory SuccessActionProcessed_Message({required final MessageSuccessActionData data}) =
       _$SuccessActionProcessed_MessageImpl;
   const SuccessActionProcessed_Message._() : super._();
 
   MessageSuccessActionData get data;
   @JsonKey(ignore: true)
-  _$$SuccessActionProcessed_MessageImplCopyWith<
-          _$SuccessActionProcessed_MessageImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$SuccessActionProcessed_MessageImplCopyWith<_$SuccessActionProcessed_MessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$SuccessActionProcessed_UrlImplCopyWith<$Res> {
   factory _$$SuccessActionProcessed_UrlImplCopyWith(
-          _$SuccessActionProcessed_UrlImpl value,
-          $Res Function(_$SuccessActionProcessed_UrlImpl) then) =
+          _$SuccessActionProcessed_UrlImpl value, $Res Function(_$SuccessActionProcessed_UrlImpl) then) =
       __$$SuccessActionProcessed_UrlImplCopyWithImpl<$Res>;
   @useResult
   $Res call({UrlSuccessActionData data});
@@ -1275,12 +1212,10 @@ abstract class _$$SuccessActionProcessed_UrlImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SuccessActionProcessed_UrlImplCopyWithImpl<$Res>
-    extends _$SuccessActionProcessedCopyWithImpl<$Res,
-        _$SuccessActionProcessed_UrlImpl>
+    extends _$SuccessActionProcessedCopyWithImpl<$Res, _$SuccessActionProcessed_UrlImpl>
     implements _$$SuccessActionProcessed_UrlImplCopyWith<$Res> {
   __$$SuccessActionProcessed_UrlImplCopyWithImpl(
-      _$SuccessActionProcessed_UrlImpl _value,
-      $Res Function(_$SuccessActionProcessed_UrlImpl) _then)
+      _$SuccessActionProcessed_UrlImpl _value, $Res Function(_$SuccessActionProcessed_UrlImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1324,9 +1259,8 @@ class _$SuccessActionProcessed_UrlImpl extends SuccessActionProcessed_Url {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SuccessActionProcessed_UrlImplCopyWith<_$SuccessActionProcessed_UrlImpl>
-      get copyWith => __$$SuccessActionProcessed_UrlImplCopyWithImpl<
-          _$SuccessActionProcessed_UrlImpl>(this, _$identity);
+  _$$SuccessActionProcessed_UrlImplCopyWith<_$SuccessActionProcessed_UrlImpl> get copyWith =>
+      __$$SuccessActionProcessed_UrlImplCopyWithImpl<_$SuccessActionProcessed_UrlImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1398,13 +1332,12 @@ class _$SuccessActionProcessed_UrlImpl extends SuccessActionProcessed_Url {
 }
 
 abstract class SuccessActionProcessed_Url extends SuccessActionProcessed {
-  const factory SuccessActionProcessed_Url(
-          {required final UrlSuccessActionData data}) =
+  const factory SuccessActionProcessed_Url({required final UrlSuccessActionData data}) =
       _$SuccessActionProcessed_UrlImpl;
   const SuccessActionProcessed_Url._() : super._();
 
   UrlSuccessActionData get data;
   @JsonKey(ignore: true)
-  _$$SuccessActionProcessed_UrlImplCopyWith<_$SuccessActionProcessed_UrlImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$SuccessActionProcessed_UrlImplCopyWith<_$SuccessActionProcessed_UrlImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

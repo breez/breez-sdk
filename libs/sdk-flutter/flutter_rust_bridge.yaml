@@ -1,7 +1,7 @@
 rust_input: ../sdk-core/src/binding.rs
 dart_output: lib/generated/
-c_output: ios/Classes/frb_generated.h
-dart_entrypoint_class_name: BreezSdkBindings
+c_output: ios/Classes/breez_sdk_core.h
+dart_entrypoint_class_name: BreezSdkCore
 dart_format_line_length: 110
 dart_enums_style: false
 add_mod_to_lib: false

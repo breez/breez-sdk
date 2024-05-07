@@ -18,16 +18,15 @@ import 'models.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
-class BreezSdkBindings
-    extends BaseEntrypoint<BreezSdkBindingsApi, BreezSdkBindingsApiImpl, BreezSdkBindingsWire> {
+class BreezSdkCore extends BaseEntrypoint<BreezSdkCoreApi, BreezSdkCoreApiImpl, BreezSdkCoreWire> {
   @internal
-  static final instance = BreezSdkBindings._();
+  static final instance = BreezSdkCore._();
 
-  BreezSdkBindings._();
+  BreezSdkCore._();
 
   /// Initialize flutter_rust_bridge
   static Future<void> init({
-    BreezSdkBindingsApi? api,
+    BreezSdkCoreApi? api,
     BaseHandler? handler,
     ExternalLibrary? externalLibrary,
   }) async {
@@ -45,11 +44,10 @@ class BreezSdkBindings
   static void dispose() => instance.disposeImpl();
 
   @override
-  ApiImplConstructor<BreezSdkBindingsApiImpl, BreezSdkBindingsWire> get apiImplConstructor =>
-      BreezSdkBindingsApiImpl.new;
+  ApiImplConstructor<BreezSdkCoreApiImpl, BreezSdkCoreWire> get apiImplConstructor => BreezSdkCoreApiImpl.new;
 
   @override
-  WireConstructor<BreezSdkBindingsWire> get wireConstructor => BreezSdkBindingsWire.fromExternalLibrary;
+  WireConstructor<BreezSdkCoreWire> get wireConstructor => BreezSdkCoreWire.fromExternalLibrary;
 
   @override
   Future<void> executeRustInitializers() async {}
@@ -70,7 +68,7 @@ class BreezSdkBindings
   );
 }
 
-abstract class BreezSdkBindingsApi extends BaseApi {
+abstract class BreezSdkCoreApi extends BaseApi {
   Future<void> backup({dynamic hint});
 
   Future<BackupStatus> backupStatus({dynamic hint});
@@ -200,8 +198,8 @@ abstract class BreezSdkBindingsApi extends BaseApi {
   Future<void> sync({dynamic hint});
 }
 
-class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements BreezSdkBindingsApi {
-  BreezSdkBindingsApiImpl({
+class BreezSdkCoreApiImpl extends BreezSdkCoreApiImplPlatform implements BreezSdkCoreApi {
+  BreezSdkCoreApiImpl({
     required super.handler,
     required super.wire,
     required super.generalizedFrbRustBinding,

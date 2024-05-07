@@ -26,11 +26,11 @@ class BreezSDK {
 
   Future<void> verifyInitialized() async {
     try {
-      if (!BreezSdkBindings.instance.initialized) {
-        await BreezSdkBindings.init(externalLibrary: createLibraryImpl());
+      if (!BreezSdkCore.instance.initialized) {
+        await BreezSdkCore.init(externalLibrary: createLibraryImpl());
       }
     } catch (e) {
-      throw Exception("Failed to initialize BreezSdkBindings");
+      throw Exception("Failed to initialize BreezSdkCore");
     }
   }
 

@@ -99,8 +99,7 @@ abstract class $InputTypeCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$InputTypeCopyWithImpl<$Res, $Val extends InputType>
-    implements $InputTypeCopyWith<$Res> {
+class _$InputTypeCopyWithImpl<$Res, $Val extends InputType> implements $InputTypeCopyWith<$Res> {
   _$InputTypeCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -112,8 +111,7 @@ class _$InputTypeCopyWithImpl<$Res, $Val extends InputType>
 /// @nodoc
 abstract class _$$InputType_BitcoinAddressImplCopyWith<$Res> {
   factory _$$InputType_BitcoinAddressImplCopyWith(
-          _$InputType_BitcoinAddressImpl value,
-          $Res Function(_$InputType_BitcoinAddressImpl) then) =
+          _$InputType_BitcoinAddressImpl value, $Res Function(_$InputType_BitcoinAddressImpl) then) =
       __$$InputType_BitcoinAddressImplCopyWithImpl<$Res>;
   @useResult
   $Res call({BitcoinAddressData address});
@@ -124,8 +122,7 @@ class __$$InputType_BitcoinAddressImplCopyWithImpl<$Res>
     extends _$InputTypeCopyWithImpl<$Res, _$InputType_BitcoinAddressImpl>
     implements _$$InputType_BitcoinAddressImplCopyWith<$Res> {
   __$$InputType_BitcoinAddressImplCopyWithImpl(
-      _$InputType_BitcoinAddressImpl _value,
-      $Res Function(_$InputType_BitcoinAddressImpl) _then)
+      _$InputType_BitcoinAddressImpl _value, $Res Function(_$InputType_BitcoinAddressImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -169,9 +166,8 @@ class _$InputType_BitcoinAddressImpl extends InputType_BitcoinAddress {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$InputType_BitcoinAddressImplCopyWith<_$InputType_BitcoinAddressImpl>
-      get copyWith => __$$InputType_BitcoinAddressImplCopyWithImpl<
-          _$InputType_BitcoinAddressImpl>(this, _$identity);
+  _$$InputType_BitcoinAddressImplCopyWith<_$InputType_BitcoinAddressImpl> get copyWith =>
+      __$$InputType_BitcoinAddressImplCopyWithImpl<_$InputType_BitcoinAddressImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -273,32 +269,30 @@ class _$InputType_BitcoinAddressImpl extends InputType_BitcoinAddress {
 }
 
 abstract class InputType_BitcoinAddress extends InputType {
-  const factory InputType_BitcoinAddress(
-          {required final BitcoinAddressData address}) =
+  const factory InputType_BitcoinAddress({required final BitcoinAddressData address}) =
       _$InputType_BitcoinAddressImpl;
   const InputType_BitcoinAddress._() : super._();
 
   BitcoinAddressData get address;
   @JsonKey(ignore: true)
-  _$$InputType_BitcoinAddressImplCopyWith<_$InputType_BitcoinAddressImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$InputType_BitcoinAddressImplCopyWith<_$InputType_BitcoinAddressImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$InputType_Bolt11ImplCopyWith<$Res> {
-  factory _$$InputType_Bolt11ImplCopyWith(_$InputType_Bolt11Impl value,
-          $Res Function(_$InputType_Bolt11Impl) then) =
+  factory _$$InputType_Bolt11ImplCopyWith(
+          _$InputType_Bolt11Impl value, $Res Function(_$InputType_Bolt11Impl) then) =
       __$$InputType_Bolt11ImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LNInvoice invoice});
 }
 
 /// @nodoc
-class __$$InputType_Bolt11ImplCopyWithImpl<$Res>
-    extends _$InputTypeCopyWithImpl<$Res, _$InputType_Bolt11Impl>
+class __$$InputType_Bolt11ImplCopyWithImpl<$Res> extends _$InputTypeCopyWithImpl<$Res, _$InputType_Bolt11Impl>
     implements _$$InputType_Bolt11ImplCopyWith<$Res> {
-  __$$InputType_Bolt11ImplCopyWithImpl(_$InputType_Bolt11Impl _value,
-      $Res Function(_$InputType_Bolt11Impl) _then)
+  __$$InputType_Bolt11ImplCopyWithImpl(
+      _$InputType_Bolt11Impl _value, $Res Function(_$InputType_Bolt11Impl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -343,8 +337,7 @@ class _$InputType_Bolt11Impl extends InputType_Bolt11 {
   @override
   @pragma('vm:prefer-inline')
   _$$InputType_Bolt11ImplCopyWith<_$InputType_Bolt11Impl> get copyWith =>
-      __$$InputType_Bolt11ImplCopyWithImpl<_$InputType_Bolt11Impl>(
-          this, _$identity);
+      __$$InputType_Bolt11ImplCopyWithImpl<_$InputType_Bolt11Impl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -446,31 +439,28 @@ class _$InputType_Bolt11Impl extends InputType_Bolt11 {
 }
 
 abstract class InputType_Bolt11 extends InputType {
-  const factory InputType_Bolt11({required final LNInvoice invoice}) =
-      _$InputType_Bolt11Impl;
+  const factory InputType_Bolt11({required final LNInvoice invoice}) = _$InputType_Bolt11Impl;
   const InputType_Bolt11._() : super._();
 
   LNInvoice get invoice;
   @JsonKey(ignore: true)
-  _$$InputType_Bolt11ImplCopyWith<_$InputType_Bolt11Impl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$InputType_Bolt11ImplCopyWith<_$InputType_Bolt11Impl> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$InputType_NodeIdImplCopyWith<$Res> {
-  factory _$$InputType_NodeIdImplCopyWith(_$InputType_NodeIdImpl value,
-          $Res Function(_$InputType_NodeIdImpl) then) =
+  factory _$$InputType_NodeIdImplCopyWith(
+          _$InputType_NodeIdImpl value, $Res Function(_$InputType_NodeIdImpl) then) =
       __$$InputType_NodeIdImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String nodeId});
 }
 
 /// @nodoc
-class __$$InputType_NodeIdImplCopyWithImpl<$Res>
-    extends _$InputTypeCopyWithImpl<$Res, _$InputType_NodeIdImpl>
+class __$$InputType_NodeIdImplCopyWithImpl<$Res> extends _$InputTypeCopyWithImpl<$Res, _$InputType_NodeIdImpl>
     implements _$$InputType_NodeIdImplCopyWith<$Res> {
-  __$$InputType_NodeIdImplCopyWithImpl(_$InputType_NodeIdImpl _value,
-      $Res Function(_$InputType_NodeIdImpl) _then)
+  __$$InputType_NodeIdImplCopyWithImpl(
+      _$InputType_NodeIdImpl _value, $Res Function(_$InputType_NodeIdImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -515,8 +505,7 @@ class _$InputType_NodeIdImpl extends InputType_NodeId {
   @override
   @pragma('vm:prefer-inline')
   _$$InputType_NodeIdImplCopyWith<_$InputType_NodeIdImpl> get copyWith =>
-      __$$InputType_NodeIdImplCopyWithImpl<_$InputType_NodeIdImpl>(
-          this, _$identity);
+      __$$InputType_NodeIdImplCopyWithImpl<_$InputType_NodeIdImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -618,31 +607,26 @@ class _$InputType_NodeIdImpl extends InputType_NodeId {
 }
 
 abstract class InputType_NodeId extends InputType {
-  const factory InputType_NodeId({required final String nodeId}) =
-      _$InputType_NodeIdImpl;
+  const factory InputType_NodeId({required final String nodeId}) = _$InputType_NodeIdImpl;
   const InputType_NodeId._() : super._();
 
   String get nodeId;
   @JsonKey(ignore: true)
-  _$$InputType_NodeIdImplCopyWith<_$InputType_NodeIdImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$InputType_NodeIdImplCopyWith<_$InputType_NodeIdImpl> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$InputType_UrlImplCopyWith<$Res> {
-  factory _$$InputType_UrlImplCopyWith(
-          _$InputType_UrlImpl value, $Res Function(_$InputType_UrlImpl) then) =
+  factory _$$InputType_UrlImplCopyWith(_$InputType_UrlImpl value, $Res Function(_$InputType_UrlImpl) then) =
       __$$InputType_UrlImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String url});
 }
 
 /// @nodoc
-class __$$InputType_UrlImplCopyWithImpl<$Res>
-    extends _$InputTypeCopyWithImpl<$Res, _$InputType_UrlImpl>
+class __$$InputType_UrlImplCopyWithImpl<$Res> extends _$InputTypeCopyWithImpl<$Res, _$InputType_UrlImpl>
     implements _$$InputType_UrlImplCopyWith<$Res> {
-  __$$InputType_UrlImplCopyWithImpl(
-      _$InputType_UrlImpl _value, $Res Function(_$InputType_UrlImpl) _then)
+  __$$InputType_UrlImplCopyWithImpl(_$InputType_UrlImpl _value, $Res Function(_$InputType_UrlImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -789,20 +773,18 @@ class _$InputType_UrlImpl extends InputType_Url {
 }
 
 abstract class InputType_Url extends InputType {
-  const factory InputType_Url({required final String url}) =
-      _$InputType_UrlImpl;
+  const factory InputType_Url({required final String url}) = _$InputType_UrlImpl;
   const InputType_Url._() : super._();
 
   String get url;
   @JsonKey(ignore: true)
-  _$$InputType_UrlImplCopyWith<_$InputType_UrlImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$InputType_UrlImplCopyWith<_$InputType_UrlImpl> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$InputType_LnUrlPayImplCopyWith<$Res> {
-  factory _$$InputType_LnUrlPayImplCopyWith(_$InputType_LnUrlPayImpl value,
-          $Res Function(_$InputType_LnUrlPayImpl) then) =
+  factory _$$InputType_LnUrlPayImplCopyWith(
+          _$InputType_LnUrlPayImpl value, $Res Function(_$InputType_LnUrlPayImpl) then) =
       __$$InputType_LnUrlPayImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlPayRequestData data});
@@ -812,8 +794,8 @@ abstract class _$$InputType_LnUrlPayImplCopyWith<$Res> {
 class __$$InputType_LnUrlPayImplCopyWithImpl<$Res>
     extends _$InputTypeCopyWithImpl<$Res, _$InputType_LnUrlPayImpl>
     implements _$$InputType_LnUrlPayImplCopyWith<$Res> {
-  __$$InputType_LnUrlPayImplCopyWithImpl(_$InputType_LnUrlPayImpl _value,
-      $Res Function(_$InputType_LnUrlPayImpl) _then)
+  __$$InputType_LnUrlPayImplCopyWithImpl(
+      _$InputType_LnUrlPayImpl _value, $Res Function(_$InputType_LnUrlPayImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -858,8 +840,7 @@ class _$InputType_LnUrlPayImpl extends InputType_LnUrlPay {
   @override
   @pragma('vm:prefer-inline')
   _$$InputType_LnUrlPayImplCopyWith<_$InputType_LnUrlPayImpl> get copyWith =>
-      __$$InputType_LnUrlPayImplCopyWithImpl<_$InputType_LnUrlPayImpl>(
-          this, _$identity);
+      __$$InputType_LnUrlPayImplCopyWithImpl<_$InputType_LnUrlPayImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -961,8 +942,7 @@ class _$InputType_LnUrlPayImpl extends InputType_LnUrlPay {
 }
 
 abstract class InputType_LnUrlPay extends InputType {
-  const factory InputType_LnUrlPay({required final LnUrlPayRequestData data}) =
-      _$InputType_LnUrlPayImpl;
+  const factory InputType_LnUrlPay({required final LnUrlPayRequestData data}) = _$InputType_LnUrlPayImpl;
   const InputType_LnUrlPay._() : super._();
 
   LnUrlPayRequestData get data;
@@ -974,8 +954,7 @@ abstract class InputType_LnUrlPay extends InputType {
 /// @nodoc
 abstract class _$$InputType_LnUrlWithdrawImplCopyWith<$Res> {
   factory _$$InputType_LnUrlWithdrawImplCopyWith(
-          _$InputType_LnUrlWithdrawImpl value,
-          $Res Function(_$InputType_LnUrlWithdrawImpl) then) =
+          _$InputType_LnUrlWithdrawImpl value, $Res Function(_$InputType_LnUrlWithdrawImpl) then) =
       __$$InputType_LnUrlWithdrawImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlWithdrawRequestData data});
@@ -986,8 +965,7 @@ class __$$InputType_LnUrlWithdrawImplCopyWithImpl<$Res>
     extends _$InputTypeCopyWithImpl<$Res, _$InputType_LnUrlWithdrawImpl>
     implements _$$InputType_LnUrlWithdrawImplCopyWith<$Res> {
   __$$InputType_LnUrlWithdrawImplCopyWithImpl(
-      _$InputType_LnUrlWithdrawImpl _value,
-      $Res Function(_$InputType_LnUrlWithdrawImpl) _then)
+      _$InputType_LnUrlWithdrawImpl _value, $Res Function(_$InputType_LnUrlWithdrawImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1031,9 +1009,8 @@ class _$InputType_LnUrlWithdrawImpl extends InputType_LnUrlWithdraw {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$InputType_LnUrlWithdrawImplCopyWith<_$InputType_LnUrlWithdrawImpl>
-      get copyWith => __$$InputType_LnUrlWithdrawImplCopyWithImpl<
-          _$InputType_LnUrlWithdrawImpl>(this, _$identity);
+  _$$InputType_LnUrlWithdrawImplCopyWith<_$InputType_LnUrlWithdrawImpl> get copyWith =>
+      __$$InputType_LnUrlWithdrawImplCopyWithImpl<_$InputType_LnUrlWithdrawImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1135,21 +1112,20 @@ class _$InputType_LnUrlWithdrawImpl extends InputType_LnUrlWithdraw {
 }
 
 abstract class InputType_LnUrlWithdraw extends InputType {
-  const factory InputType_LnUrlWithdraw(
-          {required final LnUrlWithdrawRequestData data}) =
+  const factory InputType_LnUrlWithdraw({required final LnUrlWithdrawRequestData data}) =
       _$InputType_LnUrlWithdrawImpl;
   const InputType_LnUrlWithdraw._() : super._();
 
   LnUrlWithdrawRequestData get data;
   @JsonKey(ignore: true)
-  _$$InputType_LnUrlWithdrawImplCopyWith<_$InputType_LnUrlWithdrawImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$InputType_LnUrlWithdrawImplCopyWith<_$InputType_LnUrlWithdrawImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$InputType_LnUrlAuthImplCopyWith<$Res> {
-  factory _$$InputType_LnUrlAuthImplCopyWith(_$InputType_LnUrlAuthImpl value,
-          $Res Function(_$InputType_LnUrlAuthImpl) then) =
+  factory _$$InputType_LnUrlAuthImplCopyWith(
+          _$InputType_LnUrlAuthImpl value, $Res Function(_$InputType_LnUrlAuthImpl) then) =
       __$$InputType_LnUrlAuthImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlAuthRequestData data});
@@ -1159,8 +1135,8 @@ abstract class _$$InputType_LnUrlAuthImplCopyWith<$Res> {
 class __$$InputType_LnUrlAuthImplCopyWithImpl<$Res>
     extends _$InputTypeCopyWithImpl<$Res, _$InputType_LnUrlAuthImpl>
     implements _$$InputType_LnUrlAuthImplCopyWith<$Res> {
-  __$$InputType_LnUrlAuthImplCopyWithImpl(_$InputType_LnUrlAuthImpl _value,
-      $Res Function(_$InputType_LnUrlAuthImpl) _then)
+  __$$InputType_LnUrlAuthImplCopyWithImpl(
+      _$InputType_LnUrlAuthImpl _value, $Res Function(_$InputType_LnUrlAuthImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1205,8 +1181,7 @@ class _$InputType_LnUrlAuthImpl extends InputType_LnUrlAuth {
   @override
   @pragma('vm:prefer-inline')
   _$$InputType_LnUrlAuthImplCopyWith<_$InputType_LnUrlAuthImpl> get copyWith =>
-      __$$InputType_LnUrlAuthImplCopyWithImpl<_$InputType_LnUrlAuthImpl>(
-          this, _$identity);
+      __$$InputType_LnUrlAuthImplCopyWithImpl<_$InputType_LnUrlAuthImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1308,8 +1283,7 @@ class _$InputType_LnUrlAuthImpl extends InputType_LnUrlAuth {
 }
 
 abstract class InputType_LnUrlAuth extends InputType {
-  const factory InputType_LnUrlAuth(
-      {required final LnUrlAuthRequestData data}) = _$InputType_LnUrlAuthImpl;
+  const factory InputType_LnUrlAuth({required final LnUrlAuthRequestData data}) = _$InputType_LnUrlAuthImpl;
   const InputType_LnUrlAuth._() : super._();
 
   LnUrlAuthRequestData get data;
@@ -1320,8 +1294,8 @@ abstract class InputType_LnUrlAuth extends InputType {
 
 /// @nodoc
 abstract class _$$InputType_LnUrlErrorImplCopyWith<$Res> {
-  factory _$$InputType_LnUrlErrorImplCopyWith(_$InputType_LnUrlErrorImpl value,
-          $Res Function(_$InputType_LnUrlErrorImpl) then) =
+  factory _$$InputType_LnUrlErrorImplCopyWith(
+          _$InputType_LnUrlErrorImpl value, $Res Function(_$InputType_LnUrlErrorImpl) then) =
       __$$InputType_LnUrlErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({LnUrlErrorData data});
@@ -1331,8 +1305,8 @@ abstract class _$$InputType_LnUrlErrorImplCopyWith<$Res> {
 class __$$InputType_LnUrlErrorImplCopyWithImpl<$Res>
     extends _$InputTypeCopyWithImpl<$Res, _$InputType_LnUrlErrorImpl>
     implements _$$InputType_LnUrlErrorImplCopyWith<$Res> {
-  __$$InputType_LnUrlErrorImplCopyWithImpl(_$InputType_LnUrlErrorImpl _value,
-      $Res Function(_$InputType_LnUrlErrorImpl) _then)
+  __$$InputType_LnUrlErrorImplCopyWithImpl(
+      _$InputType_LnUrlErrorImpl _value, $Res Function(_$InputType_LnUrlErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1376,10 +1350,8 @@ class _$InputType_LnUrlErrorImpl extends InputType_LnUrlError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$InputType_LnUrlErrorImplCopyWith<_$InputType_LnUrlErrorImpl>
-      get copyWith =>
-          __$$InputType_LnUrlErrorImplCopyWithImpl<_$InputType_LnUrlErrorImpl>(
-              this, _$identity);
+  _$$InputType_LnUrlErrorImplCopyWith<_$InputType_LnUrlErrorImpl> get copyWith =>
+      __$$InputType_LnUrlErrorImplCopyWithImpl<_$InputType_LnUrlErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1481,12 +1453,11 @@ class _$InputType_LnUrlErrorImpl extends InputType_LnUrlError {
 }
 
 abstract class InputType_LnUrlError extends InputType {
-  const factory InputType_LnUrlError({required final LnUrlErrorData data}) =
-      _$InputType_LnUrlErrorImpl;
+  const factory InputType_LnUrlError({required final LnUrlErrorData data}) = _$InputType_LnUrlErrorImpl;
   const InputType_LnUrlError._() : super._();
 
   LnUrlErrorData get data;
   @JsonKey(ignore: true)
-  _$$InputType_LnUrlErrorImplCopyWith<_$InputType_LnUrlErrorImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$InputType_LnUrlErrorImplCopyWith<_$InputType_LnUrlErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

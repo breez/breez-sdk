@@ -15,6 +15,7 @@ flutter_rust_bridge:
 	cargo install flutter_rust_bridge_codegen --version 2.0.0-dev.33
 	mkdir -p ./lib/generated
 	flutter_rust_bridge_codegen generate
+	dart format -l 110 ./lib/generated
 
 ios: $(SOURCES) flutter_rust_bridge
 	make -C ../sdk-bindings bindings-swift
