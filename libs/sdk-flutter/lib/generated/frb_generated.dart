@@ -8,6 +8,7 @@ import 'breez_services.dart';
 import 'chain.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'error.dart';
 import 'fiat.dart';
 import 'frb_generated.io.dart' if (dart.library.html) 'frb_generated.web.dart';
 import 'input_parser.dart';
@@ -61,7 +62,7 @@ class BreezSdkBindings
   String get codegenVersion => '2.0.0-dev.36';
 
   @override
-  int get rustContentHash => 1499828454;
+  int get rustContentHash => -1104475804;
 
   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
     stem: 'breez_sdk_core',
@@ -71,25 +72,160 @@ class BreezSdkBindings
 }
 
 abstract class BreezSdkBindingsApi extends BaseApi {
-  Future<void> crateBindingBackup({dynamic hint});
+  Future<void> crateBindingBindingBreezServicesBackup({required BindingBreezServices that, dynamic hint});
 
-  Future<BackupStatus> crateBindingBackupStatus({dynamic hint});
+  Future<BackupStatus> crateBindingBindingBreezServicesBackupStatus(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<BuyBitcoinResponse> crateBindingBindingBreezServicesBuyBitcoin(
+      {required BindingBreezServices that, required BuyBitcoinRequest req, dynamic hint});
+
+  Future<CheckMessageResponse> crateBindingBindingBreezServicesCheckMessage(
+      {required BindingBreezServices that, required CheckMessageRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesCloseLspChannels(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesConfigureNode(
+      {required BindingBreezServices that, required ConfigureNodeRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesConnectLsp(
+      {required BindingBreezServices that, required String lspId, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesDisconnect({required BindingBreezServices that, dynamic hint});
+
+  Future<String> crateBindingBindingBreezServicesExecuteCommand(
+      {required BindingBreezServices that, required String command, dynamic hint});
+
+  Future<List<Rate>> crateBindingBindingBreezServicesFetchFiatRates(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<LspInformation?> crateBindingBindingBreezServicesFetchLspInfo(
+      {required BindingBreezServices that, required String id, dynamic hint});
+
+  Future<ReverseSwapPairInfo> crateBindingBindingBreezServicesFetchReverseSwapFees(
+      {required BindingBreezServices that, required ReverseSwapFeesRequest req, dynamic hint});
+
+  Future<String> crateBindingBindingBreezServicesGenerateDiagnosticData(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<List<ReverseSwapInfo>> crateBindingBindingBreezServicesInProgressOnchainPayments(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<List<ReverseSwapInfo>> crateBindingBindingBreezServicesInProgressReverseSwaps(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<SwapInfo?> crateBindingBindingBreezServicesInProgressSwap(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<List<FiatCurrency>> crateBindingBindingBreezServicesListFiatCurrencies(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<List<LspInformation>> crateBindingBindingBreezServicesListLsps(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<List<Payment>> crateBindingBindingBreezServicesListPayments(
+      {required BindingBreezServices that, required ListPaymentsRequest req, dynamic hint});
+
+  Future<List<SwapInfo>> crateBindingBindingBreezServicesListRefundables(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<LnUrlCallbackStatus> crateBindingBindingBreezServicesLnurlAuth(
+      {required BindingBreezServices that, required LnUrlAuthRequestData reqData, dynamic hint});
+
+  Future<LnUrlPayResult> crateBindingBindingBreezServicesLnurlPay(
+      {required BindingBreezServices that, required LnUrlPayRequest req, dynamic hint});
+
+  Future<LnUrlWithdrawResult> crateBindingBindingBreezServicesLnurlWithdraw(
+      {required BindingBreezServices that, required LnUrlWithdrawRequest req, dynamic hint});
+
+  Future<String?> crateBindingBindingBreezServicesLspId({required BindingBreezServices that, dynamic hint});
+
+  Future<LspInformation> crateBindingBindingBreezServicesLspInfo(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<MaxReverseSwapAmountResponse> crateBindingBindingBreezServicesMaxReverseSwapAmount(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<NodeCredentials?> crateBindingBindingBreezServicesNodeCredentials(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<NodeState> crateBindingBindingBreezServicesNodeInfo(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<OnchainPaymentLimitsResponse> crateBindingBindingBreezServicesOnchainPaymentLimits(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<OpenChannelFeeResponse> crateBindingBindingBreezServicesOpenChannelFee(
+      {required BindingBreezServices that, required OpenChannelFeeRequest req, dynamic hint});
+
+  Future<PayOnchainResponse> crateBindingBindingBreezServicesPayOnchain(
+      {required BindingBreezServices that, required PayOnchainRequest req, dynamic hint});
+
+  Future<Payment?> crateBindingBindingBreezServicesPaymentByHash(
+      {required BindingBreezServices that, required String hash, dynamic hint});
+
+  Future<PrepareOnchainPaymentResponse> crateBindingBindingBreezServicesPrepareOnchainPayment(
+      {required BindingBreezServices that, required PrepareOnchainPaymentRequest req, dynamic hint});
+
+  Future<PrepareRedeemOnchainFundsResponse> crateBindingBindingBreezServicesPrepareRedeemOnchainFunds(
+      {required BindingBreezServices that, required PrepareRedeemOnchainFundsRequest req, dynamic hint});
+
+  Future<PrepareRefundResponse> crateBindingBindingBreezServicesPrepareRefund(
+      {required BindingBreezServices that, required PrepareRefundRequest req, dynamic hint});
+
+  Future<SwapInfo> crateBindingBindingBreezServicesReceiveOnchain(
+      {required BindingBreezServices that, required ReceiveOnchainRequest req, dynamic hint});
+
+  Future<ReceivePaymentResponse> crateBindingBindingBreezServicesReceivePayment(
+      {required BindingBreezServices that, required ReceivePaymentRequest req, dynamic hint});
+
+  Future<RecommendedFees> crateBindingBindingBreezServicesRecommendedFees(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<RedeemOnchainFundsResponse> crateBindingBindingBreezServicesRedeemOnchainFunds(
+      {required BindingBreezServices that, required RedeemOnchainFundsRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesRedeemSwap(
+      {required BindingBreezServices that, required String swapAddress, dynamic hint});
+
+  Future<RefundResponse> crateBindingBindingBreezServicesRefund(
+      {required BindingBreezServices that, required RefundRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesRegisterWebhook(
+      {required BindingBreezServices that, required String webhookUrl, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesReportIssue(
+      {required BindingBreezServices that, required ReportIssueRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesRescanSwaps(
+      {required BindingBreezServices that, dynamic hint});
+
+  Future<SendOnchainResponse> crateBindingBindingBreezServicesSendOnchain(
+      {required BindingBreezServices that, required SendOnchainRequest req, dynamic hint});
+
+  Future<SendPaymentResponse> crateBindingBindingBreezServicesSendPayment(
+      {required BindingBreezServices that, required SendPaymentRequest req, dynamic hint});
+
+  Future<SendPaymentResponse> crateBindingBindingBreezServicesSendSpontaneousPayment(
+      {required BindingBreezServices that, required SendSpontaneousPaymentRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesSetPaymentMetadata(
+      {required BindingBreezServices that, required String hash, required String metadata, dynamic hint});
+
+  Future<SignMessageResponse> crateBindingBindingBreezServicesSignMessage(
+      {required BindingBreezServices that, required SignMessageRequest req, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesSync({required BindingBreezServices that, dynamic hint});
+
+  Future<void> crateBindingBindingBreezServicesUnregisterWebhook(
+      {required BindingBreezServices that, required String webhookUrl, dynamic hint});
 
   Stream<BreezEvent> crateBindingBreezEventsStream({dynamic hint});
 
   Stream<LogEntry> crateBindingBreezLogStream({dynamic hint});
 
-  Future<BuyBitcoinResponse> crateBindingBuyBitcoin({required BuyBitcoinRequest req, dynamic hint});
-
-  Future<CheckMessageResponse> crateBindingCheckMessage({required CheckMessageRequest req, dynamic hint});
-
-  Future<void> crateBindingCloseLspChannels({dynamic hint});
-
-  Future<void> crateBindingConfigureNode({required ConfigureNodeRequest req, dynamic hint});
-
-  Future<void> crateBindingConnect({required ConnectRequest req, dynamic hint});
-
-  Future<void> crateBindingConnectLsp({required String lspId, dynamic hint});
+  Future<BindingBreezServices> crateBindingConnect({required ConnectRequest req, dynamic hint});
 
   Future<Config> crateBindingDefaultConfig(
       {required EnvironmentType envType,
@@ -97,112 +233,21 @@ abstract class BreezSdkBindingsApi extends BaseApi {
       required NodeConfig nodeConfig,
       dynamic hint});
 
-  Future<void> crateBindingDisconnect({dynamic hint});
-
-  Future<String> crateBindingExecuteCommand({required String command, dynamic hint});
-
-  Future<List<Rate>> crateBindingFetchFiatRates({dynamic hint});
-
-  Future<LspInformation?> crateBindingFetchLspInfo({required String id, dynamic hint});
-
-  Future<ReverseSwapPairInfo> crateBindingFetchReverseSwapFees(
-      {required ReverseSwapFeesRequest req, dynamic hint});
-
-  Future<String> crateBindingGenerateDiagnosticData({dynamic hint});
-
-  Future<List<ReverseSwapInfo>> crateBindingInProgressOnchainPayments({dynamic hint});
-
-  Future<List<ReverseSwapInfo>> crateBindingInProgressReverseSwaps({dynamic hint});
-
-  Future<SwapInfo?> crateBindingInProgressSwap({dynamic hint});
-
-  Future<bool> crateBindingIsInitialized({dynamic hint});
-
-  Future<List<FiatCurrency>> crateBindingListFiatCurrencies({dynamic hint});
-
-  Future<List<LspInformation>> crateBindingListLsps({dynamic hint});
-
-  Future<List<Payment>> crateBindingListPayments({required ListPaymentsRequest req, dynamic hint});
-
-  Future<List<SwapInfo>> crateBindingListRefundables({dynamic hint});
-
-  Future<LnUrlCallbackStatus> crateBindingLnurlAuth({required LnUrlAuthRequestData reqData, dynamic hint});
-
-  Future<LnUrlPayResult> crateBindingLnurlPay({required LnUrlPayRequest req, dynamic hint});
-
-  Future<LnUrlWithdrawResult> crateBindingLnurlWithdraw({required LnUrlWithdrawRequest req, dynamic hint});
-
-  Future<String?> crateBindingLspId({dynamic hint});
-
-  Future<LspInformation> crateBindingLspInfo({dynamic hint});
-
-  Future<MaxReverseSwapAmountResponse> crateBindingMaxReverseSwapAmount({dynamic hint});
-
   Future<Uint8List> crateBindingMnemonicToSeed({required String phrase, dynamic hint});
-
-  Future<NodeCredentials?> crateBindingNodeCredentials({dynamic hint});
-
-  Future<NodeState> crateBindingNodeInfo({dynamic hint});
-
-  Future<OnchainPaymentLimitsResponse> crateBindingOnchainPaymentLimits({dynamic hint});
-
-  Future<OpenChannelFeeResponse> crateBindingOpenChannelFee(
-      {required OpenChannelFeeRequest req, dynamic hint});
 
   Future<InputType> crateBindingParseInput({required String input, dynamic hint});
 
   Future<LNInvoice> crateBindingParseInvoice({required String invoice, dynamic hint});
 
-  Future<PayOnchainResponse> crateBindingPayOnchain({required PayOnchainRequest req, dynamic hint});
-
-  Future<Payment?> crateBindingPaymentByHash({required String hash, dynamic hint});
-
-  Future<PrepareOnchainPaymentResponse> crateBindingPrepareOnchainPayment(
-      {required PrepareOnchainPaymentRequest req, dynamic hint});
-
-  Future<PrepareRedeemOnchainFundsResponse> crateBindingPrepareRedeemOnchainFunds(
-      {required PrepareRedeemOnchainFundsRequest req, dynamic hint});
-
-  Future<PrepareRefundResponse> crateBindingPrepareRefund({required PrepareRefundRequest req, dynamic hint});
-
-  Future<SwapInfo> crateBindingReceiveOnchain({required ReceiveOnchainRequest req, dynamic hint});
-
-  Future<ReceivePaymentResponse> crateBindingReceivePayment(
-      {required ReceivePaymentRequest req, dynamic hint});
-
-  Future<RecommendedFees> crateBindingRecommendedFees({dynamic hint});
-
-  Future<RedeemOnchainFundsResponse> crateBindingRedeemOnchainFunds(
-      {required RedeemOnchainFundsRequest req, dynamic hint});
-
-  Future<void> crateBindingRedeemSwap({required String swapAddress, dynamic hint});
-
-  Future<RefundResponse> crateBindingRefund({required RefundRequest req, dynamic hint});
-
-  Future<void> crateBindingRegisterWebhook({required String webhookUrl, dynamic hint});
-
-  Future<void> crateBindingReportIssue({required ReportIssueRequest req, dynamic hint});
-
-  Future<void> crateBindingRescanSwaps({dynamic hint});
-
-  Future<SendOnchainResponse> crateBindingSendOnchain({required SendOnchainRequest req, dynamic hint});
-
-  Future<SendPaymentResponse> crateBindingSendPayment({required SendPaymentRequest req, dynamic hint});
-
-  Future<SendPaymentResponse> crateBindingSendSpontaneousPayment(
-      {required SendSpontaneousPaymentRequest req, dynamic hint});
-
   Future<ServiceHealthCheckResponse> crateBindingServiceHealthCheck({required String apiKey, dynamic hint});
-
-  Future<void> crateBindingSetPaymentMetadata({required String hash, required String metadata, dynamic hint});
-
-  Future<SignMessageResponse> crateBindingSignMessage({required SignMessageRequest req, dynamic hint});
 
   Future<StaticBackupResponse> crateBindingStaticBackup({required StaticBackupRequest req, dynamic hint});
 
-  Future<void> crateBindingSync({dynamic hint});
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_BindingBreezServices;
 
-  Future<void> crateBindingUnregisterWebhook({required String webhookUrl, dynamic hint});
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_BindingBreezServices;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_BindingBreezServicesPtr;
 }
 
 class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements BreezSdkBindingsApi {
@@ -214,47 +259,1360 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   });
 
   @override
-  Future<void> crateBindingBackup({dynamic hint}) {
+  Future<void> crateBindingBindingBreezServicesBackup({required BindingBreezServices that, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        return wire.wire__crate__binding__backup(port_);
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_backup(port_, arg0);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_unit,
         decodeErrorData: dco_decode_AnyhowException,
       ),
-      constMeta: kCrateBindingBackupConstMeta,
-      argValues: [],
+      constMeta: kCrateBindingBindingBreezServicesBackupConstMeta,
+      argValues: [that],
       apiImpl: this,
       hint: hint,
     ));
   }
 
-  TaskConstMeta get kCrateBindingBackupConstMeta => const TaskConstMeta(
-        debugName: "backup",
-        argNames: [],
+  TaskConstMeta get kCrateBindingBindingBreezServicesBackupConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_backup",
+        argNames: ["that"],
       );
 
   @override
-  Future<BackupStatus> crateBindingBackupStatus({dynamic hint}) {
+  Future<BackupStatus> crateBindingBindingBreezServicesBackupStatus(
+      {required BindingBreezServices that, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
-        return wire.wire__crate__binding__backup_status(port_);
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_backup_status(port_, arg0);
       },
       codec: DcoCodec(
         decodeSuccessData: dco_decode_backup_status,
         decodeErrorData: dco_decode_AnyhowException,
       ),
-      constMeta: kCrateBindingBackupStatusConstMeta,
-      argValues: [],
+      constMeta: kCrateBindingBindingBreezServicesBackupStatusConstMeta,
+      argValues: [that],
       apiImpl: this,
       hint: hint,
     ));
   }
 
-  TaskConstMeta get kCrateBindingBackupStatusConstMeta => const TaskConstMeta(
-        debugName: "backup_status",
-        argNames: [],
+  TaskConstMeta get kCrateBindingBindingBreezServicesBackupStatusConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_backup_status",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<BuyBitcoinResponse> crateBindingBindingBreezServicesBuyBitcoin(
+      {required BindingBreezServices that, required BuyBitcoinRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_buy_bitcoin_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_buy_bitcoin(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_buy_bitcoin_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesBuyBitcoinConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesBuyBitcoinConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_buy_bitcoin",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<CheckMessageResponse> crateBindingBindingBreezServicesCheckMessage(
+      {required BindingBreezServices that, required CheckMessageRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_check_message_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_check_message(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_check_message_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesCheckMessageConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesCheckMessageConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_check_message",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesCloseLspChannels(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_close_lsp_channels(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesCloseLspChannelsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesCloseLspChannelsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_close_lsp_channels",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesConfigureNode(
+      {required BindingBreezServices that, required ConfigureNodeRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_configure_node_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_configure_node(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesConfigureNodeConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesConfigureNodeConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_configure_node",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesConnectLsp(
+      {required BindingBreezServices that, required String lspId, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(lspId);
+        return wire.wire__crate__binding__BindingBreezServices_connect_lsp(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesConnectLspConstMeta,
+      argValues: [that, lspId],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesConnectLspConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_connect_lsp",
+        argNames: ["that", "lspId"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesDisconnect(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_disconnect(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesDisconnectConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesDisconnectConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_disconnect",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<String> crateBindingBindingBreezServicesExecuteCommand(
+      {required BindingBreezServices that, required String command, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(command);
+        return wire.wire__crate__binding__BindingBreezServices_execute_command(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_String,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesExecuteCommandConstMeta,
+      argValues: [that, command],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesExecuteCommandConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_execute_command",
+        argNames: ["that", "command"],
+      );
+
+  @override
+  Future<List<Rate>> crateBindingBindingBreezServicesFetchFiatRates(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_fetch_fiat_rates(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_rate,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesFetchFiatRatesConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesFetchFiatRatesConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_fetch_fiat_rates",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<LspInformation?> crateBindingBindingBreezServicesFetchLspInfo(
+      {required BindingBreezServices that, required String id, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(id);
+        return wire.wire__crate__binding__BindingBreezServices_fetch_lsp_info(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_opt_box_autoadd_lsp_information,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesFetchLspInfoConstMeta,
+      argValues: [that, id],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesFetchLspInfoConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_fetch_lsp_info",
+        argNames: ["that", "id"],
+      );
+
+  @override
+  Future<ReverseSwapPairInfo> crateBindingBindingBreezServicesFetchReverseSwapFees(
+      {required BindingBreezServices that, required ReverseSwapFeesRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_reverse_swap_fees_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_reverse_swap_pair_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesFetchReverseSwapFeesConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesFetchReverseSwapFeesConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_fetch_reverse_swap_fees",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<String> crateBindingBindingBreezServicesGenerateDiagnosticData(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_generate_diagnostic_data(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_String,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesGenerateDiagnosticDataConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesGenerateDiagnosticDataConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_generate_diagnostic_data",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<ReverseSwapInfo>> crateBindingBindingBreezServicesInProgressOnchainPayments(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_in_progress_onchain_payments(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_reverse_swap_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesInProgressOnchainPaymentsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesInProgressOnchainPaymentsConstMeta =>
+      const TaskConstMeta(
+        debugName: "BindingBreezServices_in_progress_onchain_payments",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<ReverseSwapInfo>> crateBindingBindingBreezServicesInProgressReverseSwaps(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_reverse_swap_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesInProgressReverseSwapsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesInProgressReverseSwapsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_in_progress_reverse_swaps",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<SwapInfo?> crateBindingBindingBreezServicesInProgressSwap(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_in_progress_swap(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_opt_box_autoadd_swap_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesInProgressSwapConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesInProgressSwapConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_in_progress_swap",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<FiatCurrency>> crateBindingBindingBreezServicesListFiatCurrencies(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_list_fiat_currencies(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_fiat_currency,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesListFiatCurrenciesConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesListFiatCurrenciesConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_list_fiat_currencies",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<LspInformation>> crateBindingBindingBreezServicesListLsps(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_list_lsps(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_lsp_information,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesListLspsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesListLspsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_list_lsps",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<Payment>> crateBindingBindingBreezServicesListPayments(
+      {required BindingBreezServices that, required ListPaymentsRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_list_payments_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_list_payments(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_payment,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesListPaymentsConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesListPaymentsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_list_payments",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<List<SwapInfo>> crateBindingBindingBreezServicesListRefundables(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_list_refundables(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_list_swap_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesListRefundablesConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesListRefundablesConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_list_refundables",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<LnUrlCallbackStatus> crateBindingBindingBreezServicesLnurlAuth(
+      {required BindingBreezServices that, required LnUrlAuthRequestData reqData, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_ln_url_auth_request_data(reqData);
+        return wire.wire__crate__binding__BindingBreezServices_lnurl_auth(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_ln_url_callback_status,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesLnurlAuthConstMeta,
+      argValues: [that, reqData],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesLnurlAuthConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_lnurl_auth",
+        argNames: ["that", "reqData"],
+      );
+
+  @override
+  Future<LnUrlPayResult> crateBindingBindingBreezServicesLnurlPay(
+      {required BindingBreezServices that, required LnUrlPayRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_ln_url_pay_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_lnurl_pay(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_ln_url_pay_result,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesLnurlPayConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesLnurlPayConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_lnurl_pay",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<LnUrlWithdrawResult> crateBindingBindingBreezServicesLnurlWithdraw(
+      {required BindingBreezServices that, required LnUrlWithdrawRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_ln_url_withdraw_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_lnurl_withdraw(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_ln_url_withdraw_result,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesLnurlWithdrawConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesLnurlWithdrawConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_lnurl_withdraw",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<String?> crateBindingBindingBreezServicesLspId({required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_lsp_id(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_opt_String,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesLspIdConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesLspIdConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_lsp_id",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<LspInformation> crateBindingBindingBreezServicesLspInfo(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_lsp_info(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_lsp_information,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesLspInfoConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesLspInfoConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_lsp_info",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<MaxReverseSwapAmountResponse> crateBindingBindingBreezServicesMaxReverseSwapAmount(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_max_reverse_swap_amount(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_max_reverse_swap_amount_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesMaxReverseSwapAmountConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesMaxReverseSwapAmountConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_max_reverse_swap_amount",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<NodeCredentials?> crateBindingBindingBreezServicesNodeCredentials(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_node_credentials(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_opt_box_autoadd_node_credentials,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesNodeCredentialsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesNodeCredentialsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_node_credentials",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<NodeState> crateBindingBindingBreezServicesNodeInfo(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_node_info(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_node_state,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesNodeInfoConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesNodeInfoConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_node_info",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<OnchainPaymentLimitsResponse> crateBindingBindingBreezServicesOnchainPaymentLimits(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_onchain_payment_limits(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_onchain_payment_limits_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesOnchainPaymentLimitsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesOnchainPaymentLimitsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_onchain_payment_limits",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<OpenChannelFeeResponse> crateBindingBindingBreezServicesOpenChannelFee(
+      {required BindingBreezServices that, required OpenChannelFeeRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_open_channel_fee_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_open_channel_fee(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_open_channel_fee_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesOpenChannelFeeConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesOpenChannelFeeConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_open_channel_fee",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<PayOnchainResponse> crateBindingBindingBreezServicesPayOnchain(
+      {required BindingBreezServices that, required PayOnchainRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_pay_onchain_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_pay_onchain(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_pay_onchain_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesPayOnchainConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesPayOnchainConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_pay_onchain",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<Payment?> crateBindingBindingBreezServicesPaymentByHash(
+      {required BindingBreezServices that, required String hash, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(hash);
+        return wire.wire__crate__binding__BindingBreezServices_payment_by_hash(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_opt_box_autoadd_payment,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesPaymentByHashConstMeta,
+      argValues: [that, hash],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesPaymentByHashConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_payment_by_hash",
+        argNames: ["that", "hash"],
+      );
+
+  @override
+  Future<PrepareOnchainPaymentResponse> crateBindingBindingBreezServicesPrepareOnchainPayment(
+      {required BindingBreezServices that, required PrepareOnchainPaymentRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_prepare_onchain_payment_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_prepare_onchain_payment(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_prepare_onchain_payment_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesPrepareOnchainPaymentConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesPrepareOnchainPaymentConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_prepare_onchain_payment",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<PrepareRedeemOnchainFundsResponse> crateBindingBindingBreezServicesPrepareRedeemOnchainFunds(
+      {required BindingBreezServices that, required PrepareRedeemOnchainFundsRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_prepare_redeem_onchain_funds_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds(
+            port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_prepare_redeem_onchain_funds_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesPrepareRedeemOnchainFundsConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesPrepareRedeemOnchainFundsConstMeta =>
+      const TaskConstMeta(
+        debugName: "BindingBreezServices_prepare_redeem_onchain_funds",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<PrepareRefundResponse> crateBindingBindingBreezServicesPrepareRefund(
+      {required BindingBreezServices that, required PrepareRefundRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_prepare_refund_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_prepare_refund(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_prepare_refund_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesPrepareRefundConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesPrepareRefundConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_prepare_refund",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<SwapInfo> crateBindingBindingBreezServicesReceiveOnchain(
+      {required BindingBreezServices that, required ReceiveOnchainRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_receive_onchain_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_receive_onchain(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_swap_info,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesReceiveOnchainConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesReceiveOnchainConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_receive_onchain",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<ReceivePaymentResponse> crateBindingBindingBreezServicesReceivePayment(
+      {required BindingBreezServices that, required ReceivePaymentRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_receive_payment_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_receive_payment(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_receive_payment_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesReceivePaymentConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesReceivePaymentConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_receive_payment",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<RecommendedFees> crateBindingBindingBreezServicesRecommendedFees(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_recommended_fees(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_recommended_fees,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRecommendedFeesConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRecommendedFeesConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_recommended_fees",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<RedeemOnchainFundsResponse> crateBindingBindingBreezServicesRedeemOnchainFunds(
+      {required BindingBreezServices that, required RedeemOnchainFundsRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_redeem_onchain_funds_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_redeem_onchain_funds(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_redeem_onchain_funds_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRedeemOnchainFundsConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRedeemOnchainFundsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_redeem_onchain_funds",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesRedeemSwap(
+      {required BindingBreezServices that, required String swapAddress, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(swapAddress);
+        return wire.wire__crate__binding__BindingBreezServices_redeem_swap(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRedeemSwapConstMeta,
+      argValues: [that, swapAddress],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRedeemSwapConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_redeem_swap",
+        argNames: ["that", "swapAddress"],
+      );
+
+  @override
+  Future<RefundResponse> crateBindingBindingBreezServicesRefund(
+      {required BindingBreezServices that, required RefundRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_refund_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_refund(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_refund_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRefundConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRefundConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_refund",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesRegisterWebhook(
+      {required BindingBreezServices that, required String webhookUrl, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(webhookUrl);
+        return wire.wire__crate__binding__BindingBreezServices_register_webhook(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRegisterWebhookConstMeta,
+      argValues: [that, webhookUrl],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRegisterWebhookConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_register_webhook",
+        argNames: ["that", "webhookUrl"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesReportIssue(
+      {required BindingBreezServices that, required ReportIssueRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_report_issue_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_report_issue(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesReportIssueConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesReportIssueConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_report_issue",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesRescanSwaps(
+      {required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_rescan_swaps(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesRescanSwapsConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesRescanSwapsConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_rescan_swaps",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<SendOnchainResponse> crateBindingBindingBreezServicesSendOnchain(
+      {required BindingBreezServices that, required SendOnchainRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_send_onchain_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_send_onchain(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_send_onchain_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSendOnchainConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSendOnchainConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_send_onchain",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<SendPaymentResponse> crateBindingBindingBreezServicesSendPayment(
+      {required BindingBreezServices that, required SendPaymentRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_send_payment_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_send_payment(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_send_payment_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSendPaymentConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSendPaymentConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_send_payment",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<SendPaymentResponse> crateBindingBindingBreezServicesSendSpontaneousPayment(
+      {required BindingBreezServices that, required SendSpontaneousPaymentRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_send_spontaneous_payment_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_send_spontaneous_payment(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_send_payment_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSendSpontaneousPaymentConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSendSpontaneousPaymentConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_send_spontaneous_payment",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesSetPaymentMetadata(
+      {required BindingBreezServices that, required String hash, required String metadata, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(hash);
+        var arg2 = cst_encode_String(metadata);
+        return wire.wire__crate__binding__BindingBreezServices_set_payment_metadata(port_, arg0, arg1, arg2);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSetPaymentMetadataConstMeta,
+      argValues: [that, hash, metadata],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSetPaymentMetadataConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_set_payment_metadata",
+        argNames: ["that", "hash", "metadata"],
+      );
+
+  @override
+  Future<SignMessageResponse> crateBindingBindingBreezServicesSignMessage(
+      {required BindingBreezServices that, required SignMessageRequest req, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_box_autoadd_sign_message_request(req);
+        return wire.wire__crate__binding__BindingBreezServices_sign_message(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_sign_message_response,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSignMessageConstMeta,
+      argValues: [that, req],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSignMessageConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_sign_message",
+        argNames: ["that", "req"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesSync({required BindingBreezServices that, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        return wire.wire__crate__binding__BindingBreezServices_sync(port_, arg0);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesSyncConstMeta,
+      argValues: [that],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesSyncConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_sync",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<void> crateBindingBindingBreezServicesUnregisterWebhook(
+      {required BindingBreezServices that, required String webhookUrl, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 =
+            cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+                that);
+        var arg1 = cst_encode_String(webhookUrl);
+        return wire.wire__crate__binding__BindingBreezServices_unregister_webhook(port_, arg0, arg1);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_unit,
+        decodeErrorData: dco_decode_AnyhowException,
+      ),
+      constMeta: kCrateBindingBindingBreezServicesUnregisterWebhookConstMeta,
+      argValues: [that, webhookUrl],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kCrateBindingBindingBreezServicesUnregisterWebhookConstMeta => const TaskConstMeta(
+        debugName: "BindingBreezServices_unregister_webhook",
+        argNames: ["that", "webhookUrl"],
       );
 
   @override
@@ -308,106 +1666,16 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
       );
 
   @override
-  Future<BuyBitcoinResponse> crateBindingBuyBitcoin({required BuyBitcoinRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_buy_bitcoin_request(req);
-        return wire.wire__crate__binding__buy_bitcoin(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_buy_bitcoin_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingBuyBitcoinConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingBuyBitcoinConstMeta => const TaskConstMeta(
-        debugName: "buy_bitcoin",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<CheckMessageResponse> crateBindingCheckMessage({required CheckMessageRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_check_message_request(req);
-        return wire.wire__crate__binding__check_message(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_check_message_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingCheckMessageConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingCheckMessageConstMeta => const TaskConstMeta(
-        debugName: "check_message",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingCloseLspChannels({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__close_lsp_channels(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingCloseLspChannelsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingCloseLspChannelsConstMeta => const TaskConstMeta(
-        debugName: "close_lsp_channels",
-        argNames: [],
-      );
-
-  @override
-  Future<void> crateBindingConfigureNode({required ConfigureNodeRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_configure_node_request(req);
-        return wire.wire__crate__binding__configure_node(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingConfigureNodeConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingConfigureNodeConstMeta => const TaskConstMeta(
-        debugName: "configure_node",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingConnect({required ConnectRequest req, dynamic hint}) {
+  Future<BindingBreezServices> crateBindingConnect({required ConnectRequest req, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         var arg0 = cst_encode_box_autoadd_connect_request(req);
         return wire.wire__crate__binding__connect(port_, arg0);
       },
       codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
+        decodeSuccessData:
+            dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices,
+        decodeErrorData: dco_decode_connect_error,
       ),
       constMeta: kCrateBindingConnectConstMeta,
       argValues: [req],
@@ -419,29 +1687,6 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   TaskConstMeta get kCrateBindingConnectConstMeta => const TaskConstMeta(
         debugName: "connect",
         argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingConnectLsp({required String lspId, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(lspId);
-        return wire.wire__crate__binding__connect_lsp(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingConnectLspConstMeta,
-      argValues: [lspId],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingConnectLspConstMeta => const TaskConstMeta(
-        debugName: "connect_lsp",
-        argNames: ["lspId"],
       );
 
   @override
@@ -474,454 +1719,6 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
       );
 
   @override
-  Future<void> crateBindingDisconnect({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__disconnect(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingDisconnectConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingDisconnectConstMeta => const TaskConstMeta(
-        debugName: "disconnect",
-        argNames: [],
-      );
-
-  @override
-  Future<String> crateBindingExecuteCommand({required String command, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(command);
-        return wire.wire__crate__binding__execute_command(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_String,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingExecuteCommandConstMeta,
-      argValues: [command],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingExecuteCommandConstMeta => const TaskConstMeta(
-        debugName: "execute_command",
-        argNames: ["command"],
-      );
-
-  @override
-  Future<List<Rate>> crateBindingFetchFiatRates({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__fetch_fiat_rates(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_rate,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingFetchFiatRatesConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingFetchFiatRatesConstMeta => const TaskConstMeta(
-        debugName: "fetch_fiat_rates",
-        argNames: [],
-      );
-
-  @override
-  Future<LspInformation?> crateBindingFetchLspInfo({required String id, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(id);
-        return wire.wire__crate__binding__fetch_lsp_info(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_opt_box_autoadd_lsp_information,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingFetchLspInfoConstMeta,
-      argValues: [id],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingFetchLspInfoConstMeta => const TaskConstMeta(
-        debugName: "fetch_lsp_info",
-        argNames: ["id"],
-      );
-
-  @override
-  Future<ReverseSwapPairInfo> crateBindingFetchReverseSwapFees(
-      {required ReverseSwapFeesRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_reverse_swap_fees_request(req);
-        return wire.wire__crate__binding__fetch_reverse_swap_fees(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_reverse_swap_pair_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingFetchReverseSwapFeesConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingFetchReverseSwapFeesConstMeta => const TaskConstMeta(
-        debugName: "fetch_reverse_swap_fees",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<String> crateBindingGenerateDiagnosticData({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__generate_diagnostic_data(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_String,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingGenerateDiagnosticDataConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingGenerateDiagnosticDataConstMeta => const TaskConstMeta(
-        debugName: "generate_diagnostic_data",
-        argNames: [],
-      );
-
-  @override
-  Future<List<ReverseSwapInfo>> crateBindingInProgressOnchainPayments({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__in_progress_onchain_payments(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_reverse_swap_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingInProgressOnchainPaymentsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingInProgressOnchainPaymentsConstMeta => const TaskConstMeta(
-        debugName: "in_progress_onchain_payments",
-        argNames: [],
-      );
-
-  @override
-  Future<List<ReverseSwapInfo>> crateBindingInProgressReverseSwaps({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__in_progress_reverse_swaps(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_reverse_swap_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingInProgressReverseSwapsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingInProgressReverseSwapsConstMeta => const TaskConstMeta(
-        debugName: "in_progress_reverse_swaps",
-        argNames: [],
-      );
-
-  @override
-  Future<SwapInfo?> crateBindingInProgressSwap({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__in_progress_swap(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_opt_box_autoadd_swap_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingInProgressSwapConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingInProgressSwapConstMeta => const TaskConstMeta(
-        debugName: "in_progress_swap",
-        argNames: [],
-      );
-
-  @override
-  Future<bool> crateBindingIsInitialized({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__is_initialized(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_bool,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateBindingIsInitializedConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingIsInitializedConstMeta => const TaskConstMeta(
-        debugName: "is_initialized",
-        argNames: [],
-      );
-
-  @override
-  Future<List<FiatCurrency>> crateBindingListFiatCurrencies({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__list_fiat_currencies(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_fiat_currency,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingListFiatCurrenciesConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingListFiatCurrenciesConstMeta => const TaskConstMeta(
-        debugName: "list_fiat_currencies",
-        argNames: [],
-      );
-
-  @override
-  Future<List<LspInformation>> crateBindingListLsps({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__list_lsps(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_lsp_information,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingListLspsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingListLspsConstMeta => const TaskConstMeta(
-        debugName: "list_lsps",
-        argNames: [],
-      );
-
-  @override
-  Future<List<Payment>> crateBindingListPayments({required ListPaymentsRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_list_payments_request(req);
-        return wire.wire__crate__binding__list_payments(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_payment,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingListPaymentsConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingListPaymentsConstMeta => const TaskConstMeta(
-        debugName: "list_payments",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<List<SwapInfo>> crateBindingListRefundables({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__list_refundables(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_list_swap_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingListRefundablesConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingListRefundablesConstMeta => const TaskConstMeta(
-        debugName: "list_refundables",
-        argNames: [],
-      );
-
-  @override
-  Future<LnUrlCallbackStatus> crateBindingLnurlAuth({required LnUrlAuthRequestData reqData, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_ln_url_auth_request_data(reqData);
-        return wire.wire__crate__binding__lnurl_auth(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_ln_url_callback_status,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingLnurlAuthConstMeta,
-      argValues: [reqData],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingLnurlAuthConstMeta => const TaskConstMeta(
-        debugName: "lnurl_auth",
-        argNames: ["reqData"],
-      );
-
-  @override
-  Future<LnUrlPayResult> crateBindingLnurlPay({required LnUrlPayRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_ln_url_pay_request(req);
-        return wire.wire__crate__binding__lnurl_pay(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_ln_url_pay_result,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingLnurlPayConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingLnurlPayConstMeta => const TaskConstMeta(
-        debugName: "lnurl_pay",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<LnUrlWithdrawResult> crateBindingLnurlWithdraw({required LnUrlWithdrawRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_ln_url_withdraw_request(req);
-        return wire.wire__crate__binding__lnurl_withdraw(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_ln_url_withdraw_result,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingLnurlWithdrawConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingLnurlWithdrawConstMeta => const TaskConstMeta(
-        debugName: "lnurl_withdraw",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<String?> crateBindingLspId({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__lsp_id(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_opt_String,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingLspIdConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingLspIdConstMeta => const TaskConstMeta(
-        debugName: "lsp_id",
-        argNames: [],
-      );
-
-  @override
-  Future<LspInformation> crateBindingLspInfo({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__lsp_info(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_lsp_information,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingLspInfoConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingLspInfoConstMeta => const TaskConstMeta(
-        debugName: "lsp_info",
-        argNames: [],
-      );
-
-  @override
-  Future<MaxReverseSwapAmountResponse> crateBindingMaxReverseSwapAmount({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__max_reverse_swap_amount(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_max_reverse_swap_amount_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingMaxReverseSwapAmountConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingMaxReverseSwapAmountConstMeta => const TaskConstMeta(
-        debugName: "max_reverse_swap_amount",
-        argNames: [],
-      );
-
-  @override
   Future<Uint8List> crateBindingMnemonicToSeed({required String phrase, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -942,96 +1739,6 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   TaskConstMeta get kCrateBindingMnemonicToSeedConstMeta => const TaskConstMeta(
         debugName: "mnemonic_to_seed",
         argNames: ["phrase"],
-      );
-
-  @override
-  Future<NodeCredentials?> crateBindingNodeCredentials({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__node_credentials(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_opt_box_autoadd_node_credentials,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingNodeCredentialsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingNodeCredentialsConstMeta => const TaskConstMeta(
-        debugName: "node_credentials",
-        argNames: [],
-      );
-
-  @override
-  Future<NodeState> crateBindingNodeInfo({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__node_info(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_node_state,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingNodeInfoConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingNodeInfoConstMeta => const TaskConstMeta(
-        debugName: "node_info",
-        argNames: [],
-      );
-
-  @override
-  Future<OnchainPaymentLimitsResponse> crateBindingOnchainPaymentLimits({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__onchain_payment_limits(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_onchain_payment_limits_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingOnchainPaymentLimitsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingOnchainPaymentLimitsConstMeta => const TaskConstMeta(
-        debugName: "onchain_payment_limits",
-        argNames: [],
-      );
-
-  @override
-  Future<OpenChannelFeeResponse> crateBindingOpenChannelFee(
-      {required OpenChannelFeeRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_open_channel_fee_request(req);
-        return wire.wire__crate__binding__open_channel_fee(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_open_channel_fee_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingOpenChannelFeeConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingOpenChannelFeeConstMeta => const TaskConstMeta(
-        debugName: "open_channel_fee",
-        argNames: ["req"],
       );
 
   @override
@@ -1081,400 +1788,6 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
       );
 
   @override
-  Future<PayOnchainResponse> crateBindingPayOnchain({required PayOnchainRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_pay_onchain_request(req);
-        return wire.wire__crate__binding__pay_onchain(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_pay_onchain_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingPayOnchainConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingPayOnchainConstMeta => const TaskConstMeta(
-        debugName: "pay_onchain",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<Payment?> crateBindingPaymentByHash({required String hash, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(hash);
-        return wire.wire__crate__binding__payment_by_hash(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_opt_box_autoadd_payment,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingPaymentByHashConstMeta,
-      argValues: [hash],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingPaymentByHashConstMeta => const TaskConstMeta(
-        debugName: "payment_by_hash",
-        argNames: ["hash"],
-      );
-
-  @override
-  Future<PrepareOnchainPaymentResponse> crateBindingPrepareOnchainPayment(
-      {required PrepareOnchainPaymentRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_prepare_onchain_payment_request(req);
-        return wire.wire__crate__binding__prepare_onchain_payment(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_prepare_onchain_payment_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingPrepareOnchainPaymentConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingPrepareOnchainPaymentConstMeta => const TaskConstMeta(
-        debugName: "prepare_onchain_payment",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<PrepareRedeemOnchainFundsResponse> crateBindingPrepareRedeemOnchainFunds(
-      {required PrepareRedeemOnchainFundsRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_prepare_redeem_onchain_funds_request(req);
-        return wire.wire__crate__binding__prepare_redeem_onchain_funds(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_prepare_redeem_onchain_funds_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingPrepareRedeemOnchainFundsConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingPrepareRedeemOnchainFundsConstMeta => const TaskConstMeta(
-        debugName: "prepare_redeem_onchain_funds",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<PrepareRefundResponse> crateBindingPrepareRefund({required PrepareRefundRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_prepare_refund_request(req);
-        return wire.wire__crate__binding__prepare_refund(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_prepare_refund_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingPrepareRefundConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingPrepareRefundConstMeta => const TaskConstMeta(
-        debugName: "prepare_refund",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<SwapInfo> crateBindingReceiveOnchain({required ReceiveOnchainRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_receive_onchain_request(req);
-        return wire.wire__crate__binding__receive_onchain(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_swap_info,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingReceiveOnchainConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingReceiveOnchainConstMeta => const TaskConstMeta(
-        debugName: "receive_onchain",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<ReceivePaymentResponse> crateBindingReceivePayment(
-      {required ReceivePaymentRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_receive_payment_request(req);
-        return wire.wire__crate__binding__receive_payment(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_receive_payment_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingReceivePaymentConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingReceivePaymentConstMeta => const TaskConstMeta(
-        debugName: "receive_payment",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<RecommendedFees> crateBindingRecommendedFees({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__recommended_fees(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_recommended_fees,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRecommendedFeesConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRecommendedFeesConstMeta => const TaskConstMeta(
-        debugName: "recommended_fees",
-        argNames: [],
-      );
-
-  @override
-  Future<RedeemOnchainFundsResponse> crateBindingRedeemOnchainFunds(
-      {required RedeemOnchainFundsRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_redeem_onchain_funds_request(req);
-        return wire.wire__crate__binding__redeem_onchain_funds(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_redeem_onchain_funds_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRedeemOnchainFundsConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRedeemOnchainFundsConstMeta => const TaskConstMeta(
-        debugName: "redeem_onchain_funds",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingRedeemSwap({required String swapAddress, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(swapAddress);
-        return wire.wire__crate__binding__redeem_swap(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRedeemSwapConstMeta,
-      argValues: [swapAddress],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRedeemSwapConstMeta => const TaskConstMeta(
-        debugName: "redeem_swap",
-        argNames: ["swapAddress"],
-      );
-
-  @override
-  Future<RefundResponse> crateBindingRefund({required RefundRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_refund_request(req);
-        return wire.wire__crate__binding__refund(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_refund_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRefundConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRefundConstMeta => const TaskConstMeta(
-        debugName: "refund",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingRegisterWebhook({required String webhookUrl, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(webhookUrl);
-        return wire.wire__crate__binding__register_webhook(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRegisterWebhookConstMeta,
-      argValues: [webhookUrl],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRegisterWebhookConstMeta => const TaskConstMeta(
-        debugName: "register_webhook",
-        argNames: ["webhookUrl"],
-      );
-
-  @override
-  Future<void> crateBindingReportIssue({required ReportIssueRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_report_issue_request(req);
-        return wire.wire__crate__binding__report_issue(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingReportIssueConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingReportIssueConstMeta => const TaskConstMeta(
-        debugName: "report_issue",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<void> crateBindingRescanSwaps({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__rescan_swaps(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingRescanSwapsConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingRescanSwapsConstMeta => const TaskConstMeta(
-        debugName: "rescan_swaps",
-        argNames: [],
-      );
-
-  @override
-  Future<SendOnchainResponse> crateBindingSendOnchain({required SendOnchainRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_send_onchain_request(req);
-        return wire.wire__crate__binding__send_onchain(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_send_onchain_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSendOnchainConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingSendOnchainConstMeta => const TaskConstMeta(
-        debugName: "send_onchain",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<SendPaymentResponse> crateBindingSendPayment({required SendPaymentRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_send_payment_request(req);
-        return wire.wire__crate__binding__send_payment(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_send_payment_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSendPaymentConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingSendPaymentConstMeta => const TaskConstMeta(
-        debugName: "send_payment",
-        argNames: ["req"],
-      );
-
-  @override
-  Future<SendPaymentResponse> crateBindingSendSpontaneousPayment(
-      {required SendSpontaneousPaymentRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_send_spontaneous_payment_request(req);
-        return wire.wire__crate__binding__send_spontaneous_payment(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_send_payment_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSendSpontaneousPaymentConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingSendSpontaneousPaymentConstMeta => const TaskConstMeta(
-        debugName: "send_spontaneous_payment",
-        argNames: ["req"],
-      );
-
-  @override
   Future<ServiceHealthCheckResponse> crateBindingServiceHealthCheck({required String apiKey, dynamic hint}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -1495,54 +1808,6 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   TaskConstMeta get kCrateBindingServiceHealthCheckConstMeta => const TaskConstMeta(
         debugName: "service_health_check",
         argNames: ["apiKey"],
-      );
-
-  @override
-  Future<void> crateBindingSetPaymentMetadata(
-      {required String hash, required String metadata, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(hash);
-        var arg1 = cst_encode_String(metadata);
-        return wire.wire__crate__binding__set_payment_metadata(port_, arg0, arg1);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSetPaymentMetadataConstMeta,
-      argValues: [hash, metadata],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingSetPaymentMetadataConstMeta => const TaskConstMeta(
-        debugName: "set_payment_metadata",
-        argNames: ["hash", "metadata"],
-      );
-
-  @override
-  Future<SignMessageResponse> crateBindingSignMessage({required SignMessageRequest req, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_box_autoadd_sign_message_request(req);
-        return wire.wire__crate__binding__sign_message(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_sign_message_response,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSignMessageConstMeta,
-      argValues: [req],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingSignMessageConstMeta => const TaskConstMeta(
-        debugName: "sign_message",
-        argNames: ["req"],
       );
 
   @override
@@ -1568,55 +1833,40 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
         argNames: ["req"],
       );
 
-  @override
-  Future<void> crateBindingSync({dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        return wire.wire__crate__binding__sync(port_);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingSyncConstMeta,
-      argValues: [],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_BindingBreezServices => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices;
 
-  TaskConstMeta get kCrateBindingSyncConstMeta => const TaskConstMeta(
-        debugName: "sync",
-        argNames: [],
-      );
-
-  @override
-  Future<void> crateBindingUnregisterWebhook({required String webhookUrl, dynamic hint}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        var arg0 = cst_encode_String(webhookUrl);
-        return wire.wire__crate__binding__unregister_webhook(port_, arg0);
-      },
-      codec: DcoCodec(
-        decodeSuccessData: dco_decode_unit,
-        decodeErrorData: dco_decode_AnyhowException,
-      ),
-      constMeta: kCrateBindingUnregisterWebhookConstMeta,
-      argValues: [webhookUrl],
-      apiImpl: this,
-      hint: hint,
-    ));
-  }
-
-  TaskConstMeta get kCrateBindingUnregisterWebhookConstMeta => const TaskConstMeta(
-        debugName: "unregister_webhook",
-        argNames: ["webhookUrl"],
-      );
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_BindingBreezServices => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
+  }
+
+  @protected
+  BindingBreezServices
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return BindingBreezServices.dcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  BindingBreezServices
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return BindingBreezServices.dcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  BindingBreezServices
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return BindingBreezServices.dcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -2184,6 +2434,27 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
     return ConfigureNodeRequest(
       closeToAddress: dco_decode_opt_String(arr[0]),
     );
+  }
+
+  @protected
+  ConnectError dco_decode_connect_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return ConnectError_Generic(
+          err: dco_decode_String(raw[1]),
+        );
+      case 1:
+        return ConnectError_RestoreOnly(
+          err: dco_decode_String(raw[1]),
+        );
+      case 2:
+        return ConnectError_ServiceConnectivity(
+          err: dco_decode_String(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -3606,10 +3877,40 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   }
 
   @protected
+  BigInt dco_decode_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_String(deserializer);
     return AnyhowException(inner);
+  }
+
+  @protected
+  BindingBreezServices
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return BindingBreezServices.sseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  BindingBreezServices
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return BindingBreezServices.sseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  BindingBreezServices
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return BindingBreezServices.sseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
@@ -4171,6 +4472,26 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_closeToAddress = sse_decode_opt_String(deserializer);
     return ConfigureNodeRequest(closeToAddress: var_closeToAddress);
+  }
+
+  @protected
+  ConnectError sse_decode_connect_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_err = sse_decode_String(deserializer);
+        return ConnectError_Generic(err: var_err);
+      case 1:
+        var var_err = sse_decode_String(deserializer);
+        return ConnectError_RestoreOnly(err: var_err);
+      case 2:
+        var var_err = sse_decode_String(deserializer);
+        return ConnectError_ServiceConnectivity(err: var_err);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -5766,6 +6087,36 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   }
 
   @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
+  int cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+// ignore: invalid_use_of_internal_member
+    return raw.cstEncode(move: true);
+  }
+
+  @protected
+  int cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+// ignore: invalid_use_of_internal_member
+    return raw.cstEncode(move: false);
+  }
+
+  @protected
+  int cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+// ignore: invalid_use_of_internal_member
+    return raw.cstEncode();
+  }
+
+  @protected
   bool cst_encode_bool(bool raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw;
@@ -5877,6 +6228,28 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.message, serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          BindingBreezServices self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(self.sseEncode(move: true), serializer);
+  }
+
+  @protected
+  void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(self.sseEncode(move: false), serializer);
+  }
+
+  @protected
+  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(self.sseEncode(move: null), serializer);
   }
 
   @protected
@@ -6408,6 +6781,22 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
   void sse_encode_configure_node_request(ConfigureNodeRequest self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_opt_String(self.closeToAddress, serializer);
+  }
+
+  @protected
+  void sse_encode_connect_error(ConnectError self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case ConnectError_Generic(err: final err):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(err, serializer);
+      case ConnectError_RestoreOnly(err: final err):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(err, serializer);
+      case ConnectError_ServiceConnectivity(err: final err):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(err, serializer);
+    }
   }
 
   @protected
@@ -7649,5 +8038,11 @@ class BreezSdkBindingsApiImpl extends BreezSdkBindingsApiImplPlatform implements
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.description, serializer);
     sse_encode_String(self.url, serializer);
+  }
+
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
   }
 }

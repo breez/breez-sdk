@@ -9,6 +9,7 @@ import 'chain.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
+import 'error.dart';
 import 'fiat.dart';
 import 'frb_generated.dart';
 import 'input_parser.dart';
@@ -26,8 +27,26 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
     required super.portManager,
   });
 
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_BindingBreezServicesPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServicesPtr;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
+
+  @protected
+  BindingBreezServices
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw);
+
+  @protected
+  BindingBreezServices
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw);
+
+  @protected
+  BindingBreezServices
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          dynamic raw);
 
   @protected
   RustStreamSink<BreezEvent> dco_decode_StreamSink_breez_event_Dco(dynamic raw);
@@ -256,6 +275,9 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   ConfigureNodeRequest dco_decode_configure_node_request(dynamic raw);
+
+  @protected
+  ConnectError dco_decode_connect_error(dynamic raw);
 
   @protected
   ConnectRequest dco_decode_connect_request(dynamic raw);
@@ -666,7 +688,25 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
   UrlSuccessActionData dco_decode_url_success_action_data(dynamic raw);
 
   @protected
+  BigInt dco_decode_usize(dynamic raw);
+
+  @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+
+  @protected
+  BindingBreezServices
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer);
+
+  @protected
+  BindingBreezServices
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer);
+
+  @protected
+  BindingBreezServices
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          SseDeserializer deserializer);
 
   @protected
   RustStreamSink<BreezEvent> sse_decode_StreamSink_breez_event_Dco(SseDeserializer deserializer);
@@ -902,6 +942,9 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   ConfigureNodeRequest sse_decode_configure_node_request(SseDeserializer deserializer);
+
+  @protected
+  ConnectError sse_decode_connect_error(SseDeserializer deserializer);
 
   @protected
   ConnectRequest sse_decode_connect_request(SseDeserializer deserializer);
@@ -1312,6 +1355,9 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   UrlSuccessActionData sse_decode_url_success_action_data(SseDeserializer deserializer);
+
+  @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
   ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_AnyhowException(AnyhowException raw) {
@@ -2148,6 +2194,12 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
   }
 
   @protected
+  int cst_encode_usize(BigInt raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.toSigned(64).toInt();
+  }
+
+  @protected
   void cst_api_fill_to_wire_aes_success_action_data_decrypted(
       AesSuccessActionDataDecrypted apiObj, wire_cst_aes_success_action_data_decrypted wireObj) {
     wireObj.description = cst_encode_String(apiObj.description);
@@ -2616,6 +2668,28 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
   void cst_api_fill_to_wire_configure_node_request(
       ConfigureNodeRequest apiObj, wire_cst_configure_node_request wireObj) {
     wireObj.close_to_address = cst_encode_opt_String(apiObj.closeToAddress);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_connect_error(ConnectError apiObj, wire_cst_connect_error wireObj) {
+    if (apiObj is ConnectError_Generic) {
+      var pre_err = cst_encode_String(apiObj.err);
+      wireObj.tag = 0;
+      wireObj.kind.Generic.err = pre_err;
+      return;
+    }
+    if (apiObj is ConnectError_RestoreOnly) {
+      var pre_err = cst_encode_String(apiObj.err);
+      wireObj.tag = 1;
+      wireObj.kind.RestoreOnly.err = pre_err;
+      return;
+    }
+    if (apiObj is ConnectError_ServiceConnectivity) {
+      var pre_err = cst_encode_String(apiObj.err);
+      wireObj.tag = 2;
+      wireObj.kind.ServiceConnectivity.err = pre_err;
+      return;
+    }
   }
 
   @protected
@@ -3401,6 +3475,18 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
   }
 
   @protected
+  int cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw);
+
+  @protected
+  int cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw);
+
+  @protected
+  int cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices raw);
+
+  @protected
   bool cst_encode_bool(bool raw);
 
   @protected
@@ -3456,6 +3542,19 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+          BindingBreezServices self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      BindingBreezServices self, SseSerializer serializer);
 
   @protected
   void sse_encode_StreamSink_breez_event_Dco(RustStreamSink<BreezEvent> self, SseSerializer serializer);
@@ -3697,6 +3796,9 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   void sse_encode_configure_node_request(ConfigureNodeRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_connect_error(ConnectError self, SseSerializer serializer);
 
   @protected
   void sse_encode_connect_request(ConnectRequest self, SseSerializer serializer);
@@ -4115,6 +4217,9 @@ abstract class BreezSdkBindingsApiImplPlatform extends BaseApiImpl<BreezSdkBindi
 
   @protected
   void sse_encode_url_success_action_data(UrlSuccessActionData self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer);
 }
 
 // Section: wire_class
@@ -4153,32 +4258,954 @@ class BreezSdkBindingsWire implements BaseWire {
   late final _store_dart_post_cobject =
       _store_dart_post_cobjectPtr.asFunction<void Function(DartPostCObjectFnType)>();
 
-  void wire__crate__binding__backup(
+  void wire__crate__binding__BindingBreezServices_backup(
     int port_,
+    int that,
   ) {
-    return _wire__crate__binding__backup(
+    return _wire__crate__binding__BindingBreezServices_backup(
       port_,
+      that,
     );
   }
 
-  late final _wire__crate__binding__backupPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__backup');
-  late final _wire__crate__binding__backup =
-      _wire__crate__binding__backupPtr.asFunction<void Function(int)>();
+  late final _wire__crate__binding__BindingBreezServices_backupPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup');
+  late final _wire__crate__binding__BindingBreezServices_backup =
+      _wire__crate__binding__BindingBreezServices_backupPtr.asFunction<void Function(int, int)>();
 
-  void wire__crate__binding__backup_status(
+  void wire__crate__binding__BindingBreezServices_backup_status(
     int port_,
+    int that,
   ) {
-    return _wire__crate__binding__backup_status(
+    return _wire__crate__binding__BindingBreezServices_backup_status(
       port_,
+      that,
     );
   }
 
-  late final _wire__crate__binding__backup_statusPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__backup_status');
-  late final _wire__crate__binding__backup_status =
-      _wire__crate__binding__backup_statusPtr.asFunction<void Function(int)>();
+  late final _wire__crate__binding__BindingBreezServices_backup_statusPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup_status');
+  late final _wire__crate__binding__BindingBreezServices_backup_status =
+      _wire__crate__binding__BindingBreezServices_backup_statusPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_buy_bitcoin(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_buy_bitcoin_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_buy_bitcoin(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_buy_bitcoinPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_buy_bitcoin_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_buy_bitcoin');
+  late final _wire__crate__binding__BindingBreezServices_buy_bitcoin =
+      _wire__crate__binding__BindingBreezServices_buy_bitcoinPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_buy_bitcoin_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_check_message(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_check_message_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_check_message(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_check_messagePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_check_message_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_check_message');
+  late final _wire__crate__binding__BindingBreezServices_check_message =
+      _wire__crate__binding__BindingBreezServices_check_messagePtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_check_message_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_close_lsp_channels(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_close_lsp_channels(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_close_lsp_channelsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_close_lsp_channels');
+  late final _wire__crate__binding__BindingBreezServices_close_lsp_channels =
+      _wire__crate__binding__BindingBreezServices_close_lsp_channelsPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_configure_node(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_configure_node_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_configure_node(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_configure_nodePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_configure_node_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_configure_node');
+  late final _wire__crate__binding__BindingBreezServices_configure_node =
+      _wire__crate__binding__BindingBreezServices_configure_nodePtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_configure_node_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_connect_lsp(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> lsp_id,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_connect_lsp(
+      port_,
+      that,
+      lsp_id,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_connect_lspPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_connect_lsp');
+  late final _wire__crate__binding__BindingBreezServices_connect_lsp =
+      _wire__crate__binding__BindingBreezServices_connect_lspPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_disconnect(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_disconnect(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_disconnectPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_disconnect');
+  late final _wire__crate__binding__BindingBreezServices_disconnect =
+      _wire__crate__binding__BindingBreezServices_disconnectPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_execute_command(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> command,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_execute_command(
+      port_,
+      that,
+      command,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_execute_commandPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_execute_command');
+  late final _wire__crate__binding__BindingBreezServices_execute_command =
+      _wire__crate__binding__BindingBreezServices_execute_commandPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_fetch_fiat_rates(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_fetch_fiat_rates(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_fetch_fiat_ratesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_fiat_rates');
+  late final _wire__crate__binding__BindingBreezServices_fetch_fiat_rates =
+      _wire__crate__binding__BindingBreezServices_fetch_fiat_ratesPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_fetch_lsp_info(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> id,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_fetch_lsp_info(
+      port_,
+      that,
+      id,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_fetch_lsp_infoPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_lsp_info');
+  late final _wire__crate__binding__BindingBreezServices_fetch_lsp_info =
+      _wire__crate__binding__BindingBreezServices_fetch_lsp_infoPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_reverse_swap_fees_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_fetch_reverse_swap_feesPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_reverse_swap_fees_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees');
+  late final _wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees =
+      _wire__crate__binding__BindingBreezServices_fetch_reverse_swap_feesPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_reverse_swap_fees_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_generate_diagnostic_data(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_generate_diagnostic_data(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_generate_diagnostic_dataPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_generate_diagnostic_data');
+  late final _wire__crate__binding__BindingBreezServices_generate_diagnostic_data =
+      _wire__crate__binding__BindingBreezServices_generate_diagnostic_dataPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_in_progress_onchain_payments(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_in_progress_onchain_payments(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_in_progress_onchain_paymentsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_onchain_payments');
+  late final _wire__crate__binding__BindingBreezServices_in_progress_onchain_payments =
+      _wire__crate__binding__BindingBreezServices_in_progress_onchain_paymentsPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_in_progress_reverse_swapsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps');
+  late final _wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps =
+      _wire__crate__binding__BindingBreezServices_in_progress_reverse_swapsPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_in_progress_swap(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_in_progress_swap(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_in_progress_swapPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_swap');
+  late final _wire__crate__binding__BindingBreezServices_in_progress_swap =
+      _wire__crate__binding__BindingBreezServices_in_progress_swapPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_list_fiat_currencies(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_list_fiat_currencies(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_list_fiat_currenciesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_fiat_currencies');
+  late final _wire__crate__binding__BindingBreezServices_list_fiat_currencies =
+      _wire__crate__binding__BindingBreezServices_list_fiat_currenciesPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_list_lsps(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_list_lsps(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_list_lspsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_lsps');
+  late final _wire__crate__binding__BindingBreezServices_list_lsps =
+      _wire__crate__binding__BindingBreezServices_list_lspsPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_list_payments(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_payments_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_list_payments(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_list_paymentsPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_payments_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_payments');
+  late final _wire__crate__binding__BindingBreezServices_list_payments =
+      _wire__crate__binding__BindingBreezServices_list_paymentsPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_payments_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_list_refundables(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_list_refundables(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_list_refundablesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_refundables');
+  late final _wire__crate__binding__BindingBreezServices_list_refundables =
+      _wire__crate__binding__BindingBreezServices_list_refundablesPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_lnurl_auth(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_ln_url_auth_request_data> req_data,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_lnurl_auth(
+      port_,
+      that,
+      req_data,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_lnurl_authPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_ln_url_auth_request_data>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_auth');
+  late final _wire__crate__binding__BindingBreezServices_lnurl_auth =
+      _wire__crate__binding__BindingBreezServices_lnurl_authPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_ln_url_auth_request_data>)>();
+
+  void wire__crate__binding__BindingBreezServices_lnurl_pay(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_ln_url_pay_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_lnurl_pay(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_lnurl_payPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_ln_url_pay_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_pay');
+  late final _wire__crate__binding__BindingBreezServices_lnurl_pay =
+      _wire__crate__binding__BindingBreezServices_lnurl_payPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_ln_url_pay_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_lnurl_withdraw(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_ln_url_withdraw_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_lnurl_withdraw(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_lnurl_withdrawPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_ln_url_withdraw_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_withdraw');
+  late final _wire__crate__binding__BindingBreezServices_lnurl_withdraw =
+      _wire__crate__binding__BindingBreezServices_lnurl_withdrawPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_ln_url_withdraw_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_lsp_id(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_lsp_id(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_lsp_idPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_id');
+  late final _wire__crate__binding__BindingBreezServices_lsp_id =
+      _wire__crate__binding__BindingBreezServices_lsp_idPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_lsp_info(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_lsp_info(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_lsp_infoPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_info');
+  late final _wire__crate__binding__BindingBreezServices_lsp_info =
+      _wire__crate__binding__BindingBreezServices_lsp_infoPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_max_reverse_swap_amount(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_max_reverse_swap_amount(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_max_reverse_swap_amountPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_max_reverse_swap_amount');
+  late final _wire__crate__binding__BindingBreezServices_max_reverse_swap_amount =
+      _wire__crate__binding__BindingBreezServices_max_reverse_swap_amountPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_node_credentials(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_node_credentials(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_node_credentialsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_credentials');
+  late final _wire__crate__binding__BindingBreezServices_node_credentials =
+      _wire__crate__binding__BindingBreezServices_node_credentialsPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_node_info(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_node_info(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_node_infoPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_info');
+  late final _wire__crate__binding__BindingBreezServices_node_info =
+      _wire__crate__binding__BindingBreezServices_node_infoPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_onchain_payment_limits(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_onchain_payment_limits(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_onchain_payment_limitsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_onchain_payment_limits');
+  late final _wire__crate__binding__BindingBreezServices_onchain_payment_limits =
+      _wire__crate__binding__BindingBreezServices_onchain_payment_limitsPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_open_channel_fee(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_open_channel_fee_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_open_channel_fee(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_open_channel_feePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_open_channel_fee_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_open_channel_fee');
+  late final _wire__crate__binding__BindingBreezServices_open_channel_fee =
+      _wire__crate__binding__BindingBreezServices_open_channel_feePtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_open_channel_fee_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_pay_onchain(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_pay_onchain_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_pay_onchain(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_pay_onchainPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_pay_onchain_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_pay_onchain');
+  late final _wire__crate__binding__BindingBreezServices_pay_onchain =
+      _wire__crate__binding__BindingBreezServices_pay_onchainPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_pay_onchain_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_payment_by_hash(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> hash,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_payment_by_hash(
+      port_,
+      that,
+      hash,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_payment_by_hashPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_payment_by_hash');
+  late final _wire__crate__binding__BindingBreezServices_payment_by_hash =
+      _wire__crate__binding__BindingBreezServices_payment_by_hashPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_prepare_onchain_payment(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_prepare_onchain_payment_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_prepare_onchain_payment(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_prepare_onchain_paymentPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_prepare_onchain_payment_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_onchain_payment');
+  late final _wire__crate__binding__BindingBreezServices_prepare_onchain_payment =
+      _wire__crate__binding__BindingBreezServices_prepare_onchain_paymentPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_prepare_onchain_payment_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_fundsPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds');
+  late final _wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds =
+      _wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_fundsPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_prepare_refund(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_prepare_refund_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_prepare_refund(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_prepare_refundPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_prepare_refund_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_refund');
+  late final _wire__crate__binding__BindingBreezServices_prepare_refund =
+      _wire__crate__binding__BindingBreezServices_prepare_refundPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_prepare_refund_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_receive_onchain(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_receive_onchain_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_receive_onchain(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_receive_onchainPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_receive_onchain_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_onchain');
+  late final _wire__crate__binding__BindingBreezServices_receive_onchain =
+      _wire__crate__binding__BindingBreezServices_receive_onchainPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_receive_onchain_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_receive_payment(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_receive_payment_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_receive_payment(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_receive_paymentPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_receive_payment_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_payment');
+  late final _wire__crate__binding__BindingBreezServices_receive_payment =
+      _wire__crate__binding__BindingBreezServices_receive_paymentPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_receive_payment_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_recommended_fees(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_recommended_fees(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_recommended_feesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_recommended_fees');
+  late final _wire__crate__binding__BindingBreezServices_recommended_fees =
+      _wire__crate__binding__BindingBreezServices_recommended_feesPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_redeem_onchain_funds(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_redeem_onchain_funds_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_redeem_onchain_funds(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_redeem_onchain_fundsPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_redeem_onchain_funds_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_onchain_funds');
+  late final _wire__crate__binding__BindingBreezServices_redeem_onchain_funds =
+      _wire__crate__binding__BindingBreezServices_redeem_onchain_fundsPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_redeem_onchain_funds_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_redeem_swap(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> swap_address,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_redeem_swap(
+      port_,
+      that,
+      swap_address,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_redeem_swapPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_swap');
+  late final _wire__crate__binding__BindingBreezServices_redeem_swap =
+      _wire__crate__binding__BindingBreezServices_redeem_swapPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_refund(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_refund_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_refund(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_refundPtr = _lookup<
+          ffi
+          .NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_refund_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_refund');
+  late final _wire__crate__binding__BindingBreezServices_refund =
+      _wire__crate__binding__BindingBreezServices_refundPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_refund_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_register_webhook(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> webhook_url,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_register_webhook(
+      port_,
+      that,
+      webhook_url,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_register_webhookPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_register_webhook');
+  late final _wire__crate__binding__BindingBreezServices_register_webhook =
+      _wire__crate__binding__BindingBreezServices_register_webhookPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_report_issue(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_report_issue_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_report_issue(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_report_issuePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_report_issue_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_report_issue');
+  late final _wire__crate__binding__BindingBreezServices_report_issue =
+      _wire__crate__binding__BindingBreezServices_report_issuePtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_report_issue_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_rescan_swaps(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_rescan_swaps(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_rescan_swapsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_rescan_swaps');
+  late final _wire__crate__binding__BindingBreezServices_rescan_swaps =
+      _wire__crate__binding__BindingBreezServices_rescan_swapsPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_send_onchain(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_send_onchain_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_send_onchain(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_send_onchainPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_send_onchain_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_onchain');
+  late final _wire__crate__binding__BindingBreezServices_send_onchain =
+      _wire__crate__binding__BindingBreezServices_send_onchainPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_send_onchain_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_send_payment(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_send_payment_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_send_payment(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_send_paymentPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_send_payment_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_payment');
+  late final _wire__crate__binding__BindingBreezServices_send_payment =
+      _wire__crate__binding__BindingBreezServices_send_paymentPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_send_payment_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_send_spontaneous_payment(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_send_spontaneous_payment_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_send_spontaneous_payment(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_send_spontaneous_paymentPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_send_spontaneous_payment_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_spontaneous_payment');
+  late final _wire__crate__binding__BindingBreezServices_send_spontaneous_payment =
+      _wire__crate__binding__BindingBreezServices_send_spontaneous_paymentPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_send_spontaneous_payment_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_set_payment_metadata(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> hash,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> metadata,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_set_payment_metadata(
+      port_,
+      that,
+      hash,
+      metadata,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_set_payment_metadataPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+                  ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_set_payment_metadata');
+  late final _wire__crate__binding__BindingBreezServices_set_payment_metadata =
+      _wire__crate__binding__BindingBreezServices_set_payment_metadataPtr.asFunction<
+          void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+
+  void wire__crate__binding__BindingBreezServices_sign_message(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_sign_message_request> req,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_sign_message(
+      port_,
+      that,
+      req,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_sign_messagePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_sign_message_request>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sign_message');
+  late final _wire__crate__binding__BindingBreezServices_sign_message =
+      _wire__crate__binding__BindingBreezServices_sign_messagePtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_sign_message_request>)>();
+
+  void wire__crate__binding__BindingBreezServices_sync(
+    int port_,
+    int that,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_sync(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_syncPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+          'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sync');
+  late final _wire__crate__binding__BindingBreezServices_sync =
+      _wire__crate__binding__BindingBreezServices_syncPtr.asFunction<void Function(int, int)>();
+
+  void wire__crate__binding__BindingBreezServices_unregister_webhook(
+    int port_,
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> webhook_url,
+  ) {
+    return _wire__crate__binding__BindingBreezServices_unregister_webhook(
+      port_,
+      that,
+      webhook_url,
+    );
+  }
+
+  late final _wire__crate__binding__BindingBreezServices_unregister_webhookPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
+      'frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_unregister_webhook');
+  late final _wire__crate__binding__BindingBreezServices_unregister_webhook =
+      _wire__crate__binding__BindingBreezServices_unregister_webhookPtr
+          .asFunction<void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
 
   void wire__crate__binding__breez_events_stream(
     int port_,
@@ -4212,68 +5239,6 @@ class BreezSdkBindingsWire implements BaseWire {
   late final _wire__crate__binding__breez_log_stream = _wire__crate__binding__breez_log_streamPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
 
-  void wire__crate__binding__buy_bitcoin(
-    int port_,
-    ffi.Pointer<wire_cst_buy_bitcoin_request> req,
-  ) {
-    return _wire__crate__binding__buy_bitcoin(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__buy_bitcoinPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_buy_bitcoin_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__buy_bitcoin');
-  late final _wire__crate__binding__buy_bitcoin = _wire__crate__binding__buy_bitcoinPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_buy_bitcoin_request>)>();
-
-  void wire__crate__binding__check_message(
-    int port_,
-    ffi.Pointer<wire_cst_check_message_request> req,
-  ) {
-    return _wire__crate__binding__check_message(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__check_messagePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_check_message_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__check_message');
-  late final _wire__crate__binding__check_message = _wire__crate__binding__check_messagePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_check_message_request>)>();
-
-  void wire__crate__binding__close_lsp_channels(
-    int port_,
-  ) {
-    return _wire__crate__binding__close_lsp_channels(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__close_lsp_channelsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__close_lsp_channels');
-  late final _wire__crate__binding__close_lsp_channels =
-      _wire__crate__binding__close_lsp_channelsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__configure_node(
-    int port_,
-    ffi.Pointer<wire_cst_configure_node_request> req,
-  ) {
-    return _wire__crate__binding__configure_node(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__configure_nodePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_configure_node_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__configure_node');
-  late final _wire__crate__binding__configure_node = _wire__crate__binding__configure_nodePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_configure_node_request>)>();
-
   void wire__crate__binding__connect(
     int port_,
     ffi.Pointer<wire_cst_connect_request> req,
@@ -4289,22 +5254,6 @@ class BreezSdkBindingsWire implements BaseWire {
           'frbgen_breez_sdk_wire__crate__binding__connect');
   late final _wire__crate__binding__connect = _wire__crate__binding__connectPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_connect_request>)>();
-
-  void wire__crate__binding__connect_lsp(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> lsp_id,
-  ) {
-    return _wire__crate__binding__connect_lsp(
-      port_,
-      lsp_id,
-    );
-  }
-
-  late final _wire__crate__binding__connect_lspPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__connect_lsp');
-  late final _wire__crate__binding__connect_lsp = _wire__crate__binding__connect_lspPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
 
   void wire__crate__binding__default_config(
     int port_,
@@ -4328,297 +5277,6 @@ class BreezSdkBindingsWire implements BaseWire {
       void Function(
           int, int, ffi.Pointer<wire_cst_list_prim_u_8_strict>, ffi.Pointer<wire_cst_node_config>)>();
 
-  void wire__crate__binding__disconnect(
-    int port_,
-  ) {
-    return _wire__crate__binding__disconnect(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__disconnectPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__disconnect');
-  late final _wire__crate__binding__disconnect =
-      _wire__crate__binding__disconnectPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__execute_command(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> command,
-  ) {
-    return _wire__crate__binding__execute_command(
-      port_,
-      command,
-    );
-  }
-
-  late final _wire__crate__binding__execute_commandPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__execute_command');
-  late final _wire__crate__binding__execute_command = _wire__crate__binding__execute_commandPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__fetch_fiat_rates(
-    int port_,
-  ) {
-    return _wire__crate__binding__fetch_fiat_rates(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__fetch_fiat_ratesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__fetch_fiat_rates');
-  late final _wire__crate__binding__fetch_fiat_rates =
-      _wire__crate__binding__fetch_fiat_ratesPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__fetch_lsp_info(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> id,
-  ) {
-    return _wire__crate__binding__fetch_lsp_info(
-      port_,
-      id,
-    );
-  }
-
-  late final _wire__crate__binding__fetch_lsp_infoPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__fetch_lsp_info');
-  late final _wire__crate__binding__fetch_lsp_info = _wire__crate__binding__fetch_lsp_infoPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__fetch_reverse_swap_fees(
-    int port_,
-    ffi.Pointer<wire_cst_reverse_swap_fees_request> req,
-  ) {
-    return _wire__crate__binding__fetch_reverse_swap_fees(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__fetch_reverse_swap_feesPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_reverse_swap_fees_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__fetch_reverse_swap_fees');
-  late final _wire__crate__binding__fetch_reverse_swap_fees =
-      _wire__crate__binding__fetch_reverse_swap_feesPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_cst_reverse_swap_fees_request>)>();
-
-  void wire__crate__binding__generate_diagnostic_data(
-    int port_,
-  ) {
-    return _wire__crate__binding__generate_diagnostic_data(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__generate_diagnostic_dataPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__generate_diagnostic_data');
-  late final _wire__crate__binding__generate_diagnostic_data =
-      _wire__crate__binding__generate_diagnostic_dataPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__in_progress_onchain_payments(
-    int port_,
-  ) {
-    return _wire__crate__binding__in_progress_onchain_payments(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__in_progress_onchain_paymentsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__in_progress_onchain_payments');
-  late final _wire__crate__binding__in_progress_onchain_payments =
-      _wire__crate__binding__in_progress_onchain_paymentsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__in_progress_reverse_swaps(
-    int port_,
-  ) {
-    return _wire__crate__binding__in_progress_reverse_swaps(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__in_progress_reverse_swapsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__in_progress_reverse_swaps');
-  late final _wire__crate__binding__in_progress_reverse_swaps =
-      _wire__crate__binding__in_progress_reverse_swapsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__in_progress_swap(
-    int port_,
-  ) {
-    return _wire__crate__binding__in_progress_swap(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__in_progress_swapPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__in_progress_swap');
-  late final _wire__crate__binding__in_progress_swap =
-      _wire__crate__binding__in_progress_swapPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__is_initialized(
-    int port_,
-  ) {
-    return _wire__crate__binding__is_initialized(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__is_initializedPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__is_initialized');
-  late final _wire__crate__binding__is_initialized =
-      _wire__crate__binding__is_initializedPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__list_fiat_currencies(
-    int port_,
-  ) {
-    return _wire__crate__binding__list_fiat_currencies(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__list_fiat_currenciesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__list_fiat_currencies');
-  late final _wire__crate__binding__list_fiat_currencies =
-      _wire__crate__binding__list_fiat_currenciesPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__list_lsps(
-    int port_,
-  ) {
-    return _wire__crate__binding__list_lsps(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__list_lspsPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__list_lsps');
-  late final _wire__crate__binding__list_lsps =
-      _wire__crate__binding__list_lspsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__list_payments(
-    int port_,
-    ffi.Pointer<wire_cst_list_payments_request> req,
-  ) {
-    return _wire__crate__binding__list_payments(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__list_paymentsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_payments_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__list_payments');
-  late final _wire__crate__binding__list_payments = _wire__crate__binding__list_paymentsPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_payments_request>)>();
-
-  void wire__crate__binding__list_refundables(
-    int port_,
-  ) {
-    return _wire__crate__binding__list_refundables(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__list_refundablesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__list_refundables');
-  late final _wire__crate__binding__list_refundables =
-      _wire__crate__binding__list_refundablesPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__lnurl_auth(
-    int port_,
-    ffi.Pointer<wire_cst_ln_url_auth_request_data> req_data,
-  ) {
-    return _wire__crate__binding__lnurl_auth(
-      port_,
-      req_data,
-    );
-  }
-
-  late final _wire__crate__binding__lnurl_authPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_ln_url_auth_request_data>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__lnurl_auth');
-  late final _wire__crate__binding__lnurl_auth = _wire__crate__binding__lnurl_authPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_ln_url_auth_request_data>)>();
-
-  void wire__crate__binding__lnurl_pay(
-    int port_,
-    ffi.Pointer<wire_cst_ln_url_pay_request> req,
-  ) {
-    return _wire__crate__binding__lnurl_pay(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__lnurl_payPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_ln_url_pay_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__lnurl_pay');
-  late final _wire__crate__binding__lnurl_pay = _wire__crate__binding__lnurl_payPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_ln_url_pay_request>)>();
-
-  void wire__crate__binding__lnurl_withdraw(
-    int port_,
-    ffi.Pointer<wire_cst_ln_url_withdraw_request> req,
-  ) {
-    return _wire__crate__binding__lnurl_withdraw(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__lnurl_withdrawPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_ln_url_withdraw_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__lnurl_withdraw');
-  late final _wire__crate__binding__lnurl_withdraw = _wire__crate__binding__lnurl_withdrawPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_ln_url_withdraw_request>)>();
-
-  void wire__crate__binding__lsp_id(
-    int port_,
-  ) {
-    return _wire__crate__binding__lsp_id(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__lsp_idPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__lsp_id');
-  late final _wire__crate__binding__lsp_id =
-      _wire__crate__binding__lsp_idPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__lsp_info(
-    int port_,
-  ) {
-    return _wire__crate__binding__lsp_info(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__lsp_infoPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__lsp_info');
-  late final _wire__crate__binding__lsp_info =
-      _wire__crate__binding__lsp_infoPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__max_reverse_swap_amount(
-    int port_,
-  ) {
-    return _wire__crate__binding__max_reverse_swap_amount(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__max_reverse_swap_amountPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__max_reverse_swap_amount');
-  late final _wire__crate__binding__max_reverse_swap_amount =
-      _wire__crate__binding__max_reverse_swap_amountPtr.asFunction<void Function(int)>();
-
   void wire__crate__binding__mnemonic_to_seed(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> phrase,
@@ -4634,63 +5292,6 @@ class BreezSdkBindingsWire implements BaseWire {
           'frbgen_breez_sdk_wire__crate__binding__mnemonic_to_seed');
   late final _wire__crate__binding__mnemonic_to_seed = _wire__crate__binding__mnemonic_to_seedPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__node_credentials(
-    int port_,
-  ) {
-    return _wire__crate__binding__node_credentials(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__node_credentialsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__node_credentials');
-  late final _wire__crate__binding__node_credentials =
-      _wire__crate__binding__node_credentialsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__node_info(
-    int port_,
-  ) {
-    return _wire__crate__binding__node_info(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__node_infoPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__node_info');
-  late final _wire__crate__binding__node_info =
-      _wire__crate__binding__node_infoPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__onchain_payment_limits(
-    int port_,
-  ) {
-    return _wire__crate__binding__onchain_payment_limits(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__onchain_payment_limitsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__onchain_payment_limits');
-  late final _wire__crate__binding__onchain_payment_limits =
-      _wire__crate__binding__onchain_payment_limitsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__open_channel_fee(
-    int port_,
-    ffi.Pointer<wire_cst_open_channel_fee_request> req,
-  ) {
-    return _wire__crate__binding__open_channel_fee(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__open_channel_feePtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_open_channel_fee_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__open_channel_fee');
-  late final _wire__crate__binding__open_channel_fee = _wire__crate__binding__open_channel_feePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_open_channel_fee_request>)>();
 
   void wire__crate__binding__parse_input(
     int port_,
@@ -4724,281 +5325,6 @@ class BreezSdkBindingsWire implements BaseWire {
   late final _wire__crate__binding__parse_invoice = _wire__crate__binding__parse_invoicePtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
 
-  void wire__crate__binding__pay_onchain(
-    int port_,
-    ffi.Pointer<wire_cst_pay_onchain_request> req,
-  ) {
-    return _wire__crate__binding__pay_onchain(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__pay_onchainPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_pay_onchain_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__pay_onchain');
-  late final _wire__crate__binding__pay_onchain = _wire__crate__binding__pay_onchainPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_pay_onchain_request>)>();
-
-  void wire__crate__binding__payment_by_hash(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> hash,
-  ) {
-    return _wire__crate__binding__payment_by_hash(
-      port_,
-      hash,
-    );
-  }
-
-  late final _wire__crate__binding__payment_by_hashPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__payment_by_hash');
-  late final _wire__crate__binding__payment_by_hash = _wire__crate__binding__payment_by_hashPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__prepare_onchain_payment(
-    int port_,
-    ffi.Pointer<wire_cst_prepare_onchain_payment_request> req,
-  ) {
-    return _wire__crate__binding__prepare_onchain_payment(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__prepare_onchain_paymentPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_prepare_onchain_payment_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__prepare_onchain_payment');
-  late final _wire__crate__binding__prepare_onchain_payment =
-      _wire__crate__binding__prepare_onchain_paymentPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_cst_prepare_onchain_payment_request>)>();
-
-  void wire__crate__binding__prepare_redeem_onchain_funds(
-    int port_,
-    ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request> req,
-  ) {
-    return _wire__crate__binding__prepare_redeem_onchain_funds(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__prepare_redeem_onchain_fundsPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__prepare_redeem_onchain_funds');
-  late final _wire__crate__binding__prepare_redeem_onchain_funds =
-      _wire__crate__binding__prepare_redeem_onchain_fundsPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_cst_prepare_redeem_onchain_funds_request>)>();
-
-  void wire__crate__binding__prepare_refund(
-    int port_,
-    ffi.Pointer<wire_cst_prepare_refund_request> req,
-  ) {
-    return _wire__crate__binding__prepare_refund(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__prepare_refundPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_prepare_refund_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__prepare_refund');
-  late final _wire__crate__binding__prepare_refund = _wire__crate__binding__prepare_refundPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_prepare_refund_request>)>();
-
-  void wire__crate__binding__receive_onchain(
-    int port_,
-    ffi.Pointer<wire_cst_receive_onchain_request> req,
-  ) {
-    return _wire__crate__binding__receive_onchain(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__receive_onchainPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_receive_onchain_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__receive_onchain');
-  late final _wire__crate__binding__receive_onchain = _wire__crate__binding__receive_onchainPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_receive_onchain_request>)>();
-
-  void wire__crate__binding__receive_payment(
-    int port_,
-    ffi.Pointer<wire_cst_receive_payment_request> req,
-  ) {
-    return _wire__crate__binding__receive_payment(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__receive_paymentPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_receive_payment_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__receive_payment');
-  late final _wire__crate__binding__receive_payment = _wire__crate__binding__receive_paymentPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_receive_payment_request>)>();
-
-  void wire__crate__binding__recommended_fees(
-    int port_,
-  ) {
-    return _wire__crate__binding__recommended_fees(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__recommended_feesPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__recommended_fees');
-  late final _wire__crate__binding__recommended_fees =
-      _wire__crate__binding__recommended_feesPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__redeem_onchain_funds(
-    int port_,
-    ffi.Pointer<wire_cst_redeem_onchain_funds_request> req,
-  ) {
-    return _wire__crate__binding__redeem_onchain_funds(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__redeem_onchain_fundsPtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_redeem_onchain_funds_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__redeem_onchain_funds');
-  late final _wire__crate__binding__redeem_onchain_funds = _wire__crate__binding__redeem_onchain_fundsPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_redeem_onchain_funds_request>)>();
-
-  void wire__crate__binding__redeem_swap(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> swap_address,
-  ) {
-    return _wire__crate__binding__redeem_swap(
-      port_,
-      swap_address,
-    );
-  }
-
-  late final _wire__crate__binding__redeem_swapPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__redeem_swap');
-  late final _wire__crate__binding__redeem_swap = _wire__crate__binding__redeem_swapPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__refund(
-    int port_,
-    ffi.Pointer<wire_cst_refund_request> req,
-  ) {
-    return _wire__crate__binding__refund(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__refundPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_refund_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__refund');
-  late final _wire__crate__binding__refund =
-      _wire__crate__binding__refundPtr.asFunction<void Function(int, ffi.Pointer<wire_cst_refund_request>)>();
-
-  void wire__crate__binding__register_webhook(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> webhook_url,
-  ) {
-    return _wire__crate__binding__register_webhook(
-      port_,
-      webhook_url,
-    );
-  }
-
-  late final _wire__crate__binding__register_webhookPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__register_webhook');
-  late final _wire__crate__binding__register_webhook = _wire__crate__binding__register_webhookPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__report_issue(
-    int port_,
-    ffi.Pointer<wire_cst_report_issue_request> req,
-  ) {
-    return _wire__crate__binding__report_issue(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__report_issuePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_report_issue_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__report_issue');
-  late final _wire__crate__binding__report_issue = _wire__crate__binding__report_issuePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_report_issue_request>)>();
-
-  void wire__crate__binding__rescan_swaps(
-    int port_,
-  ) {
-    return _wire__crate__binding__rescan_swaps(
-      port_,
-    );
-  }
-
-  late final _wire__crate__binding__rescan_swapsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'frbgen_breez_sdk_wire__crate__binding__rescan_swaps');
-  late final _wire__crate__binding__rescan_swaps =
-      _wire__crate__binding__rescan_swapsPtr.asFunction<void Function(int)>();
-
-  void wire__crate__binding__send_onchain(
-    int port_,
-    ffi.Pointer<wire_cst_send_onchain_request> req,
-  ) {
-    return _wire__crate__binding__send_onchain(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__send_onchainPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_send_onchain_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__send_onchain');
-  late final _wire__crate__binding__send_onchain = _wire__crate__binding__send_onchainPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_send_onchain_request>)>();
-
-  void wire__crate__binding__send_payment(
-    int port_,
-    ffi.Pointer<wire_cst_send_payment_request> req,
-  ) {
-    return _wire__crate__binding__send_payment(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__send_paymentPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_send_payment_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__send_payment');
-  late final _wire__crate__binding__send_payment = _wire__crate__binding__send_paymentPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_send_payment_request>)>();
-
-  void wire__crate__binding__send_spontaneous_payment(
-    int port_,
-    ffi.Pointer<wire_cst_send_spontaneous_payment_request> req,
-  ) {
-    return _wire__crate__binding__send_spontaneous_payment(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__send_spontaneous_paymentPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_send_spontaneous_payment_request>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__send_spontaneous_payment');
-  late final _wire__crate__binding__send_spontaneous_payment =
-      _wire__crate__binding__send_spontaneous_paymentPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_cst_send_spontaneous_payment_request>)>();
-
   void wire__crate__binding__service_health_check(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> api_key,
@@ -5014,44 +5340,6 @@ class BreezSdkBindingsWire implements BaseWire {
           'frbgen_breez_sdk_wire__crate__binding__service_health_check');
   late final _wire__crate__binding__service_health_check = _wire__crate__binding__service_health_checkPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__set_payment_metadata(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> hash,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> metadata,
-  ) {
-    return _wire__crate__binding__set_payment_metadata(
-      port_,
-      hash,
-      metadata,
-    );
-  }
-
-  late final _wire__crate__binding__set_payment_metadataPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-                  ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-      'frbgen_breez_sdk_wire__crate__binding__set_payment_metadata');
-  late final _wire__crate__binding__set_payment_metadata =
-      _wire__crate__binding__set_payment_metadataPtr.asFunction<
-          void Function(
-              int, ffi.Pointer<wire_cst_list_prim_u_8_strict>, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
-
-  void wire__crate__binding__sign_message(
-    int port_,
-    ffi.Pointer<wire_cst_sign_message_request> req,
-  ) {
-    return _wire__crate__binding__sign_message(
-      port_,
-      req,
-    );
-  }
-
-  late final _wire__crate__binding__sign_messagePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_sign_message_request>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__sign_message');
-  late final _wire__crate__binding__sign_message = _wire__crate__binding__sign_messagePtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_sign_message_request>)>();
 
   void wire__crate__binding__static_backup(
     int port_,
@@ -5069,33 +5357,37 @@ class BreezSdkBindingsWire implements BaseWire {
   late final _wire__crate__binding__static_backup = _wire__crate__binding__static_backupPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_static_backup_request>)>();
 
-  void wire__crate__binding__sync(
-    int port_,
+  void
+      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+    ffi.Pointer<ffi.Void> ptr,
   ) {
-    return _wire__crate__binding__sync(
-      port_,
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      ptr,
     );
   }
 
-  late final _wire__crate__binding__syncPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-      'frbgen_breez_sdk_wire__crate__binding__sync');
-  late final _wire__crate__binding__sync = _wire__crate__binding__syncPtr.asFunction<void Function(int)>();
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServicesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'frbgen_breez_sdk_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices');
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServicesPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
-  void wire__crate__binding__unregister_webhook(
-    int port_,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> webhook_url,
+  void
+      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+    ffi.Pointer<ffi.Void> ptr,
   ) {
-    return _wire__crate__binding__unregister_webhook(
-      port_,
-      webhook_url,
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+      ptr,
     );
   }
 
-  late final _wire__crate__binding__unregister_webhookPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>>(
-          'frbgen_breez_sdk_wire__crate__binding__unregister_webhook');
-  late final _wire__crate__binding__unregister_webhook = _wire__crate__binding__unregister_webhookPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)>();
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServicesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'frbgen_breez_sdk_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices');
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServicesPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
   ffi.Pointer<wire_cst_aes_success_action_data_decrypted>
       cst_new_box_autoadd_aes_success_action_data_decrypted() {
@@ -5998,69 +6290,6 @@ final class wire_cst_configure_node_request extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> close_to_address;
 }
 
-final class wire_cst_greenlight_credentials extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> device_key;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> device_cert;
-}
-
-final class wire_cst_greenlight_node_config extends ffi.Struct {
-  external ffi.Pointer<wire_cst_greenlight_credentials> partner_credentials;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> invite_code;
-}
-
-final class wire_cst_NodeConfig_Greenlight extends ffi.Struct {
-  external ffi.Pointer<wire_cst_greenlight_node_config> config;
-}
-
-final class NodeConfigKind extends ffi.Union {
-  external wire_cst_NodeConfig_Greenlight Greenlight;
-}
-
-final class wire_cst_node_config extends ffi.Struct {
-  @ffi.Int32()
-  external int tag;
-
-  external NodeConfigKind kind;
-}
-
-final class wire_cst_config extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> breezserver;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> chainnotifier_url;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> mempoolspace_url;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> working_dir;
-
-  @ffi.Int32()
-  external int network;
-
-  @ffi.Uint32()
-  external int payment_timeout_sec;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> default_lsp_id;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> api_key;
-
-  @ffi.Double()
-  external double maxfee_percent;
-
-  @ffi.Uint64()
-  external int exemptfee_msat;
-
-  external wire_cst_node_config node_config;
-}
-
-final class wire_cst_connect_request extends ffi.Struct {
-  external wire_cst_config config;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> seed;
-
-  external ffi.Pointer<ffi.Bool> restore_only;
-}
-
 final class wire_cst_reverse_swap_fees_request extends ffi.Struct {
   external ffi.Pointer<ffi.Uint64> send_amount_sat;
 
@@ -6337,6 +6566,69 @@ final class wire_cst_send_spontaneous_payment_request extends ffi.Struct {
 
 final class wire_cst_sign_message_request extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> message;
+}
+
+final class wire_cst_greenlight_credentials extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> device_key;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> device_cert;
+}
+
+final class wire_cst_greenlight_node_config extends ffi.Struct {
+  external ffi.Pointer<wire_cst_greenlight_credentials> partner_credentials;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> invite_code;
+}
+
+final class wire_cst_NodeConfig_Greenlight extends ffi.Struct {
+  external ffi.Pointer<wire_cst_greenlight_node_config> config;
+}
+
+final class NodeConfigKind extends ffi.Union {
+  external wire_cst_NodeConfig_Greenlight Greenlight;
+}
+
+final class wire_cst_node_config extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external NodeConfigKind kind;
+}
+
+final class wire_cst_config extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> breezserver;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> chainnotifier_url;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> mempoolspace_url;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> working_dir;
+
+  @ffi.Int32()
+  external int network;
+
+  @ffi.Uint32()
+  external int payment_timeout_sec;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> default_lsp_id;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> api_key;
+
+  @ffi.Double()
+  external double maxfee_percent;
+
+  @ffi.Uint64()
+  external int exemptfee_msat;
+
+  external wire_cst_node_config node_config;
+}
+
+final class wire_cst_connect_request extends ffi.Struct {
+  external wire_cst_config config;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> seed;
+
+  external ffi.Pointer<ffi.Bool> restore_only;
 }
 
 final class wire_cst_static_backup_request extends ffi.Struct {
@@ -6955,6 +7247,33 @@ final class wire_cst_buy_bitcoin_response extends ffi.Struct {
 final class wire_cst_check_message_response extends ffi.Struct {
   @ffi.Bool()
   external bool is_valid;
+}
+
+final class wire_cst_ConnectError_Generic extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> err;
+}
+
+final class wire_cst_ConnectError_RestoreOnly extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> err;
+}
+
+final class wire_cst_ConnectError_ServiceConnectivity extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> err;
+}
+
+final class ConnectErrorKind extends ffi.Union {
+  external wire_cst_ConnectError_Generic Generic;
+
+  external wire_cst_ConnectError_RestoreOnly RestoreOnly;
+
+  external wire_cst_ConnectError_ServiceConnectivity ServiceConnectivity;
+}
+
+final class wire_cst_connect_error extends ffi.Struct {
+  @ffi.Int32()
+  external int tag;
+
+  external ConnectErrorKind kind;
 }
 
 final class wire_cst_InputType_BitcoinAddress extends ffi.Struct {

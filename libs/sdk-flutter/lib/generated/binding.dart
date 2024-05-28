@@ -5,6 +5,7 @@
 
 import 'breez_services.dart';
 import 'chain.dart';
+import 'error.dart';
 import 'fiat.dart';
 import 'frb_generated.dart';
 import 'input_parser.dart';
@@ -18,37 +19,14 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // The type `BindingLogger` is not used by any `pub` functions, thus it is ignored.
 
 /// Wrapper around [BreezServices::connect] which also initializes SDK logging
-Future<void> connect({required ConnectRequest req, dynamic hint}) =>
+Future<BindingBreezServices> connect({required ConnectRequest req, dynamic hint}) =>
     BreezSdkBindings.instance.api.crateBindingConnect(req: req, hint: hint);
 
-/// Check whether node service is initialized or not
-Future<bool> isInitialized({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingIsInitialized(hint: hint);
+Future<LNInvoice> parseInvoice({required String invoice, dynamic hint}) =>
+    BreezSdkBindings.instance.api.crateBindingParseInvoice(invoice: invoice, hint: hint);
 
-/// See [BreezServices::sync]
-Future<void> sync({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingSync(hint: hint);
-
-/// See [BreezServices::node_credentials]
-Future<NodeCredentials?> nodeCredentials({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingNodeCredentials(hint: hint);
-
-/// See [BreezServices::node_info]
-Future<NodeState> nodeInfo({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingNodeInfo(hint: hint);
-
-/// See [BreezServices::configure_node]
-Future<void> configureNode({required ConfigureNodeRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingConfigureNode(req: req, hint: hint);
-
-/// Cleanup node resources and stop the signer.
-Future<void> disconnect({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingDisconnect(hint: hint);
-
-/// See [BreezServices::sign_message]
-Future<SignMessageResponse> signMessage({required SignMessageRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingSignMessage(req: req, hint: hint);
-
-/// See [BreezServices::check_message]
-Future<CheckMessageResponse> checkMessage({required CheckMessageRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingCheckMessage(req: req, hint: hint);
+Future<InputType> parseInput({required String input, dynamic hint}) =>
+    BreezSdkBindings.instance.api.crateBindingParseInput(input: input, hint: hint);
 
 /// See [breez_services::mnemonic_to_seed]
 Future<Uint8List> mnemonicToSeed({required String phrase, dynamic hint}) =>
@@ -79,183 +57,247 @@ Stream<BreezEvent> breezEventsStream({dynamic hint}) =>
 Stream<LogEntry> breezLogStream({dynamic hint}) =>
     BreezSdkBindings.instance.api.crateBindingBreezLogStream(hint: hint);
 
-/// See [BreezServices::list_lsps]
-Future<List<LspInformation>> listLsps({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingListLsps(hint: hint);
+// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>>
+@sealed
+class BindingBreezServices extends RustOpaque {
+  BindingBreezServices.dcoDecode(List<dynamic> wire) : super.dcoDecode(wire, _kStaticData);
 
-/// See [BreezServices::connect_lsp]
-Future<void> connectLsp({required String lspId, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingConnectLsp(lspId: lspId, hint: hint);
+  BindingBreezServices.sseDecode(BigInt ptr, int externalSizeOnNative)
+      : super.sseDecode(ptr, externalSizeOnNative, _kStaticData);
 
-/// See [BreezServices::lsp_id]
-Future<String?> lspId({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingLspId(hint: hint);
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        BreezSdkBindings.instance.api.rust_arc_increment_strong_count_BindingBreezServices,
+    rustArcDecrementStrongCount:
+        BreezSdkBindings.instance.api.rust_arc_decrement_strong_count_BindingBreezServices,
+    rustArcDecrementStrongCountPtr:
+        BreezSdkBindings.instance.api.rust_arc_decrement_strong_count_BindingBreezServicesPtr,
+  );
 
-/// See [BreezServices::fetch_lsp_info]
-Future<LspInformation?> fetchLspInfo({required String id, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingFetchLspInfo(id: id, hint: hint);
+  /// See [BreezServices::backup]
+  Future<void> backup({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesBackup(that: this, hint: hint);
 
-/// See [BreezServices::lsp_info]
-Future<LspInformation> lspInfo({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingLspInfo(hint: hint);
+  /// See [BreezServices::backup_status]
+  Future<BackupStatus> backupStatus({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesBackupStatus(that: this, hint: hint);
 
-/// See [BreezServices::close_lsp_channels]
-Future<void> closeLspChannels({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingCloseLspChannels(hint: hint);
+  /// See [BreezServices::buy_bitcoin]
+  Future<BuyBitcoinResponse> buyBitcoin({required BuyBitcoinRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesBuyBitcoin(that: this, req: req, hint: hint);
 
-Future<void> registerWebhook({required String webhookUrl, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingRegisterWebhook(webhookUrl: webhookUrl, hint: hint);
+  /// See [BreezServices::check_message]
+  Future<CheckMessageResponse> checkMessage({required CheckMessageRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesCheckMessage(that: this, req: req, hint: hint);
 
-Future<void> unregisterWebhook({required String webhookUrl, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingUnregisterWebhook(webhookUrl: webhookUrl, hint: hint);
+  /// See [BreezServices::close_lsp_channels]
+  Future<void> closeLspChannels({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesCloseLspChannels(that: this, hint: hint);
 
-/// See [BreezServices::backup]
-Future<void> backup({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingBackup(hint: hint);
+  /// See [BreezServices::configure_node]
+  Future<void> configureNode({required ConfigureNodeRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesConfigureNode(that: this, req: req, hint: hint);
 
-/// See [BreezServices::backup_status]
-Future<BackupStatus> backupStatus({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingBackupStatus(hint: hint);
+  /// See [BreezServices::connect_lsp]
+  Future<void> connectLsp({required String lspId, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesConnectLsp(that: this, lspId: lspId, hint: hint);
 
-Future<LNInvoice> parseInvoice({required String invoice, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingParseInvoice(invoice: invoice, hint: hint);
+  /// Cleanup node resources and stop the signer.
+  Future<void> disconnect({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesDisconnect(that: this, hint: hint);
 
-Future<InputType> parseInput({required String input, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingParseInput(input: input, hint: hint);
+  /// See [BreezServices::execute_dev_command]
+  Future<String> executeCommand({required String command, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesExecuteCommand(that: this, command: command, hint: hint);
 
-/// See [BreezServices::list_payments]
-Future<List<Payment>> listPayments({required ListPaymentsRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingListPayments(req: req, hint: hint);
+  /// See [BreezServices::fetch_fiat_rates]
+  Future<List<Rate>> fetchFiatRates({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesFetchFiatRates(that: this, hint: hint);
 
-/// See [BreezServices::list_payments]
-Future<Payment?> paymentByHash({required String hash, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingPaymentByHash(hash: hash, hint: hint);
+  /// See [BreezServices::fetch_lsp_info]
+  Future<LspInformation?> fetchLspInfo({required String id, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesFetchLspInfo(that: this, id: id, hint: hint);
 
-/// See [BreezServices::set_payment_metadata]
-Future<void> setPaymentMetadata({required String hash, required String metadata, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingSetPaymentMetadata(hash: hash, metadata: metadata, hint: hint);
+  /// See [BreezServices::fetch_reverse_swap_fees]
+  Future<ReverseSwapPairInfo> fetchReverseSwapFees({required ReverseSwapFeesRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesFetchReverseSwapFees(that: this, req: req, hint: hint);
 
-/// See [BreezServices::send_payment]
-Future<SendPaymentResponse> sendPayment({required SendPaymentRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingSendPayment(req: req, hint: hint);
+  /// See [BreezServices::generate_diagnostic_data]
+  Future<String> generateDiagnosticData({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesGenerateDiagnosticData(that: this, hint: hint);
 
-/// See [BreezServices::send_spontaneous_payment]
-Future<SendPaymentResponse> sendSpontaneousPayment(
-        {required SendSpontaneousPaymentRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingSendSpontaneousPayment(req: req, hint: hint);
+  /// See [BreezServices::in_progress_onchain_payments]
+  Future<List<ReverseSwapInfo>> inProgressOnchainPayments({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesInProgressOnchainPayments(that: this, hint: hint);
 
-/// See [BreezServices::receive_payment]
-Future<ReceivePaymentResponse> receivePayment({required ReceivePaymentRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingReceivePayment(req: req, hint: hint);
+  /// See [BreezServices::in_progress_reverse_swaps]
+  Future<List<ReverseSwapInfo>> inProgressReverseSwaps({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesInProgressReverseSwaps(that: this, hint: hint);
 
-/// See [BreezServices::lnurl_pay]
-Future<LnUrlPayResult> lnurlPay({required LnUrlPayRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingLnurlPay(req: req, hint: hint);
+  /// See [BreezServices::in_progress_swap]
+  Future<SwapInfo?> inProgressSwap({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesInProgressSwap(that: this, hint: hint);
 
-/// See [BreezServices::lnurl_withdraw]
-Future<LnUrlWithdrawResult> lnurlWithdraw({required LnUrlWithdrawRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingLnurlWithdraw(req: req, hint: hint);
+  /// See [BreezServices::list_fiat_currencies]
+  Future<List<FiatCurrency>> listFiatCurrencies({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesListFiatCurrencies(that: this, hint: hint);
 
-/// See [BreezServices::lnurl_auth]
-Future<LnUrlCallbackStatus> lnurlAuth({required LnUrlAuthRequestData reqData, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingLnurlAuth(reqData: reqData, hint: hint);
+  /// See [BreezServices::list_lsps]
+  Future<List<LspInformation>> listLsps({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesListLsps(that: this, hint: hint);
 
-/// See [BreezServices::report_issue]
-Future<void> reportIssue({required ReportIssueRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingReportIssue(req: req, hint: hint);
+  /// See [BreezServices::list_payments]
+  Future<List<Payment>> listPayments({required ListPaymentsRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesListPayments(that: this, req: req, hint: hint);
 
-/// See [BreezServices::fetch_fiat_rates]
-Future<List<Rate>> fetchFiatRates({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingFetchFiatRates(hint: hint);
+  /// See [BreezServices::list_refundables]
+  Future<List<SwapInfo>> listRefundables({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesListRefundables(that: this, hint: hint);
 
-/// See [BreezServices::list_fiat_currencies]
-Future<List<FiatCurrency>> listFiatCurrencies({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingListFiatCurrencies(hint: hint);
+  /// See [BreezServices::lnurl_auth]
+  Future<LnUrlCallbackStatus> lnurlAuth({required LnUrlAuthRequestData reqData, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesLnurlAuth(that: this, reqData: reqData, hint: hint);
 
-/// See [BreezServices::max_reverse_swap_amount]
-Future<MaxReverseSwapAmountResponse> maxReverseSwapAmount({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingMaxReverseSwapAmount(hint: hint);
+  /// See [BreezServices::lnurl_pay]
+  Future<LnUrlPayResult> lnurlPay({required LnUrlPayRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesLnurlPay(that: this, req: req, hint: hint);
 
-/// See [BreezServices::send_onchain]
-Future<SendOnchainResponse> sendOnchain({required SendOnchainRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingSendOnchain(req: req, hint: hint);
+  /// See [BreezServices::lnurl_withdraw]
+  Future<LnUrlWithdrawResult> lnurlWithdraw({required LnUrlWithdrawRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesLnurlWithdraw(that: this, req: req, hint: hint);
 
-/// See [BreezServices::pay_onchain]
-Future<PayOnchainResponse> payOnchain({required PayOnchainRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingPayOnchain(req: req, hint: hint);
+  /// See [BreezServices::lsp_id]
+  Future<String?> lspId({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesLspId(that: this, hint: hint);
 
-/// See [BreezServices::receive_onchain]
-Future<SwapInfo> receiveOnchain({required ReceiveOnchainRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingReceiveOnchain(req: req, hint: hint);
+  /// See [BreezServices::lsp_info]
+  Future<LspInformation> lspInfo({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesLspInfo(that: this, hint: hint);
 
-/// See [BreezServices::buy_bitcoin]
-Future<BuyBitcoinResponse> buyBitcoin({required BuyBitcoinRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingBuyBitcoin(req: req, hint: hint);
+  /// See [BreezServices::max_reverse_swap_amount]
+  Future<MaxReverseSwapAmountResponse> maxReverseSwapAmount({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesMaxReverseSwapAmount(that: this, hint: hint);
 
-/// See [BreezServices::redeem_onchain_funds]
-Future<RedeemOnchainFundsResponse> redeemOnchainFunds(
-        {required RedeemOnchainFundsRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingRedeemOnchainFunds(req: req, hint: hint);
+  /// See [BreezServices::node_credentials]
+  Future<NodeCredentials?> nodeCredentials({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesNodeCredentials(that: this, hint: hint);
 
-/// See [BreezServices::prepare_redeem_onchain_funds]
-Future<PrepareRedeemOnchainFundsResponse> prepareRedeemOnchainFunds(
-        {required PrepareRedeemOnchainFundsRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingPrepareRedeemOnchainFunds(req: req, hint: hint);
+  /// See [BreezServices::node_info]
+  Future<NodeState> nodeInfo({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesNodeInfo(that: this, hint: hint);
 
-/// See [BreezServices::list_refundables]
-Future<List<SwapInfo>> listRefundables({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingListRefundables(hint: hint);
+  /// See [BreezServices::onchain_payment_limits]
+  Future<OnchainPaymentLimitsResponse> onchainPaymentLimits({dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesOnchainPaymentLimits(that: this, hint: hint);
 
-/// See [BreezServices::prepare_refund]
-Future<PrepareRefundResponse> prepareRefund({required PrepareRefundRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingPrepareRefund(req: req, hint: hint);
+  /// See [BreezServices::open_channel_fee]
+  Future<OpenChannelFeeResponse> openChannelFee({required OpenChannelFeeRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesOpenChannelFee(that: this, req: req, hint: hint);
 
-/// See [BreezServices::refund]
-Future<RefundResponse> refund({required RefundRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingRefund(req: req, hint: hint);
+  /// See [BreezServices::pay_onchain]
+  Future<PayOnchainResponse> payOnchain({required PayOnchainRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesPayOnchain(that: this, req: req, hint: hint);
 
-/// See [BreezServices::rescan_swaps]
-Future<void> rescanSwaps({dynamic hint}) => BreezSdkBindings.instance.api.crateBindingRescanSwaps(hint: hint);
+  /// See [BreezServices::list_payments]
+  Future<Payment?> paymentByHash({required String hash, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesPaymentByHash(that: this, hash: hash, hint: hint);
 
-/// See [BreezServices::redeem_swap]
-Future<void> redeemSwap({required String swapAddress, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingRedeemSwap(swapAddress: swapAddress, hint: hint);
+  /// See [BreezServices::prepare_onchain_payment]
+  Future<PrepareOnchainPaymentResponse> prepareOnchainPayment(
+          {required PrepareOnchainPaymentRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesPrepareOnchainPayment(that: this, req: req, hint: hint);
 
-/// See [BreezServices::in_progress_swap]
-Future<SwapInfo?> inProgressSwap({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingInProgressSwap(hint: hint);
+  /// See [BreezServices::prepare_redeem_onchain_funds]
+  Future<PrepareRedeemOnchainFundsResponse> prepareRedeemOnchainFunds(
+          {required PrepareRedeemOnchainFundsRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesPrepareRedeemOnchainFunds(that: this, req: req, hint: hint);
 
-/// See [BreezServices::in_progress_reverse_swaps]
-Future<List<ReverseSwapInfo>> inProgressReverseSwaps({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingInProgressReverseSwaps(hint: hint);
+  /// See [BreezServices::prepare_refund]
+  Future<PrepareRefundResponse> prepareRefund({required PrepareRefundRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesPrepareRefund(that: this, req: req, hint: hint);
 
-/// See [BreezServices::open_channel_fee]
-Future<OpenChannelFeeResponse> openChannelFee({required OpenChannelFeeRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingOpenChannelFee(req: req, hint: hint);
+  /// See [BreezServices::receive_onchain]
+  Future<SwapInfo> receiveOnchain({required ReceiveOnchainRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesReceiveOnchain(that: this, req: req, hint: hint);
 
-/// See [BreezServices::fetch_reverse_swap_fees]
-Future<ReverseSwapPairInfo> fetchReverseSwapFees({required ReverseSwapFeesRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingFetchReverseSwapFees(req: req, hint: hint);
+  /// See [BreezServices::receive_payment]
+  Future<ReceivePaymentResponse> receivePayment({required ReceivePaymentRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesReceivePayment(that: this, req: req, hint: hint);
 
-/// See [BreezServices::onchain_payment_limits]
-Future<OnchainPaymentLimitsResponse> onchainPaymentLimits({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingOnchainPaymentLimits(hint: hint);
+  /// See [BreezServices::recommended_fees]
+  Future<RecommendedFees> recommendedFees({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesRecommendedFees(that: this, hint: hint);
 
-/// See [BreezServices::prepare_onchain_payment]
-Future<PrepareOnchainPaymentResponse> prepareOnchainPayment(
-        {required PrepareOnchainPaymentRequest req, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingPrepareOnchainPayment(req: req, hint: hint);
+  /// See [BreezServices::redeem_onchain_funds]
+  Future<RedeemOnchainFundsResponse> redeemOnchainFunds(
+          {required RedeemOnchainFundsRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesRedeemOnchainFunds(that: this, req: req, hint: hint);
 
-/// See [BreezServices::in_progress_onchain_payments]
-Future<List<ReverseSwapInfo>> inProgressOnchainPayments({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingInProgressOnchainPayments(hint: hint);
+  /// See [BreezServices::redeem_swap]
+  Future<void> redeemSwap({required String swapAddress, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesRedeemSwap(that: this, swapAddress: swapAddress, hint: hint);
 
-/// See [BreezServices::recommended_fees]
-Future<RecommendedFees> recommendedFees({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingRecommendedFees(hint: hint);
+  /// See [BreezServices::refund]
+  Future<RefundResponse> refund({required RefundRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesRefund(that: this, req: req, hint: hint);
 
-/// See [BreezServices::execute_dev_command]
-Future<String> executeCommand({required String command, dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingExecuteCommand(command: command, hint: hint);
+  Future<void> registerWebhook({required String webhookUrl, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesRegisterWebhook(that: this, webhookUrl: webhookUrl, hint: hint);
 
-/// See [BreezServices::generate_diagnostic_data]
-Future<String> generateDiagnosticData({dynamic hint}) =>
-    BreezSdkBindings.instance.api.crateBindingGenerateDiagnosticData(hint: hint);
+  /// See [BreezServices::report_issue]
+  Future<void> reportIssue({required ReportIssueRequest req, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesReportIssue(that: this, req: req, hint: hint);
+
+  /// See [BreezServices::rescan_swaps]
+  Future<void> rescanSwaps({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesRescanSwaps(that: this, hint: hint);
+
+  /// See [BreezServices::send_onchain]
+  Future<SendOnchainResponse> sendOnchain({required SendOnchainRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesSendOnchain(that: this, req: req, hint: hint);
+
+  /// See [BreezServices::send_payment]
+  Future<SendPaymentResponse> sendPayment({required SendPaymentRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesSendPayment(that: this, req: req, hint: hint);
+
+  /// See [BreezServices::send_spontaneous_payment]
+  Future<SendPaymentResponse> sendSpontaneousPayment(
+          {required SendSpontaneousPaymentRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesSendSpontaneousPayment(that: this, req: req, hint: hint);
+
+  /// See [BreezServices::set_payment_metadata]
+  Future<void> setPaymentMetadata({required String hash, required String metadata, dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesSetPaymentMetadata(
+          that: this, hash: hash, metadata: metadata, hint: hint);
+
+  /// See [BreezServices::sign_message]
+  Future<SignMessageResponse> signMessage({required SignMessageRequest req, dynamic hint}) =>
+      BreezSdkBindings.instance.api
+          .crateBindingBindingBreezServicesSignMessage(that: this, req: req, hint: hint);
+
+  /// See [BreezServices::sync]
+  Future<void> sync({dynamic hint}) =>
+      BreezSdkBindings.instance.api.crateBindingBindingBreezServicesSync(that: this, hint: hint);
+
+  Future<void> unregisterWebhook({required String webhookUrl, dynamic hint}) => BreezSdkBindings.instance.api
+      .crateBindingBindingBreezServicesUnregisterWebhook(that: this, webhookUrl: webhookUrl, hint: hint);
+}

@@ -51,49 +51,6 @@ typedef struct wire_cst_configure_node_request {
   struct wire_cst_list_prim_u_8_strict *close_to_address;
 } wire_cst_configure_node_request;
 
-typedef struct wire_cst_greenlight_credentials {
-  struct wire_cst_list_prim_u_8_strict *device_key;
-  struct wire_cst_list_prim_u_8_strict *device_cert;
-} wire_cst_greenlight_credentials;
-
-typedef struct wire_cst_greenlight_node_config {
-  struct wire_cst_greenlight_credentials *partner_credentials;
-  struct wire_cst_list_prim_u_8_strict *invite_code;
-} wire_cst_greenlight_node_config;
-
-typedef struct wire_cst_NodeConfig_Greenlight {
-  struct wire_cst_greenlight_node_config *config;
-} wire_cst_NodeConfig_Greenlight;
-
-typedef union NodeConfigKind {
-  struct wire_cst_NodeConfig_Greenlight Greenlight;
-} NodeConfigKind;
-
-typedef struct wire_cst_node_config {
-  int32_t tag;
-  union NodeConfigKind kind;
-} wire_cst_node_config;
-
-typedef struct wire_cst_config {
-  struct wire_cst_list_prim_u_8_strict *breezserver;
-  struct wire_cst_list_prim_u_8_strict *chainnotifier_url;
-  struct wire_cst_list_prim_u_8_strict *mempoolspace_url;
-  struct wire_cst_list_prim_u_8_strict *working_dir;
-  int32_t network;
-  uint32_t payment_timeout_sec;
-  struct wire_cst_list_prim_u_8_strict *default_lsp_id;
-  struct wire_cst_list_prim_u_8_strict *api_key;
-  double maxfee_percent;
-  uint64_t exemptfee_msat;
-  struct wire_cst_node_config node_config;
-} wire_cst_config;
-
-typedef struct wire_cst_connect_request {
-  struct wire_cst_config config;
-  struct wire_cst_list_prim_u_8_strict *seed;
-  bool *restore_only;
-} wire_cst_connect_request;
-
 typedef struct wire_cst_reverse_swap_fees_request {
   uint64_t *send_amount_sat;
   uint32_t *claim_tx_feerate;
@@ -277,6 +234,49 @@ typedef struct wire_cst_send_spontaneous_payment_request {
 typedef struct wire_cst_sign_message_request {
   struct wire_cst_list_prim_u_8_strict *message;
 } wire_cst_sign_message_request;
+
+typedef struct wire_cst_greenlight_credentials {
+  struct wire_cst_list_prim_u_8_strict *device_key;
+  struct wire_cst_list_prim_u_8_strict *device_cert;
+} wire_cst_greenlight_credentials;
+
+typedef struct wire_cst_greenlight_node_config {
+  struct wire_cst_greenlight_credentials *partner_credentials;
+  struct wire_cst_list_prim_u_8_strict *invite_code;
+} wire_cst_greenlight_node_config;
+
+typedef struct wire_cst_NodeConfig_Greenlight {
+  struct wire_cst_greenlight_node_config *config;
+} wire_cst_NodeConfig_Greenlight;
+
+typedef union NodeConfigKind {
+  struct wire_cst_NodeConfig_Greenlight Greenlight;
+} NodeConfigKind;
+
+typedef struct wire_cst_node_config {
+  int32_t tag;
+  union NodeConfigKind kind;
+} wire_cst_node_config;
+
+typedef struct wire_cst_config {
+  struct wire_cst_list_prim_u_8_strict *breezserver;
+  struct wire_cst_list_prim_u_8_strict *chainnotifier_url;
+  struct wire_cst_list_prim_u_8_strict *mempoolspace_url;
+  struct wire_cst_list_prim_u_8_strict *working_dir;
+  int32_t network;
+  uint32_t payment_timeout_sec;
+  struct wire_cst_list_prim_u_8_strict *default_lsp_id;
+  struct wire_cst_list_prim_u_8_strict *api_key;
+  double maxfee_percent;
+  uint64_t exemptfee_msat;
+  struct wire_cst_node_config node_config;
+} wire_cst_config;
+
+typedef struct wire_cst_connect_request {
+  struct wire_cst_config config;
+  struct wire_cst_list_prim_u_8_strict *seed;
+  bool *restore_only;
+} wire_cst_connect_request;
 
 typedef struct wire_cst_static_backup_request {
   struct wire_cst_list_prim_u_8_strict *working_dir;
@@ -696,6 +696,29 @@ typedef struct wire_cst_check_message_response {
   bool is_valid;
 } wire_cst_check_message_response;
 
+typedef struct wire_cst_ConnectError_Generic {
+  struct wire_cst_list_prim_u_8_strict *err;
+} wire_cst_ConnectError_Generic;
+
+typedef struct wire_cst_ConnectError_RestoreOnly {
+  struct wire_cst_list_prim_u_8_strict *err;
+} wire_cst_ConnectError_RestoreOnly;
+
+typedef struct wire_cst_ConnectError_ServiceConnectivity {
+  struct wire_cst_list_prim_u_8_strict *err;
+} wire_cst_ConnectError_ServiceConnectivity;
+
+typedef union ConnectErrorKind {
+  struct wire_cst_ConnectError_Generic Generic;
+  struct wire_cst_ConnectError_RestoreOnly RestoreOnly;
+  struct wire_cst_ConnectError_ServiceConnectivity ServiceConnectivity;
+} ConnectErrorKind;
+
+typedef struct wire_cst_connect_error {
+  int32_t tag;
+  union ConnectErrorKind kind;
+} wire_cst_connect_error;
+
 typedef struct wire_cst_InputType_BitcoinAddress {
   struct wire_cst_bitcoin_address_data *address;
 } wire_cst_InputType_BitcoinAddress;
@@ -898,9 +921,189 @@ typedef struct wire_cst_static_backup_response {
   struct wire_cst_list_String *backup;
 } wire_cst_static_backup_response;
 
-void frbgen_breez_sdk_wire__crate__binding__backup(int64_t port_);
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup(int64_t port_,
+                                                                        uintptr_t that);
 
-void frbgen_breez_sdk_wire__crate__binding__backup_status(int64_t port_);
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup_status(int64_t port_,
+                                                                               uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_buy_bitcoin(int64_t port_,
+                                                                             uintptr_t that,
+                                                                             struct wire_cst_buy_bitcoin_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_check_message(int64_t port_,
+                                                                               uintptr_t that,
+                                                                               struct wire_cst_check_message_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_close_lsp_channels(int64_t port_,
+                                                                                    uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_configure_node(int64_t port_,
+                                                                                uintptr_t that,
+                                                                                struct wire_cst_configure_node_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_connect_lsp(int64_t port_,
+                                                                             uintptr_t that,
+                                                                             struct wire_cst_list_prim_u_8_strict *lsp_id);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_disconnect(int64_t port_,
+                                                                            uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_execute_command(int64_t port_,
+                                                                                 uintptr_t that,
+                                                                                 struct wire_cst_list_prim_u_8_strict *command);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_fiat_rates(int64_t port_,
+                                                                                  uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_lsp_info(int64_t port_,
+                                                                                uintptr_t that,
+                                                                                struct wire_cst_list_prim_u_8_strict *id);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees(int64_t port_,
+                                                                                         uintptr_t that,
+                                                                                         struct wire_cst_reverse_swap_fees_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_generate_diagnostic_data(int64_t port_,
+                                                                                          uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_onchain_payments(int64_t port_,
+                                                                                              uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps(int64_t port_,
+                                                                                           uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_swap(int64_t port_,
+                                                                                  uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_fiat_currencies(int64_t port_,
+                                                                                      uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_lsps(int64_t port_,
+                                                                           uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_payments(int64_t port_,
+                                                                               uintptr_t that,
+                                                                               struct wire_cst_list_payments_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_refundables(int64_t port_,
+                                                                                  uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_auth(int64_t port_,
+                                                                            uintptr_t that,
+                                                                            struct wire_cst_ln_url_auth_request_data *req_data);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_pay(int64_t port_,
+                                                                           uintptr_t that,
+                                                                           struct wire_cst_ln_url_pay_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_withdraw(int64_t port_,
+                                                                                uintptr_t that,
+                                                                                struct wire_cst_ln_url_withdraw_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_id(int64_t port_,
+                                                                        uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_info(int64_t port_,
+                                                                          uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_max_reverse_swap_amount(int64_t port_,
+                                                                                         uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_credentials(int64_t port_,
+                                                                                  uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_info(int64_t port_,
+                                                                           uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_onchain_payment_limits(int64_t port_,
+                                                                                        uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_open_channel_fee(int64_t port_,
+                                                                                  uintptr_t that,
+                                                                                  struct wire_cst_open_channel_fee_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_pay_onchain(int64_t port_,
+                                                                             uintptr_t that,
+                                                                             struct wire_cst_pay_onchain_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_payment_by_hash(int64_t port_,
+                                                                                 uintptr_t that,
+                                                                                 struct wire_cst_list_prim_u_8_strict *hash);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_onchain_payment(int64_t port_,
+                                                                                         uintptr_t that,
+                                                                                         struct wire_cst_prepare_onchain_payment_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds(int64_t port_,
+                                                                                              uintptr_t that,
+                                                                                              struct wire_cst_prepare_redeem_onchain_funds_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_refund(int64_t port_,
+                                                                                uintptr_t that,
+                                                                                struct wire_cst_prepare_refund_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_onchain(int64_t port_,
+                                                                                 uintptr_t that,
+                                                                                 struct wire_cst_receive_onchain_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_payment(int64_t port_,
+                                                                                 uintptr_t that,
+                                                                                 struct wire_cst_receive_payment_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_recommended_fees(int64_t port_,
+                                                                                  uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_onchain_funds(int64_t port_,
+                                                                                      uintptr_t that,
+                                                                                      struct wire_cst_redeem_onchain_funds_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_swap(int64_t port_,
+                                                                             uintptr_t that,
+                                                                             struct wire_cst_list_prim_u_8_strict *swap_address);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_refund(int64_t port_,
+                                                                        uintptr_t that,
+                                                                        struct wire_cst_refund_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_register_webhook(int64_t port_,
+                                                                                  uintptr_t that,
+                                                                                  struct wire_cst_list_prim_u_8_strict *webhook_url);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_report_issue(int64_t port_,
+                                                                              uintptr_t that,
+                                                                              struct wire_cst_report_issue_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_rescan_swaps(int64_t port_,
+                                                                              uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_onchain(int64_t port_,
+                                                                              uintptr_t that,
+                                                                              struct wire_cst_send_onchain_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_payment(int64_t port_,
+                                                                              uintptr_t that,
+                                                                              struct wire_cst_send_payment_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_spontaneous_payment(int64_t port_,
+                                                                                          uintptr_t that,
+                                                                                          struct wire_cst_send_spontaneous_payment_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_set_payment_metadata(int64_t port_,
+                                                                                      uintptr_t that,
+                                                                                      struct wire_cst_list_prim_u_8_strict *hash,
+                                                                                      struct wire_cst_list_prim_u_8_strict *metadata);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sign_message(int64_t port_,
+                                                                              uintptr_t that,
+                                                                              struct wire_cst_sign_message_request *req);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sync(int64_t port_,
+                                                                      uintptr_t that);
+
+void frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_unregister_webhook(int64_t port_,
+                                                                                    uintptr_t that,
+                                                                                    struct wire_cst_list_prim_u_8_strict *webhook_url);
 
 void frbgen_breez_sdk_wire__crate__binding__breez_events_stream(int64_t port_,
                                                                 struct wire_cst_list_prim_u_8_strict *s);
@@ -908,86 +1111,16 @@ void frbgen_breez_sdk_wire__crate__binding__breez_events_stream(int64_t port_,
 void frbgen_breez_sdk_wire__crate__binding__breez_log_stream(int64_t port_,
                                                              struct wire_cst_list_prim_u_8_strict *s);
 
-void frbgen_breez_sdk_wire__crate__binding__buy_bitcoin(int64_t port_,
-                                                        struct wire_cst_buy_bitcoin_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__check_message(int64_t port_,
-                                                          struct wire_cst_check_message_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__close_lsp_channels(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__configure_node(int64_t port_,
-                                                           struct wire_cst_configure_node_request *req);
-
 void frbgen_breez_sdk_wire__crate__binding__connect(int64_t port_,
                                                     struct wire_cst_connect_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__connect_lsp(int64_t port_,
-                                                        struct wire_cst_list_prim_u_8_strict *lsp_id);
 
 void frbgen_breez_sdk_wire__crate__binding__default_config(int64_t port_,
                                                            int32_t env_type,
                                                            struct wire_cst_list_prim_u_8_strict *api_key,
                                                            struct wire_cst_node_config *node_config);
 
-void frbgen_breez_sdk_wire__crate__binding__disconnect(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__execute_command(int64_t port_,
-                                                            struct wire_cst_list_prim_u_8_strict *command);
-
-void frbgen_breez_sdk_wire__crate__binding__fetch_fiat_rates(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__fetch_lsp_info(int64_t port_,
-                                                           struct wire_cst_list_prim_u_8_strict *id);
-
-void frbgen_breez_sdk_wire__crate__binding__fetch_reverse_swap_fees(int64_t port_,
-                                                                    struct wire_cst_reverse_swap_fees_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__generate_diagnostic_data(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__in_progress_onchain_payments(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__in_progress_reverse_swaps(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__in_progress_swap(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__is_initialized(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__list_fiat_currencies(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__list_lsps(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__list_payments(int64_t port_,
-                                                          struct wire_cst_list_payments_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__list_refundables(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__lnurl_auth(int64_t port_,
-                                                       struct wire_cst_ln_url_auth_request_data *req_data);
-
-void frbgen_breez_sdk_wire__crate__binding__lnurl_pay(int64_t port_,
-                                                      struct wire_cst_ln_url_pay_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__lnurl_withdraw(int64_t port_,
-                                                           struct wire_cst_ln_url_withdraw_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__lsp_id(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__lsp_info(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__max_reverse_swap_amount(int64_t port_);
-
 void frbgen_breez_sdk_wire__crate__binding__mnemonic_to_seed(int64_t port_,
                                                              struct wire_cst_list_prim_u_8_strict *phrase);
-
-void frbgen_breez_sdk_wire__crate__binding__node_credentials(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__node_info(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__onchain_payment_limits(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__open_channel_fee(int64_t port_,
-                                                             struct wire_cst_open_channel_fee_request *req);
 
 void frbgen_breez_sdk_wire__crate__binding__parse_input(int64_t port_,
                                                         struct wire_cst_list_prim_u_8_strict *input);
@@ -995,72 +1128,15 @@ void frbgen_breez_sdk_wire__crate__binding__parse_input(int64_t port_,
 void frbgen_breez_sdk_wire__crate__binding__parse_invoice(int64_t port_,
                                                           struct wire_cst_list_prim_u_8_strict *invoice);
 
-void frbgen_breez_sdk_wire__crate__binding__pay_onchain(int64_t port_,
-                                                        struct wire_cst_pay_onchain_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__payment_by_hash(int64_t port_,
-                                                            struct wire_cst_list_prim_u_8_strict *hash);
-
-void frbgen_breez_sdk_wire__crate__binding__prepare_onchain_payment(int64_t port_,
-                                                                    struct wire_cst_prepare_onchain_payment_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__prepare_redeem_onchain_funds(int64_t port_,
-                                                                         struct wire_cst_prepare_redeem_onchain_funds_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__prepare_refund(int64_t port_,
-                                                           struct wire_cst_prepare_refund_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__receive_onchain(int64_t port_,
-                                                            struct wire_cst_receive_onchain_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__receive_payment(int64_t port_,
-                                                            struct wire_cst_receive_payment_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__recommended_fees(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__redeem_onchain_funds(int64_t port_,
-                                                                 struct wire_cst_redeem_onchain_funds_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__redeem_swap(int64_t port_,
-                                                        struct wire_cst_list_prim_u_8_strict *swap_address);
-
-void frbgen_breez_sdk_wire__crate__binding__refund(int64_t port_,
-                                                   struct wire_cst_refund_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__register_webhook(int64_t port_,
-                                                             struct wire_cst_list_prim_u_8_strict *webhook_url);
-
-void frbgen_breez_sdk_wire__crate__binding__report_issue(int64_t port_,
-                                                         struct wire_cst_report_issue_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__rescan_swaps(int64_t port_);
-
-void frbgen_breez_sdk_wire__crate__binding__send_onchain(int64_t port_,
-                                                         struct wire_cst_send_onchain_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__send_payment(int64_t port_,
-                                                         struct wire_cst_send_payment_request *req);
-
-void frbgen_breez_sdk_wire__crate__binding__send_spontaneous_payment(int64_t port_,
-                                                                     struct wire_cst_send_spontaneous_payment_request *req);
-
 void frbgen_breez_sdk_wire__crate__binding__service_health_check(int64_t port_,
                                                                  struct wire_cst_list_prim_u_8_strict *api_key);
-
-void frbgen_breez_sdk_wire__crate__binding__set_payment_metadata(int64_t port_,
-                                                                 struct wire_cst_list_prim_u_8_strict *hash,
-                                                                 struct wire_cst_list_prim_u_8_strict *metadata);
-
-void frbgen_breez_sdk_wire__crate__binding__sign_message(int64_t port_,
-                                                         struct wire_cst_sign_message_request *req);
 
 void frbgen_breez_sdk_wire__crate__binding__static_backup(int64_t port_,
                                                           struct wire_cst_static_backup_request *req);
 
-void frbgen_breez_sdk_wire__crate__binding__sync(int64_t port_);
+void frbgen_breez_sdk_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(const void *ptr);
 
-void frbgen_breez_sdk_wire__crate__binding__unregister_webhook(int64_t port_,
-                                                               struct wire_cst_list_prim_u_8_strict *webhook_url);
+void frbgen_breez_sdk_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(const void *ptr);
 
 struct wire_cst_aes_success_action_data_decrypted *frbgen_breez_sdk_cst_new_box_autoadd_aes_success_action_data_decrypted(void);
 
@@ -1285,67 +1361,68 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_cst_new_list_swap_info);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_cst_new_list_tlv_entry);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_cst_new_list_unspent_transaction_output);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__backup);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__backup_status);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup_status);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_buy_bitcoin);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_check_message);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_close_lsp_channels);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_configure_node);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_connect_lsp);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_disconnect);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_execute_command);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_fiat_rates);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_lsp_info);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_generate_diagnostic_data);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_onchain_payments);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_swap);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_fiat_currencies);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_lsps);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_payments);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_refundables);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_auth);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_pay);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_withdraw);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_id);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_info);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_max_reverse_swap_amount);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_credentials);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_info);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_onchain_payment_limits);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_open_channel_fee);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_pay_onchain);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_payment_by_hash);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_onchain_payment);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_refund);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_onchain);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_payment);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_recommended_fees);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_onchain_funds);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_swap);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_refund);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_register_webhook);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_report_issue);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_rescan_swaps);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_onchain);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_payment);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_spontaneous_payment);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_set_payment_metadata);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sign_message);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sync);
+    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_unregister_webhook);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__breez_events_stream);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__breez_log_stream);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__buy_bitcoin);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__check_message);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__close_lsp_channels);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__configure_node);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__connect);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__connect_lsp);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__default_config);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__disconnect);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__execute_command);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__fetch_fiat_rates);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__fetch_lsp_info);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__fetch_reverse_swap_fees);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__generate_diagnostic_data);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__in_progress_onchain_payments);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__in_progress_reverse_swaps);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__in_progress_swap);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__is_initialized);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__list_fiat_currencies);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__list_lsps);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__list_payments);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__list_refundables);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__lnurl_auth);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__lnurl_pay);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__lnurl_withdraw);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__lsp_id);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__lsp_info);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__max_reverse_swap_amount);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__mnemonic_to_seed);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__node_credentials);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__node_info);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__onchain_payment_limits);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__open_channel_fee);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__parse_input);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__parse_invoice);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__pay_onchain);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__payment_by_hash);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__prepare_onchain_payment);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__prepare_redeem_onchain_funds);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__prepare_refund);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__receive_onchain);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__receive_payment);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__recommended_fees);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__redeem_onchain_funds);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__redeem_swap);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__refund);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__register_webhook);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__report_issue);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__rescan_swaps);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__send_onchain);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__send_payment);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__send_spontaneous_payment);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__service_health_check);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__set_payment_metadata);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__sign_message);
     dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__static_backup);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__sync);
-    dummy_var ^= ((int64_t) (void*) frbgen_breez_sdk_wire__crate__binding__unregister_webhook);
     dummy_var ^= ((int64_t) (void*) store_dart_post_cobject);
     return dummy_var;
 }

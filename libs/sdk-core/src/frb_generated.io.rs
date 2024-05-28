@@ -4,6 +4,7 @@
 // Section: imports
 
 use super::*;
+use crate::binding::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::transform_result_dco;
 use flutter_rust_bridge::{Handler, IntoIntoDart};
@@ -20,6 +21,33 @@ impl CstDecode<flutter_rust_bridge::for_generated::anyhow::Error>
     // Codec=Cst (C-struct based), see doc to use other codecs
     fn cst_decode(self) -> flutter_rust_bridge::for_generated::anyhow::Error {
         unimplemented!()
+    }
+}
+impl CstDecode<BindingBreezServices> for usize {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> BindingBreezServices {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(CstDecode::<
+            RustOpaqueNom<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>,
+            >,
+        >::cst_decode(
+            self
+        ))
+    }
+}
+impl
+    CstDecode<
+        RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>,
+        >,
+    > for usize
+{
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(
+        self,
+    ) -> RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>>
+    {
+        unsafe { decode_rust_opaque_nom(self as _) }
     }
 }
 impl
@@ -663,6 +691,32 @@ impl CstDecode<crate::models::ConfigureNodeRequest> for wire_cst_configure_node_
     fn cst_decode(self) -> crate::models::ConfigureNodeRequest {
         crate::models::ConfigureNodeRequest {
             close_to_address: self.close_to_address.cst_decode(),
+        }
+    }
+}
+impl CstDecode<crate::error::ConnectError> for wire_cst_connect_error {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    fn cst_decode(self) -> crate::error::ConnectError {
+        match self.tag {
+            0 => {
+                let ans = unsafe { self.kind.Generic };
+                crate::error::ConnectError::Generic {
+                    err: ans.err.cst_decode(),
+                }
+            }
+            1 => {
+                let ans = unsafe { self.kind.RestoreOnly };
+                crate::error::ConnectError::RestoreOnly {
+                    err: ans.err.cst_decode(),
+                }
+            }
+            2 => {
+                let ans = unsafe { self.kind.ServiceConnectivity };
+                crate::error::ConnectError::ServiceConnectivity {
+                    err: ans.err.cst_decode(),
+                }
+            }
+            _ => unreachable!(),
         }
     }
 }
@@ -2021,6 +2075,19 @@ impl Default for wire_cst_configure_node_request {
         Self::new_with_null_ptr()
     }
 }
+impl NewWithNullPtr for wire_cst_connect_error {
+    fn new_with_null_ptr() -> Self {
+        Self {
+            tag: -1,
+            kind: ConnectErrorKind { nil__: () },
+        }
+    }
+}
+impl Default for wire_cst_connect_error {
+    fn default() -> Self {
+        Self::new_with_null_ptr()
+    }
+}
 impl NewWithNullPtr for wire_cst_connect_request {
     fn new_with_null_ptr() -> Self {
         Self {
@@ -3194,13 +3261,444 @@ impl Default for wire_cst_url_success_action_data {
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__backup(port_: i64) {
-    wire__crate__binding__backup_impl(port_)
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_backup_impl(port_, that)
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__backup_status(port_: i64) {
-    wire__crate__binding__backup_status_impl(port_)
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_backup_status(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_backup_status_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_buy_bitcoin(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_buy_bitcoin_request,
+) {
+    wire__crate__binding__BindingBreezServices_buy_bitcoin_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_check_message(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_check_message_request,
+) {
+    wire__crate__binding__BindingBreezServices_check_message_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_close_lsp_channels(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_close_lsp_channels_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_configure_node(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_configure_node_request,
+) {
+    wire__crate__binding__BindingBreezServices_configure_node_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_connect_lsp(
+    port_: i64,
+    that: usize,
+    lsp_id: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_connect_lsp_impl(port_, that, lsp_id)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_disconnect(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_disconnect_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_execute_command(
+    port_: i64,
+    that: usize,
+    command: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_execute_command_impl(port_, that, command)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_fiat_rates(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_fetch_fiat_rates_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_lsp_info(
+    port_: i64,
+    that: usize,
+    id: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_fetch_lsp_info_impl(port_, that, id)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_reverse_swap_fees_request,
+) {
+    wire__crate__binding__BindingBreezServices_fetch_reverse_swap_fees_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_generate_diagnostic_data(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_generate_diagnostic_data_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_onchain_payments(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_in_progress_onchain_payments_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_in_progress_reverse_swaps_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_in_progress_swap(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_in_progress_swap_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_fiat_currencies(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_list_fiat_currencies_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_lsps(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_list_lsps_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_payments(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_list_payments_request,
+) {
+    wire__crate__binding__BindingBreezServices_list_payments_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_list_refundables(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_list_refundables_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_auth(
+    port_: i64,
+    that: usize,
+    req_data: *mut wire_cst_ln_url_auth_request_data,
+) {
+    wire__crate__binding__BindingBreezServices_lnurl_auth_impl(port_, that, req_data)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_pay(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_ln_url_pay_request,
+) {
+    wire__crate__binding__BindingBreezServices_lnurl_pay_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lnurl_withdraw(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_ln_url_withdraw_request,
+) {
+    wire__crate__binding__BindingBreezServices_lnurl_withdraw_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_id(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_lsp_id_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_lsp_info(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_lsp_info_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_max_reverse_swap_amount(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_max_reverse_swap_amount_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_credentials(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_node_credentials_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_node_info(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_node_info_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_onchain_payment_limits(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_onchain_payment_limits_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_open_channel_fee(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_open_channel_fee_request,
+) {
+    wire__crate__binding__BindingBreezServices_open_channel_fee_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_pay_onchain(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_pay_onchain_request,
+) {
+    wire__crate__binding__BindingBreezServices_pay_onchain_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_payment_by_hash(
+    port_: i64,
+    that: usize,
+    hash: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_payment_by_hash_impl(port_, that, hash)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_onchain_payment(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_prepare_onchain_payment_request,
+) {
+    wire__crate__binding__BindingBreezServices_prepare_onchain_payment_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_prepare_redeem_onchain_funds_request,
+) {
+    wire__crate__binding__BindingBreezServices_prepare_redeem_onchain_funds_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_prepare_refund(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_prepare_refund_request,
+) {
+    wire__crate__binding__BindingBreezServices_prepare_refund_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_onchain(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_receive_onchain_request,
+) {
+    wire__crate__binding__BindingBreezServices_receive_onchain_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_receive_payment(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_receive_payment_request,
+) {
+    wire__crate__binding__BindingBreezServices_receive_payment_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_recommended_fees(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_recommended_fees_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_onchain_funds(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_redeem_onchain_funds_request,
+) {
+    wire__crate__binding__BindingBreezServices_redeem_onchain_funds_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_redeem_swap(
+    port_: i64,
+    that: usize,
+    swap_address: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_redeem_swap_impl(port_, that, swap_address)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_refund(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_refund_request,
+) {
+    wire__crate__binding__BindingBreezServices_refund_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_register_webhook(
+    port_: i64,
+    that: usize,
+    webhook_url: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_register_webhook_impl(port_, that, webhook_url)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_report_issue(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_report_issue_request,
+) {
+    wire__crate__binding__BindingBreezServices_report_issue_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_rescan_swaps(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_rescan_swaps_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_onchain(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_send_onchain_request,
+) {
+    wire__crate__binding__BindingBreezServices_send_onchain_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_payment(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_send_payment_request,
+) {
+    wire__crate__binding__BindingBreezServices_send_payment_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_send_spontaneous_payment(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_send_spontaneous_payment_request,
+) {
+    wire__crate__binding__BindingBreezServices_send_spontaneous_payment_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_set_payment_metadata(
+    port_: i64,
+    that: usize,
+    hash: *mut wire_cst_list_prim_u_8_strict,
+    metadata: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_set_payment_metadata_impl(
+        port_, that, hash, metadata,
+    )
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sign_message(
+    port_: i64,
+    that: usize,
+    req: *mut wire_cst_sign_message_request,
+) {
+    wire__crate__binding__BindingBreezServices_sign_message_impl(port_, that, req)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_sync(
+    port_: i64,
+    that: usize,
+) {
+    wire__crate__binding__BindingBreezServices_sync_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__BindingBreezServices_unregister_webhook(
+    port_: i64,
+    that: usize,
+    webhook_url: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire__crate__binding__BindingBreezServices_unregister_webhook_impl(port_, that, webhook_url)
 }
 
 #[no_mangle]
@@ -3220,48 +3718,11 @@ pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__breez_log_stream(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__buy_bitcoin(
-    port_: i64,
-    req: *mut wire_cst_buy_bitcoin_request,
-) {
-    wire__crate__binding__buy_bitcoin_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__check_message(
-    port_: i64,
-    req: *mut wire_cst_check_message_request,
-) {
-    wire__crate__binding__check_message_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__close_lsp_channels(port_: i64) {
-    wire__crate__binding__close_lsp_channels_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__configure_node(
-    port_: i64,
-    req: *mut wire_cst_configure_node_request,
-) {
-    wire__crate__binding__configure_node_impl(port_, req)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__connect(
     port_: i64,
     req: *mut wire_cst_connect_request,
 ) {
     wire__crate__binding__connect_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__connect_lsp(
-    port_: i64,
-    lsp_id: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__connect_lsp_impl(port_, lsp_id)
 }
 
 #[no_mangle]
@@ -3275,155 +3736,11 @@ pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__default_config(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__disconnect(port_: i64) {
-    wire__crate__binding__disconnect_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__execute_command(
-    port_: i64,
-    command: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__execute_command_impl(port_, command)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__fetch_fiat_rates(port_: i64) {
-    wire__crate__binding__fetch_fiat_rates_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__fetch_lsp_info(
-    port_: i64,
-    id: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__fetch_lsp_info_impl(port_, id)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__fetch_reverse_swap_fees(
-    port_: i64,
-    req: *mut wire_cst_reverse_swap_fees_request,
-) {
-    wire__crate__binding__fetch_reverse_swap_fees_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__generate_diagnostic_data(port_: i64) {
-    wire__crate__binding__generate_diagnostic_data_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__in_progress_onchain_payments(port_: i64) {
-    wire__crate__binding__in_progress_onchain_payments_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__in_progress_reverse_swaps(port_: i64) {
-    wire__crate__binding__in_progress_reverse_swaps_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__in_progress_swap(port_: i64) {
-    wire__crate__binding__in_progress_swap_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__is_initialized(port_: i64) {
-    wire__crate__binding__is_initialized_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__list_fiat_currencies(port_: i64) {
-    wire__crate__binding__list_fiat_currencies_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__list_lsps(port_: i64) {
-    wire__crate__binding__list_lsps_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__list_payments(
-    port_: i64,
-    req: *mut wire_cst_list_payments_request,
-) {
-    wire__crate__binding__list_payments_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__list_refundables(port_: i64) {
-    wire__crate__binding__list_refundables_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__lnurl_auth(
-    port_: i64,
-    req_data: *mut wire_cst_ln_url_auth_request_data,
-) {
-    wire__crate__binding__lnurl_auth_impl(port_, req_data)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__lnurl_pay(
-    port_: i64,
-    req: *mut wire_cst_ln_url_pay_request,
-) {
-    wire__crate__binding__lnurl_pay_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__lnurl_withdraw(
-    port_: i64,
-    req: *mut wire_cst_ln_url_withdraw_request,
-) {
-    wire__crate__binding__lnurl_withdraw_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__lsp_id(port_: i64) {
-    wire__crate__binding__lsp_id_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__lsp_info(port_: i64) {
-    wire__crate__binding__lsp_info_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__max_reverse_swap_amount(port_: i64) {
-    wire__crate__binding__max_reverse_swap_amount_impl(port_)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__mnemonic_to_seed(
     port_: i64,
     phrase: *mut wire_cst_list_prim_u_8_strict,
 ) {
     wire__crate__binding__mnemonic_to_seed_impl(port_, phrase)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__node_credentials(port_: i64) {
-    wire__crate__binding__node_credentials_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__node_info(port_: i64) {
-    wire__crate__binding__node_info_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__onchain_payment_limits(port_: i64) {
-    wire__crate__binding__onchain_payment_limits_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__open_channel_fee(
-    port_: i64,
-    req: *mut wire_cst_open_channel_fee_request,
-) {
-    wire__crate__binding__open_channel_fee_impl(port_, req)
 }
 
 #[no_mangle]
@@ -3443,158 +3760,11 @@ pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__parse_invoice(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__pay_onchain(
-    port_: i64,
-    req: *mut wire_cst_pay_onchain_request,
-) {
-    wire__crate__binding__pay_onchain_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__payment_by_hash(
-    port_: i64,
-    hash: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__payment_by_hash_impl(port_, hash)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__prepare_onchain_payment(
-    port_: i64,
-    req: *mut wire_cst_prepare_onchain_payment_request,
-) {
-    wire__crate__binding__prepare_onchain_payment_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__prepare_redeem_onchain_funds(
-    port_: i64,
-    req: *mut wire_cst_prepare_redeem_onchain_funds_request,
-) {
-    wire__crate__binding__prepare_redeem_onchain_funds_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__prepare_refund(
-    port_: i64,
-    req: *mut wire_cst_prepare_refund_request,
-) {
-    wire__crate__binding__prepare_refund_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__receive_onchain(
-    port_: i64,
-    req: *mut wire_cst_receive_onchain_request,
-) {
-    wire__crate__binding__receive_onchain_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__receive_payment(
-    port_: i64,
-    req: *mut wire_cst_receive_payment_request,
-) {
-    wire__crate__binding__receive_payment_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__recommended_fees(port_: i64) {
-    wire__crate__binding__recommended_fees_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__redeem_onchain_funds(
-    port_: i64,
-    req: *mut wire_cst_redeem_onchain_funds_request,
-) {
-    wire__crate__binding__redeem_onchain_funds_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__redeem_swap(
-    port_: i64,
-    swap_address: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__redeem_swap_impl(port_, swap_address)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__refund(
-    port_: i64,
-    req: *mut wire_cst_refund_request,
-) {
-    wire__crate__binding__refund_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__register_webhook(
-    port_: i64,
-    webhook_url: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__register_webhook_impl(port_, webhook_url)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__report_issue(
-    port_: i64,
-    req: *mut wire_cst_report_issue_request,
-) {
-    wire__crate__binding__report_issue_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__rescan_swaps(port_: i64) {
-    wire__crate__binding__rescan_swaps_impl(port_)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__send_onchain(
-    port_: i64,
-    req: *mut wire_cst_send_onchain_request,
-) {
-    wire__crate__binding__send_onchain_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__send_payment(
-    port_: i64,
-    req: *mut wire_cst_send_payment_request,
-) {
-    wire__crate__binding__send_payment_impl(port_, req)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__send_spontaneous_payment(
-    port_: i64,
-    req: *mut wire_cst_send_spontaneous_payment_request,
-) {
-    wire__crate__binding__send_spontaneous_payment_impl(port_, req)
-}
-
-#[no_mangle]
 pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__service_health_check(
     port_: i64,
     api_key: *mut wire_cst_list_prim_u_8_strict,
 ) {
     wire__crate__binding__service_health_check_impl(port_, api_key)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__set_payment_metadata(
-    port_: i64,
-    hash: *mut wire_cst_list_prim_u_8_strict,
-    metadata: *mut wire_cst_list_prim_u_8_strict,
-) {
-    wire__crate__binding__set_payment_metadata_impl(port_, hash, metadata)
-}
-
-#[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__sign_message(
-    port_: i64,
-    req: *mut wire_cst_sign_message_request,
-) {
-    wire__crate__binding__sign_message_impl(port_, req)
 }
 
 #[no_mangle]
@@ -3606,16 +3776,21 @@ pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__static_backup(
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__sync(port_: i64) {
-    wire__crate__binding__sync_impl(port_)
+pub extern "C" fn frbgen_breez_sdk_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+    ptr: *const std::ffi::c_void,
+) {
+    unsafe {
+        StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>>::increment_strong_count(ptr as _);
+    }
 }
 
 #[no_mangle]
-pub extern "C" fn frbgen_breez_sdk_wire__crate__binding__unregister_webhook(
-    port_: i64,
-    webhook_url: *mut wire_cst_list_prim_u_8_strict,
+pub extern "C" fn frbgen_breez_sdk_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBindingBreezServices(
+    ptr: *const std::ffi::c_void,
 ) {
-    wire__crate__binding__unregister_webhook_impl(port_, webhook_url)
+    unsafe {
+        StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BindingBreezServices>>::decrement_strong_count(ptr as _);
+    }
 }
 
 #[no_mangle]
@@ -4420,6 +4595,35 @@ pub struct wire_cst_config {
 #[derive(Clone, Copy)]
 pub struct wire_cst_configure_node_request {
     close_to_address: *mut wire_cst_list_prim_u_8_strict,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_connect_error {
+    tag: i32,
+    kind: ConnectErrorKind,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union ConnectErrorKind {
+    Generic: wire_cst_ConnectError_Generic,
+    RestoreOnly: wire_cst_ConnectError_RestoreOnly,
+    ServiceConnectivity: wire_cst_ConnectError_ServiceConnectivity,
+    nil__: (),
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_ConnectError_Generic {
+    err: *mut wire_cst_list_prim_u_8_strict,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_ConnectError_RestoreOnly {
+    err: *mut wire_cst_list_prim_u_8_strict,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct wire_cst_ConnectError_ServiceConnectivity {
+    err: *mut wire_cst_list_prim_u_8_strict,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
