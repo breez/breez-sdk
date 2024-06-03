@@ -7,6 +7,7 @@ use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use anyhow::{anyhow, Result};
+use clap::Parser;
 use ecies::symmetric::{sym_decrypt, sym_encrypt};
 use futures::{Future, Stream};
 use gl_client::node::ClnClient;
@@ -48,7 +49,9 @@ use crate::invoice::{parse_invoice, validate_network, InvoiceError, RouteHintHop
 use crate::lightning::util::message_signing::verify;
 use crate::lightning_invoice::{RawBolt11Invoice, SignedRawBolt11Invoice};
 use crate::models::*;
-use crate::node_api::{CreateInvoiceRequest, FetchBolt11Result, NodeAPI, NodeError, NodeResult};
+use crate::node_api::{
+    CreateInvoiceRequest, FetchBolt11Result, GraphChannel, NodeAPI, NodeError, NodeResult,
+};
 use crate::persist::db::SqliteStorage;
 use crate::{
     NodeConfig, PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, RouteHint,
@@ -1470,9 +1473,10 @@ impl NodeAPI for Greenlight {
     }
 
     async fn execute_command(&self, command: String) -> NodeResult<String> {
-        let node_cmd =
-            NodeCommand::from_str(&command).map_err(|_| anyhow!("Command not found: {command}"))?;
-        match node_cmd {
+        let mut args = shlex::split(&command).ok_or(anyhow!("Command not found: {command}"))?;
+        args.insert(0, String::from(" "));
+        let command = NodeCommand::try_parse_from(args)?;
+        match command {
             NodeCommand::ListPeers => {
                 let resp = self
                     .get_node_client()
@@ -1551,6 +1555,40 @@ impl NodeAPI for Greenlight {
                     .stop(cln::StopRequest::default())
                     .await?
                     .into_inner();
+                Ok(format!("{resp:?}"))
+            }
+            NodeCommand::ListChannels {
+                source,
+                destination,
+                short_channel_id,
+            } => {
+                let resp = self
+                    .get_node_client()
+                    .await?
+                    .list_channels(cln::ListchannelsRequest {
+                        source: source.and_then(|d| hex::decode(d).ok()),
+                        destination: destination.and_then(|d| hex::decode(d).ok()),
+                        short_channel_id,
+                    })
+                    .await?
+                    .into_inner()
+                    .channels
+                    .iter()
+                    .map(|c| GraphChannel {
+                        active: c.active,
+                        public: c.public,
+                        base_fee_msat: c.base_fee_millisatoshi,
+                        capacity_sat: c.amount_msat.clone().map(|a| a.msat / 1000),
+                        cltv_delta: c.delay,
+                        fee_per_millionth: c.fee_per_millionth as u64,
+                        htlc_max_msat: c.htlc_maximum_msat.clone().map(|m| m.msat),
+                        destination: hex::encode(c.destination.clone()),
+                        short_channel_id: c.short_channel_id.clone(),
+                        source: hex::encode(c.source.clone()),
+                        htlc_min_msat: c.htlc_minimum_msat.clone().map(|m| m.msat),
+                        last_update: c.last_update,
+                    })
+                    .collect::<Vec<GraphChannel>>();
                 Ok(format!("{resp:?}"))
             }
         }
@@ -1709,45 +1747,66 @@ impl NodeAPI for Greenlight {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Debug, EnumString, Display, Deserialize, Serialize)]
+#[derive(Parser, Clone, PartialEq, Eq, Debug, EnumString, Display, Deserialize, Serialize)]
 enum NodeCommand {
     /// Generates diagnostic data report.
+    #[command(name = "generatediagnosticdata")]
     #[strum(serialize = "generatediagnosticdata")]
     GenerateDiagnosticData,
 
     /// Closes all channels of all peers.
+    #[command(name = "closeallchannels")]
     #[strum(serialize = "closeallchannels")]
     CloseAllChannels,
 
     /// See <https://docs.corelightning.org/reference/lightning-getinfo>
+    #[command(name = "getinfo")]
     #[strum(serialize = "getinfo")]
     GetInfo,
 
     /// See <https://docs.corelightning.org/reference/lightning-listfunds>
+    #[command(name = "listfunds")]
     #[strum(serialize = "listfunds")]
     ListFunds,
 
     /// See <https://docs.corelightning.org/reference/lightning-listinvoices>
+    #[command(name = "listinvoices")]
     #[strum(serialize = "listinvoices")]
     ListInvoices,
 
     /// See <https://docs.corelightning.org/reference/lightning-listpays>
+    #[command(name = "listpayments")]
     #[strum(serialize = "listpayments")]
     ListPayments,
 
     /// See <https://docs.corelightning.org/reference/lightning-listpeers>
+    #[command(name = "listpeers")]
     #[strum(serialize = "listpeers")]
     ListPeers,
 
     /// See <https://docs.corelightning.org/reference/lightning-listpeerchannels>
+    #[command(name = "listpeerchannels")]
     #[strum(serialize = "listpeerchannels")]
     ListPeerChannels,
+
+    /// See <https://docs.corelightning.org/reference/lightning-listchannels>
+    #[command(name = "listchannels")]
+    #[strum(serialize = "listchannels")]
+    ListChannels {
+        #[arg(long)]
+        source: Option<String>,
+        #[arg(long)]
+        destination: Option<String>,
+        #[arg(long)]
+        short_channel_id: Option<String>,
+    },
 
     /// Stops the node.
     ///
     /// Note that this command will return an error, as the node is stopped before it can reply.
     ///
     /// See <https://docs.corelightning.org/reference/lightning-stop>
+    #[command(name = "stop")]
     #[strum(serialize = "stop")]
     Stop,
 }

@@ -204,6 +204,12 @@ impl From<TryFromIntError> for NodeError {
     }
 }
 
+impl From<clap::Error> for NodeError {
+    fn from(err: clap::Error) -> Self {
+        Self::Generic(anyhow::Error::new(err))
+    }
+}
+
 #[allow(clippy::invalid_regex)]
 pub(crate) fn parse_cln_error(status: tonic::Status) -> Result<JsonRpcErrCode> {
     let re: Regex = Regex::new(r"Some\((?<code>-?\d+)\)")?;

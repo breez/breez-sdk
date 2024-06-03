@@ -562,8 +562,9 @@ pub(crate) async fn handle_command(
                 .await?;
             Ok("Report sent".into())
         }
-        Commands::ExecuteDevCommand { command } => {
-            serde_json::to_string_pretty(&sdk()?.execute_dev_command(command).await?)
+        Commands::ExecuteDevCommand { args } => {
+            let joined = shlex::try_join(args.iter().map(|s| s.as_ref()))?;
+            serde_json::to_string_pretty(&sdk()?.execute_dev_command(joined).await?)
                 .map_err(|e| e.into())
         }
         Commands::GenerateDiagnosticData {} => Ok(sdk()?.generate_diagnostic_data().await?),

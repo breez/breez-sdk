@@ -45,8 +45,9 @@ async fn main() -> Result<()> {
         match readline {
             Ok(line) => {
                 rl.add_history_entry(line.as_str())?;
-                let mut vec: Vec<&str> = line.as_str().split_whitespace().collect();
-                vec.insert(0, " ");
+                let mut vec: Vec<String> =
+                    shlex::split(&line).ok_or(anyhow!("Could not parse command"))?;
+                vec.insert(0, String::from(" "));
                 let cli_res = Commands::try_parse_from(vec);
                 if cli_res.is_err() {
                     println!("{}", cli_res.unwrap_err());

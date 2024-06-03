@@ -320,7 +320,10 @@ pub(crate) enum Commands {
     FetchFiatRates {},
 
     /// [dev] Execute a low level node command (used for debugging)
-    ExecuteDevCommand { command: String },
+    ExecuteDevCommand {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true, hide = true)]
+        args: Vec<String>,
+    },
 
     /// [dev] Generates and retrieves a diagnostic data report from the sdk services (used for debugging)
     GenerateDiagnosticData {},

@@ -62,6 +62,22 @@ impl NodeError {
     }
 }
 
+#[derive(Debug)]
+pub struct GraphChannel {
+    pub source: String,
+    pub destination: String,
+    pub short_channel_id: String,
+    pub public: bool,
+    pub capacity_sat: Option<u64>,
+    pub active: bool,
+    pub last_update: u32,
+    pub base_fee_msat: u32,
+    pub fee_per_millionth: u64,
+    pub cltv_delta: u32,
+    pub htlc_min_msat: Option<u64>,
+    pub htlc_max_msat: Option<u64>,
+}
+
 pub struct CreateInvoiceRequest {
     pub amount_msat: u64,
     pub description: String,
