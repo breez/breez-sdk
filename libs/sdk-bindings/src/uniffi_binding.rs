@@ -396,4 +396,4 @@ fn rt() -> &'static tokio::runtime::Runtime {
     &RT
 }
 
-uniffi_macros::include_scaffolding!("breez_sdk");
+uniffi::include_scaffolding!("breez_sdk");

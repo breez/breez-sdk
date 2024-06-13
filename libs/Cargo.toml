@@ -16,5 +16,5 @@ resolver = "2"
 version = "0.4.1"
 
 [workspace.dependencies]
-uniffi = "0.23.0"
-uniffi_macros = "0.23.0"
+uniffi = "0.25.0"
+uniffi_bindgen = "0.25.0"

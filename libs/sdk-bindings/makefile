@@ -48,14 +48,14 @@ csharp-linux: $(SOURCES)
 	cp ../target/$(TARGET)/release/libbreez_sdk_bindings.so ffi/csharp
 
 golang-darwin: darwin-universal
-	cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.1.5+v0.23.0
+	cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.2.1+v0.25.0
 	uniffi-bindgen-go src/breez_sdk.udl -o ffi/golang -c ./uniffi.toml
 	cp ../target/darwin-universal/release/libbreez_sdk_bindings.dylib ffi/golang
 	cp -r ffi/golang/breez/breez_sdk tests/bindings/golang/
 
 TARGET ?= aarch64-unknown-linux-gnu
 golang-linux: $(SOURCES)
-	cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.1.5+v0.23.0
+	cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.2.1+v0.25.0
 	cargo build --release --target $(TARGET)
 	uniffi-bindgen-go src/breez_sdk.udl -o ffi/golang -c ./uniffi.toml
 	cp ../target/$(TARGET)/release/libbreez_sdk_bindings.so ffi/golang

@@ -18,10 +18,9 @@ breez-sdk-core = { path = "../sdk-core" }
 anyhow = { version = "1.0.79", features = ["backtrace"] }
 thiserror = "1.0.56"
 tokio = { version = "1", features = ["full"] }
-uniffi = { version = "0.23.0", features = ["bindgen-tests", "cli"] }
-uniffi_bindgen = "0.23.0"
-uniffi_macros = "0.23.0"
-uniffi-kotlin-multiplatform = { git = "https://gitlab.com/trixnity/uniffi-kotlin-multiplatform-bindings", rev = "bf48c5fcb153856e3055025a3cbfa56fbf213188" }
+uniffi = { workspace = true, features = ["bindgen-tests", "cli"] }
+uniffi_bindgen = { workspace = true }
+uniffi_bindgen_kotlin_multiplatform = { git = "https://gitlab.com/trixnity/uniffi-kotlin-multiplatform-bindings", rev = "7e77634ceaa653716b85a1ea2a5283ebf72c9a92" }
 camino = "1.1.1"
 log = "*"
 once_cell = "*"
@@ -34,7 +33,7 @@ tonic = { version = "^0.8", features = [
 ] }
 
 [build-dependencies]
-uniffi_build = { version = "0.23.0" }
-uniffi_bindgen = "0.23.0"
+uniffi = { workspace = true, features = ["build"] }
+uniffi_bindgen = { workspace = true }
 anyhow = { version = "1.0.79", features = ["backtrace"] }
 glob = "0.3.1"
