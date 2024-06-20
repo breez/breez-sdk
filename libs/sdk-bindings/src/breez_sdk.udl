@@ -406,6 +406,7 @@ interface BreezEvent {
     NewBlock(u32 block);
     InvoicePaid(InvoicePaidDetails details);
     Synced();
+    PaymentStarted(Payment details);
     PaymentSucceed(Payment details);
     PaymentFailed(PaymentFailedData details);
     BackupStarted();
@@ -754,6 +755,7 @@ dictionary SendPaymentRequest {
     string bolt11;
     u64? amount_msat = null;
     string? label = null;
+    u64? pending_timeout_sec = null;
 };
 
 dictionary SendSpontaneousPaymentRequest {

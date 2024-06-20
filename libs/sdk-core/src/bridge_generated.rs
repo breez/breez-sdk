@@ -1320,19 +1320,22 @@ impl support::IntoDart for BreezEvent {
                 vec![1.into_dart(), details.into_into_dart().into_dart()]
             }
             Self::Synced => vec![2.into_dart()],
-            Self::PaymentSucceed { details } => {
+            Self::PaymentStarted { details } => {
                 vec![3.into_dart(), details.into_into_dart().into_dart()]
             }
-            Self::PaymentFailed { details } => {
+            Self::PaymentSucceed { details } => {
                 vec![4.into_dart(), details.into_into_dart().into_dart()]
             }
-            Self::BackupStarted => vec![5.into_dart()],
-            Self::BackupSucceeded => vec![6.into_dart()],
+            Self::PaymentFailed { details } => {
+                vec![5.into_dart(), details.into_into_dart().into_dart()]
+            }
+            Self::BackupStarted => vec![6.into_dart()],
+            Self::BackupSucceeded => vec![7.into_dart()],
             Self::BackupFailed { details } => {
-                vec![7.into_dart(), details.into_into_dart().into_dart()]
+                vec![8.into_dart(), details.into_into_dart().into_dart()]
             }
             Self::SwapUpdated { details } => {
-                vec![8.into_dart(), details.into_into_dart().into_dart()]
+                vec![9.into_dart(), details.into_into_dart().into_dart()]
             }
         }
         .into_dart()

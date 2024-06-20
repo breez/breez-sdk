@@ -245,12 +245,14 @@ pub(crate) async fn handle_command(
             bolt11,
             amount_msat,
             label,
+            pending_timeout_sec,
         } => {
             let payment = sdk()?
                 .send_payment(SendPaymentRequest {
                     bolt11,
                     amount_msat,
                     label,
+                    pending_timeout_sec,
                 })
                 .await?;
             serde_json::to_string_pretty(&payment).map_err(|e| e.into())

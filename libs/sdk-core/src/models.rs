@@ -480,6 +480,7 @@ pub struct Config {
     /// the folder should exist before starting the SDK.
     pub working_dir: String,
     pub network: Network,
+    /// Maps to the CLN `retry_for` config when paying invoices (`lightning-pay`)
     pub payment_timeout_sec: u32,
     pub default_lsp_id: Option<String>,
     pub api_key: Option<String>,
@@ -855,7 +856,7 @@ pub struct ReceivePaymentResponse {
 }
 
 /// Represents a send payment request.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct SendPaymentRequest {
     /// The bolt11 invoice
     pub bolt11: String,
@@ -863,6 +864,9 @@ pub struct SendPaymentRequest {
     pub amount_msat: Option<u64>,
     /// The external label or identifier of the [Payment]
     pub label: Option<String>,
+    /// If set, a timeout in seconds, that [crate::BreezServices::send_payment] will return a
+    /// pending payment if not already finished. Otherwise it will return when finished.
+    pub pending_timeout_sec: Option<u64>,
 }
 
 /// Represents a TLV entry for a keysend payment.
@@ -891,6 +895,11 @@ pub struct SendSpontaneousPaymentRequest {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SendPaymentResponse {
     pub payment: Payment,
+}
+impl SendPaymentResponse {
+    pub(crate) fn from_payment(payment: Payment) -> Self {
+        Self { payment }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

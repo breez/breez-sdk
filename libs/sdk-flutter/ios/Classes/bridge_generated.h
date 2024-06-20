@@ -116,6 +116,7 @@ typedef struct wire_SendPaymentRequest {
   struct wire_uint_8_list *bolt11;
   uint64_t *amount_msat;
   struct wire_uint_8_list *label;
+  uint64_t *pending_timeout_sec;
 } wire_SendPaymentRequest;
 
 typedef struct wire_TlvEntry {

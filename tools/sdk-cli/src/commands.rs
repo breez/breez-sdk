@@ -50,6 +50,10 @@ pub(crate) enum Commands {
         /// The external label or identifier of the payment
         #[clap(name = "label", short = 'l', long = "label")]
         label: Option<String>,
+
+        /// The option timeout in which a pending payment is returned if not already finished.
+        #[clap(name = "seconds", short = 't', long = "pending_timeout")]
+        pending_timeout_sec: Option<u64>,
     },
 
     /// [pay] Send a spontaneous (keysend) payment

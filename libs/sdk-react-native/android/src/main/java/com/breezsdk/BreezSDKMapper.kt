@@ -3196,10 +3196,21 @@ fun asSendPaymentRequest(sendPaymentRequest: ReadableMap): SendPaymentRequest? {
     val bolt11 = sendPaymentRequest.getString("bolt11")!!
     val amountMsat = if (hasNonNullKey(sendPaymentRequest, "amountMsat")) sendPaymentRequest.getDouble("amountMsat").toULong() else null
     val label = if (hasNonNullKey(sendPaymentRequest, "label")) sendPaymentRequest.getString("label") else null
+    val pendingTimeoutSec =
+        if (hasNonNullKey(
+                sendPaymentRequest,
+                "pendingTimeoutSec",
+            )
+        ) {
+            sendPaymentRequest.getDouble("pendingTimeoutSec").toULong()
+        } else {
+            null
+        }
     return SendPaymentRequest(
         bolt11,
         amountMsat,
         label,
+        pendingTimeoutSec,
     )
 }
 
@@ -3208,6 +3219,7 @@ fun readableMapOf(sendPaymentRequest: SendPaymentRequest): ReadableMap =
         "bolt11" to sendPaymentRequest.bolt11,
         "amountMsat" to sendPaymentRequest.amountMsat,
         "label" to sendPaymentRequest.label,
+        "pendingTimeoutSec" to sendPaymentRequest.pendingTimeoutSec,
     )
 
 fun asSendPaymentRequestList(arr: ReadableArray): List<SendPaymentRequest> {
@@ -3811,6 +3823,9 @@ fun asBreezEvent(breezEvent: ReadableMap): BreezEvent? {
     if (type == "synced") {
         return BreezEvent.Synced
     }
+    if (type == "paymentStarted") {
+        return BreezEvent.PaymentStarted(breezEvent.getMap("details")?.let { asPayment(it) }!!)
+    }
     if (type == "paymentSucceed") {
         return BreezEvent.PaymentSucceed(breezEvent.getMap("details")?.let { asPayment(it) }!!)
     }
@@ -3845,6 +3860,10 @@ fun readableMapOf(breezEvent: BreezEvent): ReadableMap? {
         }
         is BreezEvent.Synced -> {
             pushToMap(map, "type", "synced")
+        }
+        is BreezEvent.PaymentStarted -> {
+            pushToMap(map, "type", "paymentStarted")
+            pushToMap(map, "details", readableMapOf(breezEvent.details))
         }
         is BreezEvent.PaymentSucceed -> {
             pushToMap(map, "type", "paymentSucceed")

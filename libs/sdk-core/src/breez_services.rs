@@ -70,6 +70,10 @@ pub enum BreezEvent {
     },
     /// Indicates that the local SDK state has just been sync-ed with the remote components
     Synced,
+    /// Indicates that an outgoing payment has started
+    PaymentStarted {
+        details: Payment,
+    },
     /// Indicates that an outgoing payment has been completed successfully
     PaymentSucceed {
         details: Payment,
@@ -91,6 +95,11 @@ pub enum BreezEvent {
     SwapUpdated {
         details: SwapInfo,
     },
+}
+impl BreezEvent {
+    pub(crate) fn payment_started(payment: Payment) -> Self {
+        Self::PaymentStarted { details: payment }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -258,7 +267,7 @@ impl BreezServices {
     /// Calling `send_payment` ensures that the payment is not already completed, if so it will result in an error.
     /// If the invoice doesn't specify an amount, the amount is taken from the `amount_msat` arg.
     pub async fn send_payment(
-        &self,
+        self: &Arc<BreezServices>,
         req: SendPaymentRequest,
     ) -> Result<SendPaymentResponse, SendPaymentError> {
         self.start_node().await?;
@@ -290,25 +299,39 @@ impl BreezServices {
         {
             Some(_) => Err(SendPaymentError::AlreadyPaid),
             None => {
-                self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
-                let payment_res = self
-                    .node_api
-                    .send_payment(
-                        parsed_invoice.bolt11.clone(),
-                        req.amount_msat,
-                        req.label.clone(),
-                    )
-                    .map_err(Into::into)
-                    .await;
-                let payment = self
-                    .on_payment_completed(
-                        parsed_invoice.payee_pubkey.clone(),
-                        Some(parsed_invoice),
-                        req.label,
-                        payment_res,
-                    )
+                let pending_payment =
+                    self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
+                self.notify_event_listeners(BreezEvent::payment_started(pending_payment.clone()))
                     .await?;
-                Ok(SendPaymentResponse { payment })
+
+                let pending_timeout_sec = req.pending_timeout_sec.unwrap_or(u64::MAX);
+                let (tx, rx) = std::sync::mpsc::channel();
+                let cloned = self.clone();
+                tokio::spawn(async move {
+                    let payment_res = cloned
+                        .node_api
+                        .send_payment(
+                            parsed_invoice.bolt11.clone(),
+                            req.amount_msat,
+                            req.label.clone(),
+                        )
+                        .map_err(Into::into)
+                        .await;
+                    let result = cloned
+                        .on_payment_completed(
+                            parsed_invoice.payee_pubkey.clone(),
+                            Some(parsed_invoice),
+                            req.label,
+                            payment_res,
+                        )
+                        .await;
+                    let _ = tx.send(result);
+                });
+
+                match rx.recv_timeout(Duration::from_secs(pending_timeout_sec)) {
+                    Ok(result) => result.map(SendPaymentResponse::from_payment),
+                    Err(_) => Ok(SendPaymentResponse::from_payment(pending_payment)),
+                }
             }
         }
     }
@@ -343,7 +366,10 @@ impl BreezServices {
     /// is made.
     ///
     /// This method will return an [anyhow::Error] when any validation check fails.
-    pub async fn lnurl_pay(&self, req: LnUrlPayRequest) -> Result<LnUrlPayResult, LnUrlPayError> {
+    pub async fn lnurl_pay(
+        self: &Arc<BreezServices>,
+        req: LnUrlPayRequest,
+    ) -> Result<LnUrlPayResult, LnUrlPayError> {
         match validate_lnurl_pay(
             req.amount_msat,
             &req.comment,
@@ -358,8 +384,8 @@ impl BreezServices {
             ValidatedCallbackResponse::EndpointSuccess { data: cb } => {
                 let pay_req = SendPaymentRequest {
                     bolt11: cb.pr.clone(),
-                    amount_msat: None,
                     label: req.payment_label,
+                    ..Default::default()
                 };
                 let invoice = parse_invoice(cb.pr.as_str())?;
 
@@ -1160,7 +1186,7 @@ impl BreezServices {
         invoice: &LNInvoice,
         amount_msat: u64,
         label: Option<String>,
-    ) -> Result<(), SendPaymentError> {
+    ) -> Result<Payment, SendPaymentError> {
         self.persister.insert_or_update_payments(
             &[Payment {
                 id: invoice.payment_hash.clone(),
@@ -1209,7 +1235,12 @@ impl BreezServices {
                 attempted_error: None,
             },
         )?;
-        Ok(())
+
+        self.persister
+            .get_payment_by_hash(&invoice.payment_hash)?
+            .ok_or(SendPaymentError::Generic {
+                err: "Payment not found".to_string(),
+            })
     }
 
     async fn on_payment_completed(

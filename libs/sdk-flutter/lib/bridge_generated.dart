@@ -395,6 +395,11 @@ sealed class BreezEvent with _$BreezEvent {
   /// Indicates that the local SDK state has just been sync-ed with the remote components
   const factory BreezEvent.synced() = BreezEvent_Synced;
 
+  /// Indicates that an outgoing payment has started
+  const factory BreezEvent.paymentStarted({
+    required Payment details,
+  }) = BreezEvent_PaymentStarted;
+
   /// Indicates that an outgoing payment has been completed successfully
   const factory BreezEvent.paymentSucceed({
     required Payment details,
@@ -519,6 +524,8 @@ class Config {
   /// the folder should exist before starting the SDK.
   final String workingDir;
   final Network network;
+
+  /// Maps to the CLN `retry_for` config when paying invoices (`lightning-pay`)
   final int paymentTimeoutSec;
   final String? defaultLspId;
   final String? apiKey;
@@ -1684,10 +1691,15 @@ class SendPaymentRequest {
   /// The external label or identifier of the [Payment]
   final String? label;
 
+  /// If set, a timeout in seconds, that [crate::BreezServices::send_payment] will return a
+  /// pending payment if not already finished. Otherwise it will return when finished.
+  final int? pendingTimeoutSec;
+
   const SendPaymentRequest({
     required this.bolt11,
     this.amountMsat,
     this.label,
+    this.pendingTimeoutSec,
   });
 }
 
@@ -3217,22 +3229,26 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       case 2:
         return BreezEvent_Synced();
       case 3:
-        return BreezEvent_PaymentSucceed(
+        return BreezEvent_PaymentStarted(
           details: _wire2api_box_autoadd_payment(raw[1]),
         );
       case 4:
+        return BreezEvent_PaymentSucceed(
+          details: _wire2api_box_autoadd_payment(raw[1]),
+        );
+      case 5:
         return BreezEvent_PaymentFailed(
           details: _wire2api_box_autoadd_payment_failed_data(raw[1]),
         );
-      case 5:
-        return BreezEvent_BackupStarted();
       case 6:
-        return BreezEvent_BackupSucceeded();
+        return BreezEvent_BackupStarted();
       case 7:
+        return BreezEvent_BackupSucceeded();
+      case 8:
         return BreezEvent_BackupFailed(
           details: _wire2api_box_autoadd_backup_failed_data(raw[1]),
         );
-      case 8:
+      case 9:
         return BreezEvent_SwapUpdated(
           details: _wire2api_box_autoadd_swap_info(raw[1]),
         );
@@ -4955,6 +4971,7 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
     wireObj.bolt11 = api2wire_String(apiObj.bolt11);
     wireObj.amount_msat = api2wire_opt_box_autoadd_u64(apiObj.amountMsat);
     wireObj.label = api2wire_opt_String(apiObj.label);
+    wireObj.pending_timeout_sec = api2wire_opt_box_autoadd_u64(apiObj.pendingTimeoutSec);
   }
 
   void _api_fill_to_wire_send_spontaneous_payment_request(
@@ -6517,6 +6534,8 @@ final class wire_SendPaymentRequest extends ffi.Struct {
   external ffi.Pointer<ffi.Uint64> amount_msat;
 
   external ffi.Pointer<wire_uint_8_list> label;
+
+  external ffi.Pointer<ffi.Uint64> pending_timeout_sec;
 }
 
 final class wire_TlvEntry extends ffi.Struct {
