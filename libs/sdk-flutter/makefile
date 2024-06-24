@@ -12,8 +12,9 @@ init:
 all: ios android
 
 flutter_rust_bridge:
-	cargo install flutter_rust_bridge_codegen --version 1.82.6
-	flutter_rust_bridge_codegen --dart-format-line-length 110 -r ../sdk-core/src/binding.rs -d lib/bridge_generated.dart -c ios/Classes/bridge_generated.h
+	cargo install flutter_rust_bridge_codegen --version 2.0.0
+	mkdir -p ./lib/generated
+	flutter_rust_bridge_codegen generate
 
 ios: $(SOURCES) flutter_rust_bridge
 	make -C ../sdk-bindings bindings-swift
@@ -47,6 +48,7 @@ desktop: $(SOURCES) flutter_rust_bridge
 .PHONY: clean
 clean:
 	cargo clean
+	rm -rf ./lib/generated/
 	rm -rf ./android/src/main/jniLibs
 	rm -rf ./android/src/main/kotlin/breez_sdk/
 	rm -rf ./android/src/main/kotlin/breez_sdk_notification/

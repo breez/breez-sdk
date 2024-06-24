@@ -24,6 +24,4 @@ linter:
 
 analyzer:
   exclude:
-    - lib/bridge_generated.dart
-    - lib/src/breez_server/generated/**
-    - lib/src/node/node_api/greenlight/generated/**
+    - lib/generated/**

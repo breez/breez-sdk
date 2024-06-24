@@ -8,9 +8,9 @@ name = "breez_sdk_core"
 crate-type = ["staticlib", "cdylib", "lib"]
 
 [dependencies]
-flutter_rust_bridge = "=1.82.6"
 aes = { workspace = true }
 anyhow = { workspace = true }
+flutter_rust_bridge = { workspace = true }
 hex = { workspace = true }
 # The last commit on gl-client 0.1. Development will continue on 0.2.
 # The switch to 0.2 will happen with https://github.com/breez/breez-sdk/pull/724

@@ -1,29 +1,28 @@
-import 'dart:ffi';
 import 'dart:io';
-import 'bridge_generated.dart';
 
-BreezSdkCore? _breezSDK;
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-const _libName = "libbreez_sdk_bindings.so";
-const _iosLibName = "breez_sdk";
+ExternalLibrary? _breezSDK;
 
-class UnsupportedPlatform implements Exception {
-  UnsupportedPlatform(String s);
-}
+const _libName = "breez_sdk_bindings";
+const _iosLibName = "breez_sdkFFI";
 
-BreezSdkCore getNativeToolkit() {
+ExternalLibrary createLibraryImpl() {
   if (_breezSDK == null) {
     if (Platform.isAndroid || Platform.isLinux) {
       // On Linux the lib needs to be in LD_LIBRARY_PATH or working directory
-      _breezSDK = BreezSdkCoreImpl(DynamicLibrary.open(_libName));
+      _breezSDK = ExternalLibrary.open('lib$_libName.so');
     } else if (Platform.isIOS || Platform.isMacOS) {
       try {
-        _breezSDK = BreezSdkCoreImpl(DynamicLibrary.open("$_iosLibName.framework/$_iosLibName"));
+        // TODO: Fails to load dynamic library
+        _breezSDK = ExternalLibrary.open('$_iosLibName.framework/$_iosLibName');
       } catch (e) {
-        _breezSDK = BreezSdkCoreImpl(DynamicLibrary.process());
+        // Resolving to this on apps that have multiple packages that use flutter_rust_bridge
+        // (breez-sdk & bdk-flutter where we're concerned) may cause issues.
+        _breezSDK = ExternalLibrary.process(iKnowHowToUseIt: true);
       }
     } else {
-      throw UnsupportedPlatform('${Platform.operatingSystem} is not yet supported!');
+      throw UnsupportedError('${Platform.operatingSystem} is not yet supported!');
     }
   }
   return _breezSDK!;

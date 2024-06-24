@@ -21,6 +21,7 @@ aes = "0.8"
 anyhow = { version = "1.0.79", features = ["backtrace"] }
 base64 = "0.13.0"
 bitcoin = "=0.29.2" # Same version as used in gl-client
+flutter_rust_bridge = "=2.0.0"
 # Pin the reqwest dependency until macOS linker issue is fixed: https://github.com/seanmonstar/reqwest/issues/2006
 hex = "0.4"
 lightning = "=0.0.116" # Same version as used in gl-client

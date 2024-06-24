@@ -12,8 +12,7 @@ dependencies:
     sdk: flutter
   ### flutter_rust_bridge_codegen dependencies
   ffi: ^2.1.2 # requires Dart >=3.3.0(Flutter 3.19)
-  flutter_rust_bridge: ^1.82.6 # breez-sdk requirement
-  freezed: <2.5.3
+  flutter_rust_bridge: ^2.0.0
   freezed_annotation: ^2.4.1
   ###
   rxdart: ^0.28.0
@@ -21,11 +20,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
   flutter_lints: ^4.0.0
+
   # The following dependencies are required by flutter_rust_bridge_codegen to
   # be defined under dev_dependencies to generate Dart files
   build_runner: ^2.4.11
-  ffigen: <10.0.0 # flutter_rust_bridge requirement
+  ffigen: ^11.0.0
+  freezed: ^2.5.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -41,5 +48,7 @@ flutter:
       android:
         package: com.breez.breez_sdk
         pluginClass: BreezSDKPlugin
+        ffiPlugin: true
       ios:
         pluginClass: BreezSDKPlugin
+        ffiPlugin: true
