@@ -4335,6 +4335,14 @@ enum BreezSDKMapper {
 
             return BreezEvent.backupFailed(details: _details)
         }
+        if type == "reverseSwapUpdated" {
+            guard let detailsTmp = breezEvent["details"] as? [String: Any?] else {
+                throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "details", typeName: "BreezEvent"))
+            }
+            let _details = try asReverseSwapInfo(reverseSwapInfo: detailsTmp)
+
+            return BreezEvent.reverseSwapUpdated(details: _details)
+        }
         if type == "swapUpdated" {
             guard let detailsTmp = breezEvent["details"] as? [String: Any?] else {
                 throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "details", typeName: "BreezEvent"))
@@ -4402,6 +4410,14 @@ enum BreezSDKMapper {
             return [
                 "type": "backupFailed",
                 "details": dictionaryOf(backupFailedData: details),
+            ]
+
+        case let .reverseSwapUpdated(
+            details
+        ):
+            return [
+                "type": "reverseSwapUpdated",
+                "details": dictionaryOf(reverseSwapInfo: details),
             ]
 
         case let .swapUpdated(

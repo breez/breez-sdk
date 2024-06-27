@@ -1,6 +1,6 @@
 use super::{db::SqliteStorage, error::PersistResult};
 use crate::{FullReverseSwapInfo, ReverseSwapInfoCached, ReverseSwapStatus};
-use rusqlite::{named_params, Row, TransactionBehavior};
+use rusqlite::{named_params, OptionalExtension, Row, TransactionBehavior};
 
 impl SqliteStorage {
     pub(crate) fn insert_reverse_swap(&self, rsi: &FullReverseSwapInfo) -> PersistResult<()> {
@@ -90,6 +90,17 @@ impl SqliteStorage {
         )?;
 
         Ok(())
+    }
+
+    pub(crate) fn get_reverse_swap(&self, id: &str) -> PersistResult<Option<FullReverseSwapInfo>> {
+        Ok(self
+            .get_connection()?
+            .query_row(
+                &self.select_reverse_swap_query("reverse_swaps.id = ?1", ""),
+                [id],
+                |row| self.sql_row_to_reverse_swap(row, ""),
+            )
+            .optional()?)
     }
 
     pub(crate) fn list_reverse_swaps(&self) -> PersistResult<Vec<FullReverseSwapInfo>> {

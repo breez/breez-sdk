@@ -3814,6 +3814,9 @@ fun asBreezEvent(breezEvent: ReadableMap): BreezEvent? {
     if (type == "backupFailed") {
         return BreezEvent.BackupFailed(breezEvent.getMap("details")?.let { asBackupFailedData(it) }!!)
     }
+    if (type == "reverseSwapUpdated") {
+        return BreezEvent.ReverseSwapUpdated(breezEvent.getMap("details")?.let { asReverseSwapInfo(it) }!!)
+    }
     if (type == "swapUpdated") {
         return BreezEvent.SwapUpdated(breezEvent.getMap("details")?.let { asSwapInfo(it) }!!)
     }
@@ -3850,6 +3853,10 @@ fun readableMapOf(breezEvent: BreezEvent): ReadableMap? {
         }
         is BreezEvent.BackupFailed -> {
             pushToMap(map, "type", "backupFailed")
+            pushToMap(map, "details", readableMapOf(breezEvent.details))
+        }
+        is BreezEvent.ReverseSwapUpdated -> {
+            pushToMap(map, "type", "reverseSwapUpdated")
             pushToMap(map, "details", readableMapOf(breezEvent.details))
         }
         is BreezEvent.SwapUpdated -> {

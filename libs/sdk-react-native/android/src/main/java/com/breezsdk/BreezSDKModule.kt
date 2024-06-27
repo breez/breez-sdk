@@ -825,6 +825,21 @@ class BreezSDKModule(
     }
 
     @ReactMethod
+    fun processReverseSwap(
+        lockupAddress: String,
+        promise: Promise,
+    ) {
+        executor.execute {
+            try {
+                getBreezServices().processReverseSwap(lockupAddress)
+                promise.resolve(readableMapOf("status" to "ok"))
+            } catch (e: Exception) {
+                promise.reject(e.javaClass.simpleName.replace("Exception", "Error"), e.message, e)
+            }
+        }
+    }
+
+    @ReactMethod
     fun maxReverseSwapAmount(promise: Promise) {
         executor.execute {
             try {

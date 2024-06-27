@@ -617,6 +617,16 @@ class RNBreezSDK: RCTEventEmitter {
         }
     }
 
+    @objc(processReverseSwap:resolve:reject:)
+    func processReverseSwap(_ lockupAddress: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        do {
+            try getBreezServices().processReverseSwap(lockupAddress: lockupAddress)
+            resolve(["status": "ok"])
+        } catch let err {
+            rejectErr(err: err, reject: reject)
+        }
+    }
+
     @objc(maxReverseSwapAmount:reject:)
     func maxReverseSwapAmount(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         do {

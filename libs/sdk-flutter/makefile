@@ -26,12 +26,12 @@ ios: $(SOURCES) flutter_rust_bridge
 .PHONY: android
 android: $(SOURCES) flutter_rust_bridge
 	make -C ../sdk-bindings kotlin
-	mkdir -p ./android/src/main/jniLibs
-	cp -r ../sdk-bindings/ffi/kotlin/jniLibs/* ./android/src/main/jniLibs
-	mkdir -p ./android/src/main/kotlin/breez_sdk/
-	cp -r ../sdk-bindings/ffi/kotlin/breez_sdk/* ./android/src/main/kotlin/breez_sdk/
-	mkdir -p ./android/src/main/kotlin/breez_sdk_notification/
-	cp -r ../sdk-bindings/bindings-android/lib/src/main/kotlin/breez_sdk_notification/* ./android/src/main/kotlin/breez_sdk_notification/
+	rm -rf android/src/main/jniLibs
+	rm -rf android/src/main/kotlin/breez_sdk
+	rm -rf android/src/main/kotlin/breez_sdk_notification
+	cp -r ../sdk-bindings/ffi/kotlin/jniLibs android/src/main/
+	cp -r ../sdk-bindings/ffi/kotlin/breez_sdk android/src/main/kotlin/
+	cp -r ../sdk-bindings/bindings-android/lib/src/main/kotlin/breez_sdk_notification android/src/main/kotlin/
 
 ## desktop: compiles for x86_64-unknown-linux-gnu by default, other targets can be specified
 ## with the TARGET variable eg. make desktop TARGET=aarch64-unknown-linux-gnu

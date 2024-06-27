@@ -60,36 +60,27 @@ pub trait EventListener: Send + Sync {
 #[allow(clippy::large_enum_variant)]
 pub enum BreezEvent {
     /// Indicates that a new block has just been found
-    NewBlock {
-        block: u32,
-    },
+    NewBlock { block: u32 },
     /// Indicates that a new invoice has just been paid
-    InvoicePaid {
-        details: InvoicePaidDetails,
-    },
+    InvoicePaid { details: InvoicePaidDetails },
     /// Indicates that the local SDK state has just been sync-ed with the remote components
     Synced,
     /// Indicates that an outgoing payment has been completed successfully
-    PaymentSucceed {
-        details: Payment,
-    },
+    PaymentSucceed { details: Payment },
     /// Indicates that an outgoing payment has been failed to complete
-    PaymentFailed {
-        details: PaymentFailedData,
-    },
+    PaymentFailed { details: PaymentFailedData },
     /// Indicates that the backup process has just started
     BackupStarted,
     /// Indicates that the backup process has just finished successfully
     BackupSucceeded,
     /// Indicates that the backup process has just failed
-    BackupFailed {
-        details: BackupFailedData,
-    },
-    // Indicates that we have just updated the swap associated information
-    // which may also include a status change.
-    SwapUpdated {
-        details: SwapInfo,
-    },
+    BackupFailed { details: BackupFailedData },
+    /// Indicates that a reverse swap has been updated which may also
+    /// include a status change
+    ReverseSwapUpdated { details: ReverseSwapInfo },
+    /// Indicates that a swap has been updated which may also
+    /// include a status change
+    SwapUpdated { details: SwapInfo },
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -763,8 +754,8 @@ impl BreezServices {
             .await?;
         if let Some(webhook_url) = self.persister.get_webhook_url()? {
             let address = &swap_info.bitcoin_address;
-            info!("Registering for swap tx notification for address {address}");
-            self.register_swap_tx_notification(address, &webhook_url)
+            info!("Registering for onchain tx notification for address {address}");
+            self.register_onchain_tx_notification(address, &webhook_url)
                 .await?;
         }
         Ok(swap_info)
@@ -803,6 +794,19 @@ impl BreezServices {
             .await?;
         self.btc_receive_swapper.redeem_swap(swap_address).await?;
         Ok(())
+    }
+
+    /// Processes an individual reverse swap.
+    ///
+    /// To be used only in the context of mobile notifications, where the notification triggers
+    /// an individual reverse swap to be processed.
+    ///
+    /// This is taken care of automatically in the context of typical SDK usage.
+    pub async fn process_reverse_swap(&self, lockup_address: String) -> SdkResult<()> {
+        Ok(self
+            .btc_send_swapper
+            .process_reverse_swap(lockup_address)
+            .await?)
     }
 
     /// Lookup the reverse swap fees (see [ReverseSwapServiceAPI::fetch_reverse_swap_fees]).
@@ -1027,10 +1031,18 @@ impl BreezServices {
         let full_rsi = self.btc_send_swapper.create_reverse_swap(req).await?;
         let reverse_swap_info = self
             .btc_send_swapper
-            .convert_reverse_swap_info(full_rsi)
+            .convert_reverse_swap_info(full_rsi.clone())
             .await?;
         self.do_sync(false).await?;
 
+        if let Some(webhook_url) = self.persister.get_webhook_url()? {
+            let address = &full_rsi
+                .get_lockup_address(self.config.network)?
+                .to_string();
+            info!("Registering for onchain tx notification for address {address}");
+            self.register_onchain_tx_notification(address, &webhook_url)
+                .await?;
+        }
         Ok(reverse_swap_info)
     }
 
@@ -1466,21 +1478,29 @@ impl BreezServices {
     async fn track_swap_events(self: &Arc<BreezServices>) {
         let cloned = self.clone();
         tokio::spawn(async move {
-            let mut events_stream = cloned.btc_receive_swapper.subscribe_status_changes();
+            let mut swap_events_stream = cloned.btc_receive_swapper.subscribe_status_changes();
+            let mut rev_swap_events_stream = cloned.btc_send_swapper.subscribe_status_changes();
             let mut shutdown_receiver = cloned.shutdown_receiver.clone();
             loop {
                 tokio::select! {
-                  swap_event = events_stream.recv() => {
-                   if let Ok(e) = swap_event {
-                    if let Err(err) = cloned.notify_event_listeners(e).await {
-                        error!("error handling swap event: {:?}", err);
+                    swap_event = swap_events_stream.recv() => {
+                        if let Ok(e) = swap_event {
+                            if let Err(err) = cloned.notify_event_listeners(e).await {
+                                error!("error handling swap event: {:?}", err);
+                            }
+                        }
+                    },
+                    rev_swap_event = rev_swap_events_stream.recv() => {
+                        if let Ok(e) = rev_swap_event {
+                            if let Err(err) = cloned.notify_event_listeners(e).await {
+                                error!("error handling reverse swap event: {:?}", err);
+                            }
+                        }
+                    },
+                    _ = shutdown_receiver.changed() => {
+                        debug!("Swap events handling task completed");
+                        break;
                     }
-                   }
-                  },
-                  _ = shutdown_receiver.changed() => {
-                   debug!("Swap events handling task completed");
-                   break;
-                 }
                 }
             }
         });
@@ -1853,8 +1873,20 @@ impl BreezServices {
                     .filter(|swap| !swap.refundable())
                 {
                     let swap_address = &swap.bitcoin_address;
-                    info!("Found a not yet refundable monitored swap with address {swap_address}, registering for swap tx notifications");
-                    self.register_swap_tx_notification(swap_address, &webhook_url)
+                    info!("Found non-refundable monitored swap with address {swap_address}, registering for onchain tx notifications");
+                    self.register_onchain_tx_notification(swap_address, &webhook_url)
+                        .await?;
+                }
+
+                for rev_swap in self
+                    .btc_send_swapper
+                    .list_monitored()
+                    .await?
+                    .iter()
+                {
+                    let lockup_address = &rev_swap.get_lockup_address(self.config.network)?.to_string();
+                    info!("Found monitored reverse swap with address {lockup_address}, registering for onchain tx notifications");
+                    self.register_onchain_tx_notification(lockup_address, &webhook_url)
                         .await?;
                 }
             }
@@ -1883,7 +1915,8 @@ impl BreezServices {
     /// To register a webhook call [BreezServices::register_webhook].
     pub async fn unregister_webhook(&self, webhook_url: String) -> SdkResult<()> {
         info!("Unregistering for webhook notifications");
-        self.unregister_swap_tx_notifications(&webhook_url).await?;
+        self.unregister_onchain_tx_notifications(&webhook_url)
+            .await?;
         self.unregister_payment_notifications(webhook_url).await?;
         self.persister.remove_webhook_url()?;
         Ok(())
@@ -1924,11 +1957,11 @@ impl BreezServices {
         Ok(())
     }
 
-    /// Registers for a swap tx notification. When a new transaction to the specified `swap_address`
+    /// Registers for a onchain tx notification. When a new transaction to the specified `address`
     /// is confirmed, a callback will be triggered to the `webhook_url`.
-    async fn register_swap_tx_notification(
+    async fn register_onchain_tx_notification(
         &self,
-        swap_address: &str,
+        address: &str,
         webhook_url: &str,
     ) -> SdkResult<()> {
         get_reqwest_client()?
@@ -1936,7 +1969,7 @@ impl BreezServices {
             .header(CONTENT_TYPE, "application/json")
             .body(Body::from(
                 json!({
-                    "address": swap_address,
+                    "address": address,
                     "webhook": webhook_url
                 })
                 .to_string(),
@@ -1949,8 +1982,8 @@ impl BreezServices {
             })
     }
 
-    /// Unregisters all swap tx notifications for the `webhook_url`.
-    async fn unregister_swap_tx_notifications(&self, webhook_url: &str) -> SdkResult<()> {
+    /// Unregisters all onchain tx notifications for the `webhook_url`.
+    async fn unregister_onchain_tx_notifications(&self, webhook_url: &str) -> SdkResult<()> {
         get_reqwest_client()?
             .post(format!(
                 "{}/api/v1/unregister",

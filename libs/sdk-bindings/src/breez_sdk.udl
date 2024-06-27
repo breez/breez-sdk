@@ -411,6 +411,7 @@ interface BreezEvent {
     BackupStarted();
     BackupSucceeded();
     BackupFailed(BackupFailedData details);
+    ReverseSwapUpdated(ReverseSwapInfo details);
     SwapUpdated(SwapInfo details);
 };
 
@@ -940,6 +941,9 @@ interface BlockingBreezServices {
    [Throws=SdkError]
    sequence<ReverseSwapInfo> in_progress_reverse_swaps();
    
+   [Throws=SdkError]
+   void process_reverse_swap(string lockup_address);
+
    [Throws=SdkError]
    MaxReverseSwapAmountResponse max_reverse_swap_amount();
 

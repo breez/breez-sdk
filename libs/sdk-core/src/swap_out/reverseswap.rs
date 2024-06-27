@@ -3,6 +3,7 @@ use std::sync::Arc;
 
 use anyhow::{anyhow, ensure, Result};
 use serde::{Deserialize, Serialize};
+use tokio::sync::broadcast;
 use tokio::time::{sleep, Duration};
 
 use super::boltzswap::{BoltzApiCreateReverseSwapResponse, BoltzApiReverseSwapStatus::*};
@@ -110,6 +111,7 @@ pub(crate) struct BTCSendSwap {
     persister: Arc<crate::persist::db::SqliteStorage>,
     chain_service: Arc<dyn ChainService>,
     node_api: Arc<dyn NodeAPI>,
+    status_changes_notifier: broadcast::Sender<BreezEvent>,
 }
 
 impl BTCSendSwap {
@@ -121,6 +123,7 @@ impl BTCSendSwap {
         chain_service: Arc<dyn ChainService>,
         node_api: Arc<dyn NodeAPI>,
     ) -> Self {
+        let (status_changes_notifier, _) = broadcast::channel::<BreezEvent>(100);
         Self {
             config,
             reverse_swapper_api,
@@ -128,6 +131,36 @@ impl BTCSendSwap {
             persister,
             chain_service,
             node_api,
+            status_changes_notifier,
+        }
+    }
+
+    pub(crate) fn subscribe_status_changes(&self) -> broadcast::Receiver<BreezEvent> {
+        self.status_changes_notifier.subscribe()
+    }
+
+    async fn emit_reverse_swap_updated(&self, id: &str) -> Result<()> {
+        let full_rsi = self
+            .persister
+            .get_reverse_swap(id)?
+            .ok_or_else(|| anyhow!(format!("reverse swap {} was not found", id)))?;
+        self.status_changes_notifier
+            .send(BreezEvent::ReverseSwapUpdated {
+                details: self.convert_reverse_swap_info(full_rsi).await?,
+            })
+            .map_err(anyhow::Error::msg)?;
+        Ok(())
+    }
+
+    pub(crate) async fn on_event(&self, e: BreezEvent) -> Result<()> {
+        match e {
+            BreezEvent::Synced => {
+                // Since this relies on the most up-to-date states of the reverse swap HODL invoice payments,
+                // a fresh [BreezServices::sync] *must* be called before this method.
+                // Therefore we specifically call this on the Synced event
+                self.process_monitored_reverse_swaps().await
+            }
+            _ => Ok(()),
         }
     }
 
@@ -261,11 +294,14 @@ impl BTCSendSwap {
                 self.persister
                     .update_reverse_swap_status(&created_rsi.id, &InProgress)?;
                 self.persister
-                    .update_reverse_swap_lockup_txid(&created_rsi.id, lockup_txid)?
+                    .update_reverse_swap_lockup_txid(&created_rsi.id, lockup_txid)?;
+                self.emit_reverse_swap_updated(&created_rsi.id).await?
             }
-            Err(_) => self
-                .persister
-                .update_reverse_swap_status(&created_rsi.id, &Cancelled)?,
+            Err(_) => {
+                self.persister
+                    .update_reverse_swap_status(&created_rsi.id, &Cancelled)?;
+                self.emit_reverse_swap_updated(&created_rsi.id).await?
+            }
         }
 
         Ok(res?)
@@ -353,18 +389,6 @@ impl BTCSendSwap {
                     "(Boltz) Failed to create reverse swap: {error}"
                 )))
             }
-        }
-    }
-
-    pub(crate) async fn on_event(&self, e: BreezEvent) -> Result<()> {
-        match e {
-            BreezEvent::Synced => {
-                // Since this relies on the most up-to-date states of the reverse swap HODL invoice payments,
-                // a fresh [BreezServices::sync] *must* be called before this method.
-                // Therefore we specifically call this on the Synced event
-                self.process_monitored_reverse_swaps().await
-            }
-            _ => Ok(()),
         }
     }
 
@@ -598,9 +622,12 @@ impl BTCSendSwap {
     async fn process_monitored_reverse_swaps(&self) -> Result<()> {
         let monitored = self.list_monitored().await?;
         debug!("Found {} monitored reverse swaps", monitored.len());
+        self.process_reverse_swaps(monitored).await
+    }
 
-        for rsi in monitored {
-            debug!("Processing monitored reverse swap {rsi:?}");
+    async fn process_reverse_swaps(&self, reverse_swaps: Vec<FullReverseSwapInfo>) -> Result<()> {
+        for rsi in reverse_swaps {
+            debug!("Processing reverse swap {rsi:?}");
 
             // Look for lockup and claim txs on chain
             let lockup_tx = self.get_lockup_tx(&rsi).await?;
@@ -615,6 +642,7 @@ impl BTCSendSwap {
             {
                 self.persister
                     .update_reverse_swap_status(&rsi.id, &new_status)?;
+                self.emit_reverse_swap_updated(&rsi.id).await?;
             }
 
             // (Re-)Broadcast the claim tx for monitored reverse swaps that have a confirmed lockup tx
@@ -638,6 +666,7 @@ impl BTCSendSwap {
             if rsi.cache.lockup_txid.is_none() {
                 self.persister
                     .update_reverse_swap_lockup_txid(&rsi.id, lockup_tx.map(|tx| tx.txid))?;
+                self.emit_reverse_swap_updated(&rsi.id).await?;
             }
             if rsi.cache.claim_txid.is_none() {
                 self.persister.update_reverse_swap_claim_txid(
@@ -646,10 +675,33 @@ impl BTCSendSwap {
                         .map(|tx| tx.txid)
                         .or(broadcasted_claim_tx.map(|tx| tx.txid().to_string())),
                 )?;
+                self.emit_reverse_swap_updated(&rsi.id).await?;
             }
         }
 
         Ok(())
+    }
+
+    pub async fn process_reverse_swap(&self, lockup_address: String) -> ReverseSwapResult<()> {
+        let rsis: Vec<FullReverseSwapInfo> = self
+            .list_monitored()
+            .await?
+            .into_iter()
+            .filter(|rev_swap| {
+                lockup_address
+                    == rev_swap
+                        .get_lockup_address(self.config.network)
+                        .map(|a| a.to_string())
+                        .unwrap_or_default()
+            })
+            .collect();
+        match rsis.is_empty() {
+            true => Err(ReverseSwapError::Generic(format!(
+                "Reverse swap address {} was not found",
+                lockup_address
+            ))),
+            false => Ok(self.process_reverse_swaps(rsis).await?),
+        }
     }
 
     /// Returns the ongoing reverse swaps which have a status that block the creation of new reverse swaps

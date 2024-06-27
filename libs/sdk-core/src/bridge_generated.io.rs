@@ -282,6 +282,11 @@ pub extern "C" fn wire_in_progress_reverse_swaps(port_: i64) {
 }
 
 #[no_mangle]
+pub extern "C" fn wire_process_reverse_swap(port_: i64, lockup_address: *mut wire_uint_8_list) {
+    wire_process_reverse_swap_impl(port_, lockup_address)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_open_channel_fee(port_: i64, req: *mut wire_OpenChannelFeeRequest) {
     wire_open_channel_fee_impl(port_, req)
 }

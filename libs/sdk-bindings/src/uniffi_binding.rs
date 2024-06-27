@@ -332,6 +332,10 @@ impl BlockingBreezServices {
         rt().block_on(self.breez_services.in_progress_reverse_swaps())
     }
 
+    pub fn process_reverse_swap(&self, lockup_address: String) -> SdkResult<()> {
+        rt().block_on(self.breez_services.process_reverse_swap(lockup_address))
+    }
+
     pub fn max_reverse_swap_amount(&self) -> SdkResult<MaxReverseSwapAmountResponse> {
         #[allow(deprecated)]
         rt().block_on(self.breez_services.max_reverse_swap_amount())

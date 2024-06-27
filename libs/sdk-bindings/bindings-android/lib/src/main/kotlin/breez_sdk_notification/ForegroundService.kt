@@ -19,11 +19,11 @@ import breez_sdk_notification.Constants.NOTIFICATION_ID_FOREGROUND_SERVICE
 import breez_sdk_notification.Constants.SERVICE_TIMEOUT_MS
 import breez_sdk_notification.Constants.SHUTDOWN_DELAY_MS
 import breez_sdk_notification.NotificationHelper.Companion.notifyForegroundService
+import breez_sdk_notification.job.ConfirmTransactionJob
 import breez_sdk_notification.job.Job
 import breez_sdk_notification.job.LnurlPayInfoJob
 import breez_sdk_notification.job.LnurlPayInvoiceJob
 import breez_sdk_notification.job.ReceivePaymentJob
-import breez_sdk_notification.job.RedeemSwapJob
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -147,7 +147,7 @@ abstract class ForegroundService : SdkForegroundService, EventListener, Service(
         return Message.createFromIntent(intent)?.let { message ->
             message.payload?.let { payload ->
                 when (message.type) {
-                    MESSAGE_TYPE_ADDRESS_TXS_CONFIRMED -> RedeemSwapJob(
+                    MESSAGE_TYPE_ADDRESS_TXS_CONFIRMED -> ConfirmTransactionJob(
                         applicationContext,
                         this,
                         payload,
