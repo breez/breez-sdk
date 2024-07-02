@@ -1089,6 +1089,9 @@ const _: fn() = || {
         LnUrlWithdrawResult::Ok { data } => {
             let _: LnUrlWithdrawSuccessData = data;
         }
+        LnUrlWithdrawResult::Timeout { data } => {
+            let _: LnUrlWithdrawSuccessData = data;
+        }
         LnUrlWithdrawResult::ErrorStatus { data } => {
             let _: LnUrlErrorData = data;
         }
@@ -1841,8 +1844,11 @@ impl support::IntoDart for mirror_LnUrlWithdrawResult {
             LnUrlWithdrawResult::Ok { data } => {
                 vec![0.into_dart(), data.into_into_dart().into_dart()]
             }
-            LnUrlWithdrawResult::ErrorStatus { data } => {
+            LnUrlWithdrawResult::Timeout { data } => {
                 vec![1.into_dart(), data.into_into_dart().into_dart()]
+            }
+            LnUrlWithdrawResult::ErrorStatus { data } => {
+                vec![2.into_dart(), data.into_into_dart().into_dart()]
             }
         }
         .into_dart()

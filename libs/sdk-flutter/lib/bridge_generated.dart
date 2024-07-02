@@ -933,6 +933,9 @@ sealed class LnUrlWithdrawResult with _$LnUrlWithdrawResult {
   const factory LnUrlWithdrawResult.ok({
     required LnUrlWithdrawSuccessData data,
   }) = LnUrlWithdrawResult_Ok;
+  const factory LnUrlWithdrawResult.timeout({
+    required LnUrlWithdrawSuccessData data,
+  }) = LnUrlWithdrawResult_Timeout;
   const factory LnUrlWithdrawResult.errorStatus({
     required LnUrlErrorData data,
   }) = LnUrlWithdrawResult_ErrorStatus;
@@ -3593,6 +3596,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
           data: _wire2api_box_autoadd_ln_url_withdraw_success_data(raw[1]),
         );
       case 1:
+        return LnUrlWithdrawResult_Timeout(
+          data: _wire2api_box_autoadd_ln_url_withdraw_success_data(raw[1]),
+        );
+      case 2:
         return LnUrlWithdrawResult_ErrorStatus(
           data: _wire2api_box_autoadd_ln_url_error_data(raw[1]),
         );

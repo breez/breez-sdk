@@ -4163,18 +4163,21 @@ mixin _$LnUrlWithdrawResult {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawSuccessData data) ok,
+    required TResult Function(LnUrlWithdrawSuccessData data) timeout,
     required TResult Function(LnUrlErrorData data) errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult? Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult? Function(LnUrlErrorData data)? errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult Function(LnUrlErrorData data)? errorStatus,
     required TResult orElse(),
   }) =>
@@ -4182,18 +4185,21 @@ mixin _$LnUrlWithdrawResult {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawResult_Ok value) ok,
+    required TResult Function(LnUrlWithdrawResult_Timeout value) timeout,
     required TResult Function(LnUrlWithdrawResult_ErrorStatus value) errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult? Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult? Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
     required TResult orElse(),
   }) =>
@@ -4282,6 +4288,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawSuccessData data) ok,
+    required TResult Function(LnUrlWithdrawSuccessData data) timeout,
     required TResult Function(LnUrlErrorData data) errorStatus,
   }) {
     return ok(data);
@@ -4291,6 +4298,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult? Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult? Function(LnUrlErrorData data)? errorStatus,
   }) {
     return ok?.call(data);
@@ -4300,6 +4308,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult Function(LnUrlErrorData data)? errorStatus,
     required TResult orElse(),
   }) {
@@ -4313,6 +4322,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawResult_Ok value) ok,
+    required TResult Function(LnUrlWithdrawResult_Timeout value) timeout,
     required TResult Function(LnUrlWithdrawResult_ErrorStatus value) errorStatus,
   }) {
     return ok(this);
@@ -4322,6 +4332,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult? Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult? Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
   }) {
     return ok?.call(this);
@@ -4331,6 +4342,7 @@ class _$LnUrlWithdrawResult_OkImpl implements LnUrlWithdrawResult_Ok {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
     required TResult orElse(),
   }) {
@@ -4349,6 +4361,147 @@ abstract class LnUrlWithdrawResult_Ok implements LnUrlWithdrawResult {
   LnUrlWithdrawSuccessData get data;
   @JsonKey(ignore: true)
   _$$LnUrlWithdrawResult_OkImplCopyWith<_$LnUrlWithdrawResult_OkImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LnUrlWithdrawResult_TimeoutImplCopyWith<$Res> {
+  factory _$$LnUrlWithdrawResult_TimeoutImplCopyWith(
+          _$LnUrlWithdrawResult_TimeoutImpl value, $Res Function(_$LnUrlWithdrawResult_TimeoutImpl) then) =
+      __$$LnUrlWithdrawResult_TimeoutImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({LnUrlWithdrawSuccessData data});
+}
+
+/// @nodoc
+class __$$LnUrlWithdrawResult_TimeoutImplCopyWithImpl<$Res>
+    extends _$LnUrlWithdrawResultCopyWithImpl<$Res, _$LnUrlWithdrawResult_TimeoutImpl>
+    implements _$$LnUrlWithdrawResult_TimeoutImplCopyWith<$Res> {
+  __$$LnUrlWithdrawResult_TimeoutImplCopyWithImpl(
+      _$LnUrlWithdrawResult_TimeoutImpl _value, $Res Function(_$LnUrlWithdrawResult_TimeoutImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? data = null,
+  }) {
+    return _then(_$LnUrlWithdrawResult_TimeoutImpl(
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as LnUrlWithdrawSuccessData,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$LnUrlWithdrawResult_TimeoutImpl implements LnUrlWithdrawResult_Timeout {
+  const _$LnUrlWithdrawResult_TimeoutImpl({required this.data});
+
+  @override
+  final LnUrlWithdrawSuccessData data;
+
+  @override
+  String toString() {
+    return 'LnUrlWithdrawResult.timeout(data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LnUrlWithdrawResult_TimeoutImpl &&
+            (identical(other.data, data) || other.data == data));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, data);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LnUrlWithdrawResult_TimeoutImplCopyWith<_$LnUrlWithdrawResult_TimeoutImpl> get copyWith =>
+      __$$LnUrlWithdrawResult_TimeoutImplCopyWithImpl<_$LnUrlWithdrawResult_TimeoutImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(LnUrlWithdrawSuccessData data) ok,
+    required TResult Function(LnUrlWithdrawSuccessData data) timeout,
+    required TResult Function(LnUrlErrorData data) errorStatus,
+  }) {
+    return timeout(data);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult? Function(LnUrlWithdrawSuccessData data)? timeout,
+    TResult? Function(LnUrlErrorData data)? errorStatus,
+  }) {
+    return timeout?.call(data);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult Function(LnUrlWithdrawSuccessData data)? timeout,
+    TResult Function(LnUrlErrorData data)? errorStatus,
+    required TResult orElse(),
+  }) {
+    if (timeout != null) {
+      return timeout(data);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LnUrlWithdrawResult_Ok value) ok,
+    required TResult Function(LnUrlWithdrawResult_Timeout value) timeout,
+    required TResult Function(LnUrlWithdrawResult_ErrorStatus value) errorStatus,
+  }) {
+    return timeout(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult? Function(LnUrlWithdrawResult_Timeout value)? timeout,
+    TResult? Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
+  }) {
+    return timeout?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult Function(LnUrlWithdrawResult_Timeout value)? timeout,
+    TResult Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
+    required TResult orElse(),
+  }) {
+    if (timeout != null) {
+      return timeout(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class LnUrlWithdrawResult_Timeout implements LnUrlWithdrawResult {
+  const factory LnUrlWithdrawResult_Timeout({required final LnUrlWithdrawSuccessData data}) =
+      _$LnUrlWithdrawResult_TimeoutImpl;
+
+  @override
+  LnUrlWithdrawSuccessData get data;
+  @JsonKey(ignore: true)
+  _$$LnUrlWithdrawResult_TimeoutImplCopyWith<_$LnUrlWithdrawResult_TimeoutImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -4418,6 +4571,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawSuccessData data) ok,
+    required TResult Function(LnUrlWithdrawSuccessData data) timeout,
     required TResult Function(LnUrlErrorData data) errorStatus,
   }) {
     return errorStatus(data);
@@ -4427,6 +4581,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult? Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult? Function(LnUrlErrorData data)? errorStatus,
   }) {
     return errorStatus?.call(data);
@@ -4436,6 +4591,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(LnUrlWithdrawSuccessData data)? ok,
+    TResult Function(LnUrlWithdrawSuccessData data)? timeout,
     TResult Function(LnUrlErrorData data)? errorStatus,
     required TResult orElse(),
   }) {
@@ -4449,6 +4605,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(LnUrlWithdrawResult_Ok value) ok,
+    required TResult Function(LnUrlWithdrawResult_Timeout value) timeout,
     required TResult Function(LnUrlWithdrawResult_ErrorStatus value) errorStatus,
   }) {
     return errorStatus(this);
@@ -4458,6 +4615,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult? Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult? Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
   }) {
     return errorStatus?.call(this);
@@ -4467,6 +4625,7 @@ class _$LnUrlWithdrawResult_ErrorStatusImpl implements LnUrlWithdrawResult_Error
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LnUrlWithdrawResult_Ok value)? ok,
+    TResult Function(LnUrlWithdrawResult_Timeout value)? timeout,
     TResult Function(LnUrlWithdrawResult_ErrorStatus value)? errorStatus,
     required TResult orElse(),
   }) {

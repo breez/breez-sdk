@@ -232,6 +232,7 @@ pub enum _LnUrlPayError {
 #[frb(mirror(LnUrlWithdrawResult))]
 pub enum _LnUrlWithdrawResult {
     Ok { data: LnUrlWithdrawSuccessData },
+    Timeout { data: LnUrlWithdrawSuccessData },
     ErrorStatus { data: LnUrlErrorData },
 }
 

@@ -4104,6 +4104,9 @@ fun asLnUrlWithdrawResult(lnUrlWithdrawResult: ReadableMap): LnUrlWithdrawResult
     if (type == "ok") {
         return LnUrlWithdrawResult.Ok(lnUrlWithdrawResult.getMap("data")?.let { asLnUrlWithdrawSuccessData(it) }!!)
     }
+    if (type == "timeout") {
+        return LnUrlWithdrawResult.Timeout(lnUrlWithdrawResult.getMap("data")?.let { asLnUrlWithdrawSuccessData(it) }!!)
+    }
     if (type == "errorStatus") {
         return LnUrlWithdrawResult.ErrorStatus(lnUrlWithdrawResult.getMap("data")?.let { asLnUrlErrorData(it) }!!)
     }
@@ -4115,6 +4118,10 @@ fun readableMapOf(lnUrlWithdrawResult: LnUrlWithdrawResult): ReadableMap? {
     when (lnUrlWithdrawResult) {
         is LnUrlWithdrawResult.Ok -> {
             pushToMap(map, "type", "ok")
+            pushToMap(map, "data", readableMapOf(lnUrlWithdrawResult.data))
+        }
+        is LnUrlWithdrawResult.Timeout -> {
+            pushToMap(map, "type", "timeout")
             pushToMap(map, "data", readableMapOf(lnUrlWithdrawResult.data))
         }
         is LnUrlWithdrawResult.ErrorStatus -> {
