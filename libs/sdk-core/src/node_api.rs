@@ -137,6 +137,13 @@ pub trait NodeAPI: Send + Sync {
         extra_tlvs: Option<Vec<TlvEntry>>,
         label: Option<String>,
     ) -> NodeResult<Payment>;
+    async fn send_trampoline_payment(
+        &self,
+        bolt11: String,
+        amount_msat: Option<u64>,
+        label: Option<String>,
+        trampoline_node_id: Vec<u8>,
+    ) -> NodeResult<Payment>;
     async fn start(&self) -> NodeResult<String>;
 
     /// Attempts to find a payment path "manually" and send the htlcs in a way that will drain

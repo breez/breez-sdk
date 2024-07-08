@@ -289,33 +289,80 @@ impl BreezServices {
             }
         };
 
-        match self
+        if self
             .persister
             .get_completed_payment_by_hash(&parsed_invoice.payment_hash)?
+            .is_some()
         {
-            Some(_) => Err(SendPaymentError::AlreadyPaid),
+            return Err(SendPaymentError::AlreadyPaid);
+        }
+
+        // If there is an lsp and the invoice route hint does not contain the
+        // lsp in the hint, attempt a trampoline payment.
+        let maybe_trampoline_id = match self.lsp_info().await {
+            Ok(lsp_info) => {
+                let lsp_pubkey = hex::encode(&lsp_info.lsp_pubkey);
+                match parsed_invoice.routing_hints.iter().any(|hint| {
+                    hint.hops
+                        .last()
+                        .map(|hop| hop.src_node_id == lsp_pubkey)
+                        .unwrap_or(false)
+                }) {
+                    true => None,
+                    false => Some(lsp_info.lsp_pubkey),
+                }
+            }
+            Err(_) => None,
+        };
+
+        self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
+
+        // If trampoline is an option, try trampoline first.
+        let trampoline_result = if let Some(trampoline_id) = maybe_trampoline_id {
+            match self
+                .node_api
+                .send_trampoline_payment(
+                    parsed_invoice.bolt11.clone(),
+                    req.amount_msat,
+                    req.label.clone(),
+                    trampoline_id,
+                )
+                .await
+            {
+                Ok(res) => Some(res),
+                Err(e) => {
+                    warn!("trampoline payment failed: {:?}", e);
+                    None
+                }
+            }
+        } else {
+            None
+        };
+
+        // If trampoline failed or didn't happen, fall back to regular payment.
+        let payment_res = match trampoline_result {
+            Some(res) => Ok(res),
             None => {
-                self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
-                let payment_res = self
-                    .node_api
+                self.node_api
                     .send_payment(
                         parsed_invoice.bolt11.clone(),
                         req.amount_msat,
                         req.label.clone(),
                     )
                     .map_err(Into::into)
-                    .await;
-                let payment = self
-                    .on_payment_completed(
-                        parsed_invoice.payee_pubkey.clone(),
-                        Some(parsed_invoice),
-                        req.label,
-                        payment_res,
-                    )
-                    .await?;
-                Ok(SendPaymentResponse { payment })
+                    .await
             }
-        }
+        };
+
+        let payment = self
+            .on_payment_completed(
+                parsed_invoice.payee_pubkey.clone(),
+                Some(parsed_invoice),
+                req.label,
+                payment_res,
+            )
+            .await?;
+        Ok(SendPaymentResponse { payment })
     }
 
     /// Pay directly to a node id using keysend
