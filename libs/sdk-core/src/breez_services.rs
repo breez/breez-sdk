@@ -323,7 +323,7 @@ impl BreezServices {
                 .node_api
                 .send_trampoline_payment(
                     parsed_invoice.bolt11.clone(),
-                    req.amount_msat,
+                    amount_msat,
                     req.label.clone(),
                     trampoline_id,
                 )

@@ -384,7 +384,7 @@ impl NodeAPI for MockNodeAPI {
     async fn send_trampoline_payment(
         &self,
         bolt11: String,
-        _amount_msat: Option<u64>,
+        _amount_msat: u64,
         _label: Option<String>,
         _trampoline_id: Vec<u8>,
     ) -> NodeResult<Payment> {

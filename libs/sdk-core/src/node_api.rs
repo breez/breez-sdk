@@ -140,7 +140,7 @@ pub trait NodeAPI: Send + Sync {
     async fn send_trampoline_payment(
         &self,
         bolt11: String,
-        amount_msat: Option<u64>,
+        amount_msat: u64,
         label: Option<String>,
         trampoline_node_id: Vec<u8>,
     ) -> NodeResult<Payment>;
