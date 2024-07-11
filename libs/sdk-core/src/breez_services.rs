@@ -1448,15 +1448,15 @@ impl BreezServices {
             .await;
 
         // Sync node state
-        let sync_breez_services = self.clone();
-        match sync_breez_services.persister.get_node_state()? {
+        match self.persister.get_node_state()? {
             Some(node) => {
-                info!("Starting existing node {}", node.id)
+                info!("Starting existing node {}", node.id);
+                self.connect_lsp_peer(node.id).await?;
             }
             None => {
                 // In case it is a first run we sync in foreground to get the node state.
                 info!("First run, syncing in foreground");
-                sync_breez_services.sync().await?;
+                self.sync().await?;
                 info!("First run, finished running syncing in foreground");
             }
         }
