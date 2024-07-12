@@ -58,6 +58,15 @@ impl SqliteStorage {
     pub fn get_lsp_id(&self) -> PersistResult<Option<String>> {
         self.get_setting("lsp".to_string())
     }
+
+    pub fn set_lsp_pubkey(&self, pubkey: String) -> PersistResult<()> {
+        self.update_setting("lsp-pubkey".to_string(), pubkey)
+    }
+
+    #[allow(dead_code)]
+    pub fn get_lsp_pubkey(&self) -> PersistResult<Option<String>> {
+        self.get_setting("lsp-pubkey".to_string())
+    }
 }
 
 #[test]

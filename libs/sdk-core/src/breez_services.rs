@@ -720,19 +720,22 @@ impl BreezServices {
 
     /// Select the LSP to be used and provide inbound liquidity
     pub async fn connect_lsp(&self, lsp_id: String) -> SdkResult<()> {
-        match self.list_lsps().await?.iter().any(|lsp| lsp.id == lsp_id) {
-            true => {
-                self.persister.set_lsp_id(lsp_id)?;
-                self.sync().await?;
-                if let Some(webhook_url) = self.persister.get_webhook_url()? {
-                    self.register_payment_notifications(webhook_url).await?
-                }
-                Ok(())
+        let lsp_pubkey = match self.list_lsps().await?.iter().find(|lsp| lsp.id == lsp_id) {
+            Some(lsp) => lsp.pubkey.clone(),
+            None => {
+                return Err(SdkError::Generic {
+                    err: format!("Unknown LSP: {lsp_id}"),
+                })
             }
-            false => Err(SdkError::Generic {
-                err: format!("Unknown LSP: {lsp_id}"),
-            }),
+        };
+
+        self.persister.set_lsp_id(lsp_id)?;
+        self.persister.set_lsp_pubkey(lsp_pubkey)?;
+        self.sync().await?;
+        if let Some(webhook_url) = self.persister.get_webhook_url()? {
+            self.register_payment_notifications(webhook_url).await?
         }
+        Ok(())
     }
 
     /// Get the current LSP's ID
@@ -1218,32 +1221,40 @@ impl BreezServices {
     /// If not or no LSP is selected, it selects the first LSP in [`list_lsps`].
     async fn connect_lsp_peer(&self, node_pubkey: String) -> SdkResult<()> {
         let lsps = self.lsp_api.list_lsps(node_pubkey).await?;
-        if let Some(lsp) = self
+        let lsp = match self
             .persister
             .get_lsp_id()?
-            .and_then(|lsp_id| lsps.clone().into_iter().find(|lsp| lsp.id == lsp_id))
-            .or_else(|| lsps.first().cloned())
+            .and_then(|lsp_id| lsps.iter().find(|lsp| lsp.id == lsp_id))
+            .or_else(|| lsps.first())
         {
-            self.persister.set_lsp_id(lsp.id)?;
-            if let Ok(node_state) = self.node_info() {
-                let node_id = lsp.pubkey;
-                let address = lsp.host;
-                let lsp_connected = node_state
-                    .connected_peers
-                    .iter()
-                    .any(|e| e == node_id.as_str());
-                if !lsp_connected {
-                    debug!("connecting to lsp {}@{}", node_id.clone(), address.clone());
-                    self.node_api
-                        .connect_peer(node_id.clone(), address.clone())
-                        .await
-                        .map_err(|e| SdkError::ServiceConnectivity {
-                            err: format!("(LSP: {node_id}) Failed to connect: {e}"),
-                        })?;
-                }
-                debug!("connected to lsp {node_id}@{address}");
-            }
+            Some(lsp) => lsp.clone(),
+            None => return Ok(()),
+        };
+
+        self.persister.set_lsp_id(lsp.id)?;
+        self.persister.set_lsp_pubkey(lsp.pubkey.clone())?;
+        let node_state = match self.node_info() {
+            Ok(node_state) => node_state,
+            Err(_) => return Ok(()),
+        };
+
+        let node_id = lsp.pubkey;
+        let address = lsp.host;
+        let lsp_connected = node_state
+            .connected_peers
+            .iter()
+            .any(|e| e == node_id.as_str());
+        if !lsp_connected {
+            debug!("connecting to lsp {}@{}", node_id.clone(), address.clone());
+            self.node_api
+                .connect_peer(node_id.clone(), address.clone())
+                .await
+                .map_err(|e| SdkError::ServiceConnectivity {
+                    err: format!("(LSP: {node_id}) Failed to connect: {e}"),
+                })?;
+            debug!("connected to lsp {node_id}@{address}");
         }
+
         Ok(())
     }
 
