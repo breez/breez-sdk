@@ -2203,7 +2203,7 @@ impl TryFrom<cln::ListpaysPays> for Payment {
                     .as_ref()
                     .map_or(0, |i| i.amount_msat.unwrap_or_default()),
             },
-            fee_msat: payment_amount_sent - payment_amount,
+            fee_msat: payment_amount_sent.saturating_sub(payment_amount),
             status,
             error: None,
             description: ln_invoice.map(|i| i.description).unwrap_or_default(),
