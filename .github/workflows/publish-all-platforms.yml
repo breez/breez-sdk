@@ -14,7 +14,7 @@ on:
         description: 'array of packages to publish (remove what you do not want)'
         required: true
         type: string
-        default: '["csharp", "golang", "maven", "kotlin-mpp", "flutter", "react-native", "python"]'
+        default: '["csharp", "golang", "maven", "kotlin-mpp", "flutter", "react-native", "python", "swift"]'
       csharp-ref:
         description: 'optional commit/tag/branch reference for the C# project. Defaults to ref.'
         required: false
@@ -47,7 +47,7 @@ on:
         description: 'array of packages to publish (remove what you do not want)'
         required: true
         type: string
-        default: '["csharp", "golang", "maven", "kotlin-mpp", "flutter", "react-native", "python"]'
+        default: '["csharp", "golang", "maven", "kotlin-mpp", "flutter", "react-native", "python", "swift"]'
       csharp-ref:
         description: 'optional commit/tag/branch reference for the C# project. Defaults to ref.'
         required: false
@@ -78,6 +78,7 @@ jobs:
       flutter-package-version: ${{ (contains(fromJSON(inputs.packages-to-publish), 'flutter') && inputs.package-version) || '' }}
       react-native-package-version: ${{ (contains(fromJSON(inputs.packages-to-publish), 'react-native') && inputs.package-version) || '' }}
       python-package-version: ${{ (contains(fromJSON(inputs.packages-to-publish), 'python') && inputs.package-version) || '' }}
+      swift-package-version: ${{ (contains(fromJSON(inputs.packages-to-publish), 'swift') && inputs.package-version) || '' }}
       use-dummy-binaries: ${{ inputs.use-dummy-binaries }}
       publish: ${{ inputs.publish }}
     steps:
@@ -95,12 +96,12 @@ jobs:
       # (e.g. bindings-windows: true) if you want to test something.
       repository: ${{ needs.pre-setup.outputs.repository }}
       bindings-windows: ${{ !!needs.pre-setup.outputs.csharp-package-version || !!needs.pre-setup.outputs.golang-package-version || !!needs.pre-setup.outputs.python-package-version }}
-      bindings-darwin: ${{ !!needs.pre-setup.outputs.csharp-package-version || !!needs.pre-setup.outputs.golang-package-version || !!needs.pre-setup.outputs.python-package-version }}
+      bindings-darwin: ${{ !!needs.pre-setup.outputs.csharp-package-version || !!needs.pre-setup.outputs.golang-package-version || !!needs.pre-setup.outputs.python-package-version || !!needs.pre-setup.outputs.swift-package-version }}
       bindings-linux: ${{ !!needs.pre-setup.outputs.csharp-package-version || !!needs.pre-setup.outputs.golang-package-version || !!needs.pre-setup.outputs.python-package-version }}
       bindings-android: ${{ !!needs.pre-setup.outputs.kotlin-mpp-package-version || !!needs.pre-setup.outputs.maven-package-version || !!needs.pre-setup.outputs.golang-package-version }}
-      bindings-ios: ${{ !!needs.pre-setup.outputs.kotlin-mpp-package-version || !!needs.pre-setup.outputs.maven-package-version }}
+      bindings-ios: ${{ !!needs.pre-setup.outputs.kotlin-mpp-package-version || !!needs.pre-setup.outputs.maven-package-version || !!needs.pre-setup.outputs.swift-package-version}}
       kotlin: ${{ !!needs.pre-setup.outputs.kotlin-mpp-package-version || !!needs.pre-setup.outputs.maven-package-version || !!needs.pre-setup.outputs.flutter-package-version }}
-      swift: ${{ !!needs.pre-setup.outputs.flutter-package-version }}
+      swift: ${{ !!needs.pre-setup.outputs.flutter-package-version || !!needs.pre-setup.outputs.swift-package-version }}
       python: ${{ !!needs.pre-setup.outputs.python-package-version }}
       csharp: ${{ !!needs.pre-setup.outputs.csharp-package-version }}
       golang: ${{ !!needs.pre-setup.outputs.golang-package-version }}
@@ -132,7 +133,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-darwin:
     needs: setup
-    if: ${{ needs.setup.outputs.bindings-darwin == 'true' }}
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-darwin == 'true' }}
     uses: ./.github/workflows/build-bindings-darwin.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -156,7 +157,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-ios:
     needs: setup
-    if: ${{ needs.setup.outputs.bindings-ios == 'true' }}
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-ios == 'true' }}
     uses: ./.github/workflows/build-bindings-ios.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -247,7 +248,8 @@ jobs:
     needs:
       - setup
       - build-language-bindings
-    if: ${{ needs.setup.outputs.flutter == 'true' }}
+      - publish-swift
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.flutter == 'true' }}
     uses: ./.github/workflows/publish-flutter.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -262,7 +264,8 @@ jobs:
   publish-react-native:
     needs:
       - setup
-    if: ${{ needs.setup.outputs.react-native == 'true' }}
+      - publish-swift
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.react-native == 'true' }}
     uses: ./.github/workflows/publish-react-native.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -288,3 +291,20 @@ jobs:
       publish: ${{ needs.setup.outputs.publish == 'true' }}
     secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  publish-swift:
+    needs:
+      - setup
+      - build-bindings-darwin
+      - build-bindings-ios
+      - build-language-bindings
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.swift == 'true' }}
+    uses: ./.github/workflows/publish-swift.yml
+    with:
+      repository: ${{ needs.setup.outputs.repository }}
+      ref: ${{ needs.setup.outputs.ref }}
+      package-version: ${{ needs.setup.outputs.python-package-version }}
+      publish: ${{ needs.setup.outputs.publish == 'true' }}
+    secrets:
+      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      REPO_SSH_KEY: ${{ secrets.REPO_SSH_KEY }}

@@ -72,6 +72,48 @@ jobs:
         name: sdk-bindings-${{ matrix.target }}
         path: libs/target/${{ matrix.target }}/release/libbreez_sdk_bindings.a
 
+  merge:
+    runs-on: macOS-latest
+    needs: build
+    name: build ios-universal
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: sdk-bindings-aarch64-apple-ios
+        path: aarch64-apple-ios
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: sdk-bindings-x86_64-apple-ios
+        path: x86_64-apple-ios
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: sdk-bindings-aarch64-apple-ios-sim
+        path: aarch64-apple-ios-sim
+
+    - name: Build ios-universal
+      run: |
+        mkdir -p ios-universal
+        lipo -create -output ios-universal/libbreez_sdk_bindings.a aarch64-apple-ios/libbreez_sdk_bindings.a x86_64-apple-ios/libbreez_sdk_bindings.a
+
+    - name: Build ios-universal-sim
+      run: |
+        mkdir -p ios-universal-sim
+        lipo -create -output ios-universal-sim/libbreez_sdk_bindings.a aarch64-apple-ios-sim/libbreez_sdk_bindings.a x86_64-apple-ios/libbreez_sdk_bindings.a
+
+    - name: Archive ios-universal
+      uses: actions/upload-artifact@v3
+      with:
+        name: sdk-bindings-ios-universal
+        path: ios-universal/libbreez_sdk_bindings.a
+
+    - name: Archive ios-universal-sim
+      uses: actions/upload-artifact@v3
+      with:
+        name: sdk-bindings-ios-universal-sim
+        path: ios-universal-sim/libbreez_sdk_bindings.a
+
   build-dummies:
     if: ${{ inputs.use-dummy-binaries }}
     runs-on: ubuntu-latest
@@ -82,6 +124,8 @@ jobs:
           aarch64-apple-ios,
           x86_64-apple-ios,
           aarch64-apple-ios-sim,
+          ios-universal,
+          ios-universal-sim,
         ]
     steps:
       - name: Build dummy ios ${{ matrix.target }}
