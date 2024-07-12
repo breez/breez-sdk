@@ -135,7 +135,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-darwin:
     needs: setup
-    if: ${{ needs.setup.outputs.bindings-darwin == 'true' }}
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-darwin == 'true' }}
     uses: ./.github/workflows/build-bindings-darwin.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -159,7 +159,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-ios:
     needs: setup
-    if: ${{ needs.setup.outputs.bindings-ios == 'true' }}
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-ios == 'true' }}
     uses: ./.github/workflows/build-bindings-ios.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -251,6 +251,10 @@ jobs:
       - setup
       - build-language-bindings
       - publish-swift
+    # The flutter package depends on the swift package to be available at runtime.
+    # To make sure this is will be the case, we run the publishing job only if:
+    #   a) its dependencies (mainly publish-swift) succeeded
+    #   b) one of its dependencies, mainly publish-swift, was explicitly skipped (but didn't fail or get cancelled)
     if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.flutter == 'true' }}
     uses: ./.github/workflows/publish-flutter.yml
     with:
@@ -267,6 +271,10 @@ jobs:
     needs:
       - setup
       - publish-swift
+    # The react native package depends on the swift cocoapod to be available at runtime.
+    # To make sure this is will be the case, we run the publishing job only if:
+    #   a) its dependencies (mainly publish-swift) succeeded
+    #   b) one of its dependencies, mainly publish-swift, was explicitly skipped (but didn't fail or get cancelled)
     if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.react-native == 'true' }}
     uses: ./.github/workflows/publish-react-native.yml
     with:
@@ -300,7 +308,7 @@ jobs:
       - build-bindings-darwin
       - build-bindings-ios
       - build-language-bindings
-    if: ${{ needs.setup.outputs.spm-cocoapods == 'true' }}
+    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.spm-cocoapods == 'true' }}
     uses: ./.github/workflows/publish-swift.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
