@@ -297,23 +297,33 @@ impl BreezServices {
             return Err(SendPaymentError::AlreadyPaid);
         }
 
-        // If there is an lsp and the invoice route hint does not contain the
-        // lsp in the hint, attempt a trampoline payment.
-        let maybe_trampoline_id = match self.lsp_info().await {
-            Ok(lsp_info) => {
-                let lsp_pubkey = hex::encode(&lsp_info.lsp_pubkey);
-                match parsed_invoice.routing_hints.iter().any(|hint| {
-                    hint.hops
-                        .last()
-                        .map(|hop| hop.src_node_id == lsp_pubkey)
-                        .unwrap_or(false)
-                }) {
-                    true => None,
-                    false => Some(lsp_info.lsp_pubkey),
+        // If there is an lsp, the invoice route hint does not contain the
+        // lsp in the hint, and the lsp supports trampoline payments, attempt a
+        // trampoline payment.
+        let mut maybe_trampoline_id = None;
+        if let Some(lsp_pubkey) = self.persister.get_lsp_pubkey()? {
+            if !parsed_invoice.routing_hints.iter().any(|hint| {
+                hint.hops
+                    .last()
+                    .map(|hop| hop.src_node_id == lsp_pubkey)
+                    .unwrap_or(false)
+            }) {
+                let node_state = self.node_info()?;
+                if let Some(peer) = node_state
+                    .connected_peers
+                    .iter()
+                    .find(|peer| peer.id == lsp_pubkey)
+                {
+                    if peer.features.trampoline {
+                        maybe_trampoline_id = Some(hex::decode(lsp_pubkey).map_err(|_| {
+                            SendPaymentError::Generic {
+                                err: "failed to decode lsp pubkey".to_string(),
+                            }
+                        })?);
+                    }
                 }
             }
-            Err(_) => None,
-        };
+        }
 
         self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
 
