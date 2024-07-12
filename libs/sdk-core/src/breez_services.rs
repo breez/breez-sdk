@@ -306,6 +306,7 @@ impl BreezServices {
 
         // If trampoline is an option, try trampoline first.
         let trampoline_result = if let Some(trampoline_id) = maybe_trampoline_id {
+            debug!("attempting trampoline payment");
             match self
                 .node_api
                 .send_trampoline_payment(
@@ -323,6 +324,7 @@ impl BreezServices {
                 }
             }
         } else {
+            debug!("not attempting trampoline payment");
             None
         };
 
@@ -330,6 +332,7 @@ impl BreezServices {
         let payment_res = match trampoline_result {
             Some(res) => Ok(res),
             None => {
+                debug!("attempting normal payment");
                 self.node_api
                     .send_payment(
                         parsed_invoice.bolt11.clone(),
