@@ -41,6 +41,7 @@ use crate::models::ClosedChannelPaymentDetails;
 use crate::models::Config;
 use crate::models::ConfigureNodeRequest;
 use crate::models::ConnectRequest;
+use crate::models::ConnectedPeer;
 use crate::models::EnvironmentType;
 use crate::models::GreenlightCredentials;
 use crate::models::GreenlightDeviceCredentials;
@@ -66,6 +67,7 @@ use crate::models::PaymentDetails;
 use crate::models::PaymentStatus;
 use crate::models::PaymentType;
 use crate::models::PaymentTypeFilter;
+use crate::models::PeerFeatures;
 use crate::models::PrepareOnchainPaymentRequest;
 use crate::models::PrepareOnchainPaymentResponse;
 use crate::models::PrepareRedeemOnchainFundsRequest;
@@ -1506,6 +1508,22 @@ impl rust2dart::IntoIntoDart<Config> for Config {
     }
 }
 
+impl support::IntoDart for ConnectedPeer {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            self.id.into_into_dart().into_dart(),
+            self.features.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for ConnectedPeer {}
+impl rust2dart::IntoIntoDart<ConnectedPeer> for ConnectedPeer {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
 impl support::IntoDart for mirror_CurrencyInfo {
     fn into_dart(self) -> support::DartAbi {
         vec![
@@ -2239,6 +2257,18 @@ impl support::IntoDart for PaymentType {
 }
 impl support::IntoDartExceptPrimitive for PaymentType {}
 impl rust2dart::IntoIntoDart<PaymentType> for PaymentType {
+    fn into_into_dart(self) -> Self {
+        self
+    }
+}
+
+impl support::IntoDart for PeerFeatures {
+    fn into_dart(self) -> support::DartAbi {
+        vec![self.trampoline.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for PeerFeatures {}
+impl rust2dart::IntoIntoDart<PeerFeatures> for PeerFeatures {
     fn into_into_dart(self) -> Self {
         self
     }

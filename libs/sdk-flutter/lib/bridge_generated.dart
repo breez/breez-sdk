@@ -589,6 +589,16 @@ class ConnectRequest {
   });
 }
 
+class ConnectedPeer {
+  final String id;
+  final PeerFeatures features;
+
+  const ConnectedPeer({
+    required this.id,
+    required this.features,
+  });
+}
+
 class CurrencyInfo {
   final String name;
   final int fractionSize;
@@ -1118,7 +1128,7 @@ class NodeState {
   final int maxReceivableMsat;
   final int maxSinglePaymentAmountMsat;
   final int maxChanReserveMsats;
-  final List<String> connectedPeers;
+  final List<ConnectedPeer> connectedPeers;
 
   /// Maximum receivable in a single payment without requiring a new channel open.
   final int maxReceivableSinglePaymentAmountMsat;
@@ -1312,6 +1322,14 @@ enum PaymentTypeFilter {
   Sent,
   Received,
   ClosedChannel,
+}
+
+class PeerFeatures {
+  final bool trampoline;
+
+  const PeerFeatures({
+    required this.trampoline,
+  });
 }
 
 /// See [ReverseSwapFeesRequest]
@@ -3337,6 +3355,15 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     );
   }
 
+  ConnectedPeer _wire2api_connected_peer(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ConnectedPeer(
+      id: _wire2api_String(arr[0]),
+      features: _wire2api_peer_features(arr[1]),
+    );
+  }
+
   CurrencyInfo _wire2api_currency_info(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
@@ -3449,6 +3476,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       bolt11: _wire2api_String(arr[1]),
       payment: _wire2api_opt_box_autoadd_payment(arr[2]),
     );
+  }
+
+  List<ConnectedPeer> _wire2api_list_connected_peer(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_connected_peer).toList();
   }
 
   List<FiatCurrency> _wire2api_list_fiat_currency(dynamic raw) {
@@ -3767,7 +3798,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       maxReceivableMsat: _wire2api_u64(arr[7]),
       maxSinglePaymentAmountMsat: _wire2api_u64(arr[8]),
       maxChanReserveMsats: _wire2api_u64(arr[9]),
-      connectedPeers: _wire2api_StringList(arr[10]),
+      connectedPeers: _wire2api_list_connected_peer(arr[10]),
       maxReceivableSinglePaymentAmountMsat: _wire2api_u64(arr[11]),
       totalInboundLiquidityMsats: _wire2api_u64(arr[12]),
     );
@@ -3930,6 +3961,14 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   PaymentType _wire2api_payment_type(dynamic raw) {
     return PaymentType.values[raw as int];
+  }
+
+  PeerFeatures _wire2api_peer_features(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1) throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return PeerFeatures(
+      trampoline: _wire2api_bool(arr[0]),
+    );
   }
 
   PrepareOnchainPaymentResponse _wire2api_prepare_onchain_payment_response(dynamic raw) {

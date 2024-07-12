@@ -587,6 +587,45 @@ enum BreezSDKMapper {
         return connectRequestList.map { v -> [String: Any?] in return dictionaryOf(connectRequest: v) }
     }
 
+    static func asConnectedPeer(connectedPeer: [String: Any?]) throws -> ConnectedPeer {
+        guard let id = connectedPeer["id"] as? String else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "id", typeName: "ConnectedPeer"))
+        }
+        guard let featuresTmp = connectedPeer["features"] as? [String: Any?] else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "features", typeName: "ConnectedPeer"))
+        }
+        let features = try asPeerFeatures(peerFeatures: featuresTmp)
+
+        return ConnectedPeer(
+            id: id,
+            features: features
+        )
+    }
+
+    static func dictionaryOf(connectedPeer: ConnectedPeer) -> [String: Any?] {
+        return [
+            "id": connectedPeer.id,
+            "features": dictionaryOf(peerFeatures: connectedPeer.features),
+        ]
+    }
+
+    static func asConnectedPeerList(arr: [Any]) throws -> [ConnectedPeer] {
+        var list = [ConnectedPeer]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var connectedPeer = try asConnectedPeer(connectedPeer: val)
+                list.append(connectedPeer)
+            } else {
+                throw SdkError.Generic(message: errUnexpectedType(typeName: "ConnectedPeer"))
+            }
+        }
+        return list
+    }
+
+    static func arrayOf(connectedPeerList: [ConnectedPeer]) -> [Any] {
+        return connectedPeerList.map { v -> [String: Any?] in return dictionaryOf(connectedPeer: v) }
+    }
+
     static func asCurrencyInfo(currencyInfo: [String: Any?]) throws -> CurrencyInfo {
         guard let name = currencyInfo["name"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "name", typeName: "CurrencyInfo"))
@@ -2018,9 +2057,11 @@ enum BreezSDKMapper {
         guard let maxChanReserveMsats = nodeState["maxChanReserveMsats"] as? UInt64 else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "maxChanReserveMsats", typeName: "NodeState"))
         }
-        guard let connectedPeers = nodeState["connectedPeers"] as? [String] else {
+        guard let connectedPeersTmp = nodeState["connectedPeers"] as? [[String: Any?]] else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "connectedPeers", typeName: "NodeState"))
         }
+        let connectedPeers = try asConnectedPeerList(arr: connectedPeersTmp)
+
         guard let maxReceivableSinglePaymentAmountMsat = nodeState["maxReceivableSinglePaymentAmountMsat"] as? UInt64 else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "maxReceivableSinglePaymentAmountMsat", typeName: "NodeState"))
         }
@@ -2057,7 +2098,7 @@ enum BreezSDKMapper {
             "maxReceivableMsat": nodeState.maxReceivableMsat,
             "maxSinglePaymentAmountMsat": nodeState.maxSinglePaymentAmountMsat,
             "maxChanReserveMsats": nodeState.maxChanReserveMsats,
-            "connectedPeers": nodeState.connectedPeers,
+            "connectedPeers": arrayOf(connectedPeerList: nodeState.connectedPeers),
             "maxReceivableSinglePaymentAmountMsat": nodeState.maxReceivableSinglePaymentAmountMsat,
             "totalInboundLiquidityMsats": nodeState.totalInboundLiquidityMsats,
         ]
@@ -2523,6 +2564,38 @@ enum BreezSDKMapper {
 
     static func arrayOf(paymentFailedDataList: [PaymentFailedData]) -> [Any] {
         return paymentFailedDataList.map { v -> [String: Any?] in return dictionaryOf(paymentFailedData: v) }
+    }
+
+    static func asPeerFeatures(peerFeatures: [String: Any?]) throws -> PeerFeatures {
+        guard let trampoline = peerFeatures["trampoline"] as? Bool else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "trampoline", typeName: "PeerFeatures"))
+        }
+
+        return PeerFeatures(
+            trampoline: trampoline)
+    }
+
+    static func dictionaryOf(peerFeatures: PeerFeatures) -> [String: Any?] {
+        return [
+            "trampoline": peerFeatures.trampoline,
+        ]
+    }
+
+    static func asPeerFeaturesList(arr: [Any]) throws -> [PeerFeatures] {
+        var list = [PeerFeatures]()
+        for value in arr {
+            if let val = value as? [String: Any?] {
+                var peerFeatures = try asPeerFeatures(peerFeatures: val)
+                list.append(peerFeatures)
+            } else {
+                throw SdkError.Generic(message: errUnexpectedType(typeName: "PeerFeatures"))
+            }
+        }
+        return list
+    }
+
+    static func arrayOf(peerFeaturesList: [PeerFeatures]) -> [Any] {
+        return peerFeaturesList.map { v -> [String: Any?] in return dictionaryOf(peerFeatures: v) }
     }
 
     static func asPrepareOnchainPaymentRequest(prepareOnchainPaymentRequest: [String: Any?]) throws -> PrepareOnchainPaymentRequest {

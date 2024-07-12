@@ -93,6 +93,11 @@ export interface ConnectRequest {
     restoreOnly?: boolean
 }
 
+export interface ConnectedPeer {
+    id: string
+    features: PeerFeatures
+}
+
 export interface CurrencyInfo {
     name: string
     fractionSize: number
@@ -290,7 +295,7 @@ export interface NodeState {
     maxReceivableMsat: number
     maxSinglePaymentAmountMsat: number
     maxChanReserveMsats: number
-    connectedPeers: string[]
+    connectedPeers: ConnectedPeer[]
     maxReceivableSinglePaymentAmountMsat: number
     totalInboundLiquidityMsats: number
 }
@@ -351,6 +356,10 @@ export interface PaymentFailedData {
     nodeId: string
     invoice?: LnInvoice
     label?: string
+}
+
+export interface PeerFeatures {
+    trampoline: boolean
 }
 
 export interface PrepareOnchainPaymentRequest {

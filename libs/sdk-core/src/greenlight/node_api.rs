@@ -464,7 +464,7 @@ impl Greenlight {
     ) -> NodeResult<(
         Vec<cln::ListpeerchannelsChannels>,
         Vec<cln::ListpeerchannelsChannels>,
-        Vec<String>,
+        Vec<ConnectedPeer>,
         u64,
     )> {
         let (mut all_channels, mut opened_channels, mut connected_peers, mut channels_balance) =
@@ -499,24 +499,28 @@ impl Greenlight {
     ) -> NodeResult<(
         Vec<cln::ListpeerchannelsChannels>,
         Vec<cln::ListpeerchannelsChannels>,
-        Vec<String>,
+        Vec<ConnectedPeer>,
         u64,
     )> {
         // list all channels
+        let peers = cln_client
+            .list_peers(cln::ListpeersRequest::default())
+            .await?
+            .into_inner();
         let peerchannels = cln_client
             .list_peer_channels(cln::ListpeerchannelsRequest::default())
             .await?
             .into_inner();
 
         // filter only connected peers
-        let connected_peers: Vec<String> = peerchannels
-            .channels
+        let connected_peers: Vec<ConnectedPeer> = peers
+            .peers
             .iter()
-            .filter(|channel| channel.peer_connected())
-            .filter_map(|channel| channel.peer_id.clone())
-            .map(hex::encode)
-            .collect::<HashSet<_>>()
-            .into_iter()
+            .filter(|peer| peer.connected)
+            .map(|peer| ConnectedPeer {
+                id: hex::encode(&peer.id),
+                features: peer.features().to_vec().into(),
+            })
             .collect();
 
         // filter only opened channels
@@ -1368,15 +1372,16 @@ impl NodeAPI for Greenlight {
         }
     }
 
-    async fn connect_peer(&self, id: String, addr: String) -> NodeResult<()> {
+    /// Connects to a remote node and returns the remote node's features.
+    async fn connect_peer(&self, id: String, addr: String) -> NodeResult<PeerFeatures> {
         let mut client = self.get_node_client().await?;
         let connect_req = cln::ConnectRequest {
             id: format!("{id}@{addr}"),
             host: None,
             port: None,
         };
-        client.connect_peer(connect_req).await?;
-        Ok(())
+        let resp = client.connect_peer(connect_req).await?.into_inner();
+        Ok(resp.features.into())
     }
 
     async fn sign_message(&self, message: &str) -> NodeResult<String> {

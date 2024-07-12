@@ -1233,7 +1233,7 @@ impl BreezServices {
 
         self.persister.set_lsp_id(lsp.id)?;
         self.persister.set_lsp_pubkey(lsp.pubkey.clone())?;
-        let node_state = match self.node_info() {
+        let mut node_state = match self.node_info() {
             Ok(node_state) => node_state,
             Err(_) => return Ok(()),
         };
@@ -1243,15 +1243,21 @@ impl BreezServices {
         let lsp_connected = node_state
             .connected_peers
             .iter()
-            .any(|e| e == node_id.as_str());
+            .any(|peer| peer.id == node_id);
         if !lsp_connected {
             debug!("connecting to lsp {}@{}", node_id.clone(), address.clone());
-            self.node_api
+            let features = self
+                .node_api
                 .connect_peer(node_id.clone(), address.clone())
                 .await
                 .map_err(|e| SdkError::ServiceConnectivity {
                     err: format!("(LSP: {node_id}) Failed to connect: {e}"),
                 })?;
+            node_state.connected_peers.push(ConnectedPeer {
+                id: node_id.clone(),
+                features,
+            });
+            self.persister.set_node_state(&node_state)?;
             debug!("connected to lsp {node_id}@{address}");
         }
 
@@ -3338,7 +3344,10 @@ pub(crate) mod tests {
             max_receivable_msat: 4_000_000_000,
             max_single_payment_amount_msat: 1_000,
             max_chan_reserve_msats: 0,
-            connected_peers: vec!["1111".to_string()],
+            connected_peers: vec![ConnectedPeer {
+                id: "1111".to_string(),
+                features: PeerFeatures::default(),
+            }],
             max_receivable_single_payment_amount_msat: 2_000,
             total_inbound_liquidity_msats: 10_000,
         }
