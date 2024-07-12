@@ -868,6 +868,7 @@ impl Wire2Api<LnUrlPayRequest> for wire_LnUrlPayRequest {
         LnUrlPayRequest {
             data: self.data.wire2api(),
             amount_msat: self.amount_msat.wire2api(),
+            use_trampoline: self.use_trampoline.wire2api(),
             comment: self.comment.wire2api(),
             payment_label: self.payment_label.wire2api(),
             validate_success_action_url: self.validate_success_action_url.wire2api(),
@@ -1082,6 +1083,7 @@ impl Wire2Api<SendPaymentRequest> for wire_SendPaymentRequest {
     fn wire2api(self) -> SendPaymentRequest {
         SendPaymentRequest {
             bolt11: self.bolt11.wire2api(),
+            use_trampoline: self.use_trampoline.wire2api(),
             amount_msat: self.amount_msat.wire2api(),
             label: self.label.wire2api(),
         }
@@ -1238,6 +1240,7 @@ pub struct wire_LnUrlAuthRequestData {
 pub struct wire_LnUrlPayRequest {
     data: wire_LnUrlPayRequestData,
     amount_msat: u64,
+    use_trampoline: bool,
     comment: *mut wire_uint_8_list,
     payment_label: *mut wire_uint_8_list,
     validate_success_action_url: *mut bool,
@@ -1402,6 +1405,7 @@ pub struct wire_SendOnchainRequest {
 #[derive(Clone)]
 pub struct wire_SendPaymentRequest {
     bolt11: *mut wire_uint_8_list,
+    use_trampoline: bool,
     amount_msat: *mut u64,
     label: *mut wire_uint_8_list,
 }
@@ -1647,6 +1651,7 @@ impl NewWithNullPtr for wire_LnUrlPayRequest {
         Self {
             data: Default::default(),
             amount_msat: Default::default(),
+            use_trampoline: Default::default(),
             comment: core::ptr::null_mut(),
             payment_label: core::ptr::null_mut(),
             validate_success_action_url: core::ptr::null_mut(),
@@ -2011,6 +2016,7 @@ impl NewWithNullPtr for wire_SendPaymentRequest {
     fn new_with_null_ptr() -> Self {
         Self {
             bolt11: core::ptr::null_mut(),
+            use_trampoline: Default::default(),
             amount_msat: core::ptr::null_mut(),
             label: core::ptr::null_mut(),
         }

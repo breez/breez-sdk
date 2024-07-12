@@ -1361,6 +1361,9 @@ enum BreezSDKMapper {
         guard let amountMsat = lnUrlPayRequest["amountMsat"] as? UInt64 else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "amountMsat", typeName: "LnUrlPayRequest"))
         }
+        guard let useTrampoline = lnUrlPayRequest["useTrampoline"] as? Bool else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "useTrampoline", typeName: "LnUrlPayRequest"))
+        }
         var comment: String?
         if hasNonNilKey(data: lnUrlPayRequest, key: "comment") {
             guard let commentTmp = lnUrlPayRequest["comment"] as? String else {
@@ -1386,6 +1389,7 @@ enum BreezSDKMapper {
         return LnUrlPayRequest(
             data: data,
             amountMsat: amountMsat,
+            useTrampoline: useTrampoline,
             comment: comment,
             paymentLabel: paymentLabel,
             validateSuccessActionUrl: validateSuccessActionUrl
@@ -1396,6 +1400,7 @@ enum BreezSDKMapper {
         return [
             "data": dictionaryOf(lnUrlPayRequestData: lnUrlPayRequest.data),
             "amountMsat": lnUrlPayRequest.amountMsat,
+            "useTrampoline": lnUrlPayRequest.useTrampoline,
             "comment": lnUrlPayRequest.comment == nil ? nil : lnUrlPayRequest.comment,
             "paymentLabel": lnUrlPayRequest.paymentLabel == nil ? nil : lnUrlPayRequest.paymentLabel,
             "validateSuccessActionUrl": lnUrlPayRequest.validateSuccessActionUrl == nil ? nil : lnUrlPayRequest.validateSuccessActionUrl,
@@ -3675,6 +3680,9 @@ enum BreezSDKMapper {
         guard let bolt11 = sendPaymentRequest["bolt11"] as? String else {
             throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "bolt11", typeName: "SendPaymentRequest"))
         }
+        guard let useTrampoline = sendPaymentRequest["useTrampoline"] as? Bool else {
+            throw SdkError.Generic(message: errMissingMandatoryField(fieldName: "useTrampoline", typeName: "SendPaymentRequest"))
+        }
         var amountMsat: UInt64?
         if hasNonNilKey(data: sendPaymentRequest, key: "amountMsat") {
             guard let amountMsatTmp = sendPaymentRequest["amountMsat"] as? UInt64 else {
@@ -3692,6 +3700,7 @@ enum BreezSDKMapper {
 
         return SendPaymentRequest(
             bolt11: bolt11,
+            useTrampoline: useTrampoline,
             amountMsat: amountMsat,
             label: label
         )
@@ -3700,6 +3709,7 @@ enum BreezSDKMapper {
     static func dictionaryOf(sendPaymentRequest: SendPaymentRequest) -> [String: Any?] {
         return [
             "bolt11": sendPaymentRequest.bolt11,
+            "useTrampoline": sendPaymentRequest.useTrampoline,
             "amountMsat": sendPaymentRequest.amountMsat == nil ? nil : sendPaymentRequest.amountMsat,
             "label": sendPaymentRequest.label == nil ? nil : sendPaymentRequest.label,
         ]

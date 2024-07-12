@@ -300,30 +300,7 @@ impl BreezServices {
         // If there is an lsp, the invoice route hint does not contain the
         // lsp in the hint, and the lsp supports trampoline payments, attempt a
         // trampoline payment.
-        let mut maybe_trampoline_id = None;
-        if let Some(lsp_pubkey) = self.persister.get_lsp_pubkey()? {
-            if !parsed_invoice.routing_hints.iter().any(|hint| {
-                hint.hops
-                    .last()
-                    .map(|hop| hop.src_node_id == lsp_pubkey)
-                    .unwrap_or(false)
-            }) {
-                let node_state = self.node_info()?;
-                if let Some(peer) = node_state
-                    .connected_peers
-                    .iter()
-                    .find(|peer| peer.id == lsp_pubkey)
-                {
-                    if peer.features.trampoline {
-                        maybe_trampoline_id = Some(hex::decode(lsp_pubkey).map_err(|_| {
-                            SendPaymentError::Generic {
-                                err: "failed to decode lsp pubkey".to_string(),
-                            }
-                        })?);
-                    }
-                }
-            }
-        }
+        let maybe_trampoline_id = self.get_trampoline_id(&req, &parsed_invoice)?;
 
         self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
 
@@ -375,6 +352,57 @@ impl BreezServices {
         Ok(SendPaymentResponse { payment })
     }
 
+    fn get_trampoline_id(
+        &self,
+        req: &SendPaymentRequest,
+        invoice: &LNInvoice,
+    ) -> Result<Option<Vec<u8>>, SendPaymentError> {
+        // If trampoline is turned off, return immediately
+        if !req.use_trampoline {
+            return Ok(None);
+        }
+
+        // Get the persisted LSP id. If no LSP, return early.
+        let lsp_pubkey = match self.persister.get_lsp_pubkey()? {
+            Some(lsp_pubkey) => lsp_pubkey,
+            None => return Ok(None),
+        };
+
+        // If the LSP is in the routing hint, don't use trampoline, but rather
+        // pay directly to the destination.
+        if invoice.routing_hints.iter().any(|hint| {
+            hint.hops
+                .last()
+                .map(|hop| hop.src_node_id == lsp_pubkey)
+                .unwrap_or(false)
+        }) {
+            return Ok(None);
+        }
+
+        // Get the LSP connected peer to extract its features.
+        let node_state = self.node_info()?;
+        let peer = match node_state
+            .connected_peers
+            .iter()
+            .find(|peer| peer.id == lsp_pubkey)
+        {
+            Some(peer) => peer,
+            None => return Ok(None),
+        };
+
+        // If the LSP does not support trampoline, don't attempt it.
+        if !peer.features.trampoline {
+            return Ok(None);
+        }
+
+        // If ended up here, this payment will attempt trampoline.
+        Ok(Some(hex::decode(lsp_pubkey).map_err(|_| {
+            SendPaymentError::Generic {
+                err: "failed to decode lsp pubkey".to_string(),
+            }
+        })?))
+    }
+
     /// Pay directly to a node id using keysend
     pub async fn send_spontaneous_payment(
         &self,
@@ -422,6 +450,7 @@ impl BreezServices {
                 let pay_req = SendPaymentRequest {
                     bolt11: cb.pr.clone(),
                     amount_msat: None,
+                    use_trampoline: req.use_trampoline,
                     label: req.payment_label,
                 };
                 let invoice = parse_invoice(cb.pr.as_str())?;

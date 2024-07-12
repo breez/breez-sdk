@@ -643,6 +643,7 @@ dictionary LnUrlPayErrorData {
 dictionary LnUrlPayRequest {
     LnUrlPayRequestData data;
     u64 amount_msat;
+    boolean use_trampoline;
     string? comment = null;
     string? payment_label = null;
     boolean? validate_success_action_url = null;
@@ -775,6 +776,7 @@ dictionary RedeemOnchainFundsResponse {
 
 dictionary SendPaymentRequest {
     string bolt11;
+    boolean use_trampoline;
     u64? amount_msat = null;
     string? label = null;
 };

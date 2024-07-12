@@ -879,6 +879,11 @@ pub struct ReceivePaymentResponse {
 pub struct SendPaymentRequest {
     /// The bolt11 invoice
     pub bolt11: String,
+    /// By default, if the LSP supports it, trampoline payments will be tried. Trampoline payments
+    /// outsource pathfinding to the LSP. Trampoline payments improve payment performance, but are
+    /// generally more expensive in terms of fees and they compromise on privacy. Setting this flag
+    /// to `true` will ensure no trampoline payment is attempted.
+    pub use_trampoline: bool,
     /// The amount to pay in millisatoshis. Should only be set when `bolt11` is a zero-amount invoice.
     pub amount_msat: Option<u64>,
     /// The external label or identifier of the [Payment]

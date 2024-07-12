@@ -132,6 +132,11 @@ pub mod model {
         pub data: LnUrlPayRequestData,
         /// The amount in millisatoshis for this payment
         pub amount_msat: u64,
+        /// By default, if the LSP supports it, trampoline payments will be tried. Trampoline payments
+        /// outsource pathfinding to the LSP. Trampoline payments improve payment performance, but are
+        /// generally more expensive in terms of fees and they compromise on privacy. Setting this flag
+        /// to `true` will ensure no trampoline payment is attempted.
+        pub use_trampoline: bool,
         /// An optional comment for this payment
         pub comment: Option<String>,
         /// The external label or identifier of the [Payment]

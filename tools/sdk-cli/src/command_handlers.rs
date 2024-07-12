@@ -245,12 +245,14 @@ pub(crate) async fn handle_command(
             bolt11,
             amount_msat,
             label,
+            use_trampoline,
         } => {
             let payment = sdk()?
                 .send_payment(SendPaymentRequest {
                     bolt11,
                     amount_msat,
                     label,
+                    use_trampoline,
                 })
                 .await?;
             serde_json::to_string_pretty(&payment).map_err(|e| e.into())
@@ -470,6 +472,7 @@ pub(crate) async fn handle_command(
             lnurl,
             label,
             validate_success_url,
+            use_trampoline,
         } => match parse(&lnurl).await? {
             LnUrlPay { data: pd } => {
                 let prompt = format!(
@@ -482,6 +485,7 @@ pub(crate) async fn handle_command(
                     .lnurl_pay(LnUrlPayRequest {
                         data: pd,
                         amount_msat: amount_msat.parse::<u64>()?,
+                        use_trampoline,
                         comment: None,
                         payment_label: label,
                         validate_success_action_url: validate_success_url,
