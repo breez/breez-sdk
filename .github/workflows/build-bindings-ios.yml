@@ -77,17 +77,17 @@ jobs:
     needs: build
     name: build ios-universal
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: sdk-bindings-aarch64-apple-ios
         path: aarch64-apple-ios
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: sdk-bindings-x86_64-apple-ios
         path: x86_64-apple-ios
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: sdk-bindings-aarch64-apple-ios-sim
         path: aarch64-apple-ios-sim
@@ -102,14 +102,14 @@ jobs:
         lipo -create -output ios-universal-sim/libbreez_sdk_bindings.a aarch64-apple-ios-sim/release/libbreez_sdk_bindings.a x86_64-apple-ios/release/libbreez_sdk_bindings.a
 
     - name: Archive release
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sdk-bindings-ios-universal
         path: |
           ios-universal/libbreez_sdk_bindings.a
 
     - name: Archive release
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sdk-bindings-ios-universal-sim
         path: |
