@@ -97,9 +97,9 @@ jobs:
         mkdir -p ios-universal
         mkdir -p ios-universal-sim
         # build universal lib for arm device and x86 sim
-        lipo -create -output ios-universal/libbreez_sdk_bindings.a aarch64-apple-ios/release/libbreez_sdk_bindings.a x86_64-apple-ios/release/libbreez_sdk_bindings.a
+        lipo -create -output ios-universal/libbreez_sdk_bindings.a aarch64-apple-ios/libbreez_sdk_bindings.a x86_64-apple-ios/libbreez_sdk_bindings.a
         # build universal lib for arm sim and x86 sim
-        lipo -create -output ios-universal-sim/libbreez_sdk_bindings.a aarch64-apple-ios-sim/release/libbreez_sdk_bindings.a x86_64-apple-ios/release/libbreez_sdk_bindings.a
+        lipo -create -output ios-universal-sim/libbreez_sdk_bindings.a aarch64-apple-ios-sim/libbreez_sdk_bindings.a x86_64-apple-ios/libbreez_sdk_bindings.a
 
     - name: Archive release
       uses: actions/upload-artifact@v4
