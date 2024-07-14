@@ -135,7 +135,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-darwin:
     needs: setup
-    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-darwin == 'true' }}
+    if: ${{ needs.setup.outputs.bindings-darwin == 'true' }}
     uses: ./.github/workflows/build-bindings-darwin.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -159,7 +159,7 @@ jobs:
       use-dummy-binaries: ${{ needs.setup.outputs.use-dummy-binaries == 'true' }}
   build-bindings-ios:
     needs: setup
-    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.bindings-ios == 'true' }}
+    if: ${{ needs.setup.outputs.bindings-ios == 'true' }}
     uses: ./.github/workflows/build-bindings-ios.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -251,11 +251,9 @@ jobs:
       - setup
       - build-language-bindings
       - publish-swift
-    # The flutter package depends on the swift package to be available at runtime.
-    # To make sure this is will be the case, we run the publishing job only if:
-    #   a) its dependencies (mainly publish-swift) succeeded
-    #   b) one of its dependencies, mainly publish-swift, was explicitly skipped (but didn't fail or get cancelled)
-    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.flutter == 'true' }}
+      - publish-maven
+    # The flutter package depends on the swift and android packages to be available at runtime.
+    if: ${{ needs.setup.outputs.flutter == 'true' }}
     uses: ./.github/workflows/publish-flutter.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -265,17 +263,13 @@ jobs:
     secrets:
       REPO_SSH_KEY: ${{ secrets.REPO_SSH_KEY }}
 
-  # react native version x.y.z will at runtime require
-  # ios and android packages x.y.z being published already.
   publish-react-native:
     needs:
       - setup
       - publish-swift
-    # The react native package depends on the swift cocoapod to be available at runtime.
-    # To make sure this is will be the case, we run the publishing job only if:
-    #   a) its dependencies (mainly publish-swift) succeeded
-    #   b) one of its dependencies, mainly publish-swift, was explicitly skipped (but didn't fail or get cancelled)
-    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.react-native == 'true' }}
+      - publish-maven
+    # The react native package depends on the swift and android packages to be available at runtime.
+    if: ${{ needs.setup.outputs.react-native == 'true' }}
     uses: ./.github/workflows/publish-react-native.yml
     with:
       repository: ${{ needs.setup.outputs.repository }}
@@ -308,14 +302,46 @@ jobs:
       - build-bindings-darwin
       - build-bindings-ios
       - build-language-bindings
-    if: always() && !failure() && !cancelled() && ${{ needs.setup.outputs.spm-cocoapods == 'true' }}
-    uses: ./.github/workflows/publish-swift.yml
-    with:
-      repository: ${{ needs.setup.outputs.repository }}
-      ref: ${{ needs.setup.outputs.ref }}
-      package-version: ${{ needs.setup.outputs.swift-package-version }}
-      publish: ${{ needs.setup.outputs.publish == 'true' }}
-    secrets:
-      REPO_SSH_KEY: ${{ secrets.REPO_SSH_KEY }}
-      GITHUB_TOKEN_BREEZ_SDK_SWIFT: ${{ secrets.GITHUB_TOKEN_BREEZ_SDK_SWIFT }} # todo: create token
-      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }} # todo: create token
+    if: ${{ needs.setup.outputs.spm-cocoapods == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: publish swift (failing)
+        run: exit 1
+    # uses: ./.github/workflows/publish-swift.yml
+    # with:
+    #   repository: ${{ needs.setup.outputs.repository }}
+    #   ref: ${{ needs.setup.outputs.ref }}
+    #   package-version: ${{ needs.setup.outputs.swift-package-version }}
+    #   publish: ${{ needs.setup.outputs.publish == 'true' }}
+    # secrets:
+    #   REPO_SSH_KEY: ${{ secrets.REPO_SSH_KEY }}
+    #   GITHUB_TOKEN_BREEZ_SDK_SWIFT: ${{ secrets.GITHUB_TOKEN_BREEZ_SDK_SWIFT }} # todo: create token
+    #   COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }} # todo: create token
+
+  debug-print:
+    needs:
+      - setup
+      - publish-swift
+      - publish-maven
+    runs-on: ubuntu-latest
+    if: ${{ always() && !failure() && !cancelled() }}
+    steps:
+      - name: check needs results
+        run: |
+          echo ${{ needs.setup.outputs.spm-cocoapods }}
+          echo ${{ needs.setup.outputs.maven }}
+          echo ${{ needs.publish-swift.result }}
+          echo ${{ needs.publish-maven.result }}
+
+  debug-publish:
+    needs:
+      - setup
+      - publish-swift
+      - publish-maven
+    if: ${{ true && always() && !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: check needs results
+        run: |
+          echo ${{ needs.publish-swift.result }}
+          echo ${{ needs.publish-maven.result }}
