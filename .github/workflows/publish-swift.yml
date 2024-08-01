@@ -1,0 +1,134 @@
+name: Publish Swift Package & CocoaPod
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'sdk repository, defaults to current repository'
+        required: false
+        type: string
+      ref:
+        description: 'commit/tag/branch reference'
+        required: true
+        type: string
+      package-version:
+        description: 'version for the swift package / cocoapod (MAJOR.MINOR.BUILD) (no v prefix)'
+        required: true
+        type: string
+      publish:
+        description: 'value indicating whether to commit/tag a release.'
+        required: true
+        type: boolean
+        default: true
+    secrets:
+      REPO_SSH_KEY:
+        description: 'ssh key to commit to the breez-sdk-swift repository'
+        required: true
+      GITHUB_TOKEN_BREEZ_SDK_SWIFT:
+        description: 'token to create a release to the breez-sdk-swift repository'
+        required: true
+      COCOAPODS_TRUNK_TOKEN:
+        description: 'token to publish to cocoapods'
+        required: true
+
+jobs:
+  build-tag-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout breez-sdk-swift repo
+        uses: actions/checkout@v3
+        with:
+          repository: breez/breez-sdk-swift
+          ssh-key: ${{ secrets.REPO_SSH_KEY }}
+          path: breez-sdk-swift
+
+      - name: Checkout breez-sdk repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repository || github.repository }}
+          ref: ${{ inputs.ref || github.sha }}
+          path: breez-sdk
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bindings-swift
+          path: breez-sdk/libs/sdk-bindings/bindings-swift/Sources/BreezSDK/
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-bindings-aarch64-apple-ios
+          path: breez-sdk/libs/target/aarch64-apple-ios/release/
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-bindings-ios-universal-sim
+          path: breez-sdk/libs/target/ios-universal-sim/release/
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-bindings-darwin-universal
+          path: breez-sdk/libs/target/darwin-universal/release/
+
+      - name: Create XCFramework
+        working-directory: breez-sdk/libs/sdk-bindings
+        run: |
+          cp bindings-swift/Sources/BreezSDK/breez_sdkFFI.h bindings-swift/breez_sdkFFI.xcframework/ios-arm64/breez_sdkFFI.framework/Headers
+          cp bindings-swift/Sources/BreezSDK/breez_sdkFFI.h bindings-swift/breez_sdkFFI.xcframework/ios-arm64_x86_64-simulator/breez_sdkFFI.framework/Headers
+          cp bindings-swift/Sources/BreezSDK/breez_sdkFFI.h bindings-swift/breez_sdkFFI.xcframework/macos-arm64_x86_64/breez_sdkFFI.framework/Headers
+          cp ../target/aarch64-apple-ios/release/libbreez_sdk_bindings.a bindings-swift/breez_sdkFFI.xcframework/ios-arm64/breez_sdkFFI.framework/breez_sdkFFI
+          cp ../target/ios-universal-sim/release/libbreez_sdk_bindings.a bindings-swift/breez_sdkFFI.xcframework/ios-arm64_x86_64-simulator/breez_sdkFFI.framework/breez_sdkFFI
+          cp ../target/darwin-universal/release/libbreez_sdk_bindings.a bindings-swift/breez_sdkFFI.xcframework/macos-arm64_x86_64/breez_sdkFFI.framework/breez_sdkFFI
+          rm bindings-swift/Sources/BreezSDK/breez_sdkFFI.h
+          rm bindings-swift/Sources/BreezSDK/breez_sdkFFI.modulemap
+
+      - name: Compress xcframework
+        working-directory: breez-sdk/libs/sdk-bindings/bindings-swift
+        run: |
+          zip -9 -r breez_sdkFFI.xcframework.zip breez_sdkFFI.xcframework
+          echo "XCF_CHECKSUM=`swift package compute-checksum breez_sdkFFI.xcframework.zip`" >> $GITHUB_ENV
+
+      - name: Update swift package
+        working-directory: breez-sdk/libs/sdk-bindings/bindings-swift
+        run: |
+          # Update package definition
+          sed 's#.binaryTarget(name: "breez_sdkFFI", path: "./breez_sdkFFI.xcframework"),#.binaryTarget(name: "breez_sdkFFI", url: "https://github.com/breez/breez-sdk-swift/releases/download/${{ inputs.package-version }}/breez_sdkFFI.xcframework.zip", checksum: "${{ env.XCF_CHECKSUM }}"),#;/.testTarget(name: "BreezSDKTests", dependencies: \["BreezSDK"\]),/d' Package.swift > ../../../../breez-sdk-swift/Package.swift
+          # Update language bindings
+          cp -r Sources ../../../../breez-sdk-swift
+
+      - name: Update cocoapods definitions
+        working-directory: breez-sdk-swift
+        run: |
+          sed -i '' 's#^.\{2\}spec.version.*$#  spec.version                = "${{ inputs.package-version }}"#' breez_sdkFFI.podspec
+          sed -i '' 's#^.\{2\}spec.version.*$#  spec.version                = "${{ inputs.package-version }}"#' BreezSDK.podspec
+
+      - name: Tag swift package
+        working-directory: breez-sdk-swift
+        if: ${{ inputs.publish }}
+        run: |
+          git add Package.swift
+          git add Sources
+          git add breez_sdkFFI.podspec
+          git add BreezSDK.podspec
+          git commit -m "Update Breez SDK Swift bindings to version ${{ inputs.package-version }}"
+          git push
+          git tag ${{ inputs.package-version }} -m "${{ inputs.package-version }}"
+          git push --tags
+
+      - name: Release and attach XCFramework binary artifact
+        if: ${{ inputs.publish }}
+        uses: ncipollo/release-action@v1
+        with:
+          repo: breez/breez-sdk-swift
+          tag: ${{ inputs.package-version }}
+          token: ${{ secrets.GITHUB_TOKEN_BREEZ_SDK_SWIFT }}
+          name: ${{ inputs.package-version }}
+          artifacts: "breez-sdk/libs/sdk-bindings/bindings-swift/breez_sdkFFI.xcframework.zip"
+          prerelease: true
+
+      - name: Push update to Cocoapods trunk
+        working-directory: breez-sdk-swift
+        if: ${{ inputs.publish }}
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          pod trunk push breez_sdkFFI.podspec --allow-warnings
+          pod trunk push BreezSDK.podspec --allow-warnings --synchronous
