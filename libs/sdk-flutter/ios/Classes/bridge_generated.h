@@ -114,6 +114,7 @@ typedef struct wire_ListPaymentsRequest {
 
 typedef struct wire_SendPaymentRequest {
   struct wire_uint_8_list *bolt11;
+  bool use_trampoline;
   uint64_t *amount_msat;
   struct wire_uint_8_list *label;
 } wire_SendPaymentRequest;
@@ -169,6 +170,7 @@ typedef struct wire_LnUrlPayRequestData {
 typedef struct wire_LnUrlPayRequest {
   struct wire_LnUrlPayRequestData data;
   uint64_t amount_msat;
+  bool use_trampoline;
   struct wire_uint_8_list *comment;
   struct wire_uint_8_list *payment_label;
   bool *validate_success_action_url;

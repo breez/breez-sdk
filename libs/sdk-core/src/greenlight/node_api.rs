@@ -22,7 +22,7 @@ use gl_client::pb::cln::{
 };
 use gl_client::pb::scheduler::scheduler_client::SchedulerClient;
 use gl_client::pb::scheduler::{NodeInfoRequest, UpgradeRequest};
-use gl_client::pb::{OffChainPayment, PayStatus};
+use gl_client::pb::{OffChainPayment, PayStatus, TrampolinePayRequest};
 use gl_client::scheduler::Scheduler;
 use gl_client::signer::model::greenlight::{amount, scheduler};
 use gl_client::signer::{Error, Signer};
@@ -70,6 +70,14 @@ pub(crate) struct Greenlight {
 struct InvoiceLabel {
     pub unix_milli: u128,
     pub payer_amount_msat: Option<u64>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct PaymentLabel {
+    pub unix_nano: u128,
+    pub trampoline: bool,
+    pub client_label: Option<String>,
+    pub amount_msat: u64,
 }
 
 impl Greenlight {
@@ -456,7 +464,7 @@ impl Greenlight {
     ) -> NodeResult<(
         Vec<cln::ListpeerchannelsChannels>,
         Vec<cln::ListpeerchannelsChannels>,
-        Vec<String>,
+        Vec<ConnectedPeer>,
         u64,
     )> {
         let (mut all_channels, mut opened_channels, mut connected_peers, mut channels_balance) =
@@ -491,24 +499,28 @@ impl Greenlight {
     ) -> NodeResult<(
         Vec<cln::ListpeerchannelsChannels>,
         Vec<cln::ListpeerchannelsChannels>,
-        Vec<String>,
+        Vec<ConnectedPeer>,
         u64,
     )> {
         // list all channels
+        let peers = cln_client
+            .list_peers(cln::ListpeersRequest::default())
+            .await?
+            .into_inner();
         let peerchannels = cln_client
             .list_peer_channels(cln::ListpeerchannelsRequest::default())
             .await?
             .into_inner();
 
         // filter only connected peers
-        let connected_peers: Vec<String> = peerchannels
-            .channels
+        let connected_peers: Vec<ConnectedPeer> = peers
+            .peers
             .iter()
-            .filter(|channel| channel.peer_connected())
-            .filter_map(|channel| channel.peer_id.clone())
-            .map(hex::encode)
-            .collect::<HashSet<_>>()
-            .into_iter()
+            .filter(|peer| peer.connected)
+            .map(|peer| ConnectedPeer {
+                id: hex::encode(&peer.id),
+                features: peer.features().to_vec().into(),
+            })
             .collect();
 
         // filter only opened channels
@@ -1147,6 +1159,47 @@ impl NodeAPI for Greenlight {
         payment.try_into()
     }
 
+    async fn send_trampoline_payment(
+        &self,
+        bolt11: String,
+        amount_msat: u64,
+        label: Option<String>,
+        trampoline_node_id: Vec<u8>,
+    ) -> NodeResult<Payment> {
+        let invoice = parse_invoice(&bolt11)?;
+        validate_network(invoice.clone(), self.sdk_config.network)?;
+        let label = serde_json::to_string(&PaymentLabel {
+            trampoline: true,
+            client_label: label,
+            unix_nano: SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos(),
+            amount_msat,
+        })?;
+        let mut client = self.get_client().await?;
+        let request = TrampolinePayRequest {
+            bolt11,
+            trampoline_node_id,
+            amount_msat,
+            label,
+            maxdelay: u32::default(),
+            description: String::default(),
+            maxfeepercent: f32::default(),
+        };
+        let result = self
+            .with_keep_alive(client.trampoline_pay(request))
+            .await?
+            .into_inner();
+
+        let client = self.get_node_client().await?;
+
+        // Before returning from send_payment we need to make sure it is
+        // persisted in the backend node. We do so by polling for the payment.
+        // TODO: Ensure this works with trampoline payments
+        // NOTE: If this doesn't work with trampoline payments, the sync also
+        // needs updating.
+        let payment = Self::fetch_outgoing_payment_with_retry(client, result.payment_hash).await?;
+        payment.try_into()
+    }
+
     async fn send_spontaneous_payment(
         &self,
         node_id: String,
@@ -1319,15 +1372,16 @@ impl NodeAPI for Greenlight {
         }
     }
 
-    async fn connect_peer(&self, id: String, addr: String) -> NodeResult<()> {
+    /// Connects to a remote node and returns the remote node's features.
+    async fn connect_peer(&self, id: String, addr: String) -> NodeResult<PeerFeatures> {
         let mut client = self.get_node_client().await?;
         let connect_req = cln::ConnectRequest {
             id: format!("{id}@{addr}"),
             host: None,
             port: None,
         };
-        client.connect_peer(connect_req).await?;
-        Ok(())
+        let resp = client.connect_peer(connect_req).await?.into_inner();
+        Ok(resp.features.into())
     }
 
     async fn sign_message(&self, message: &str) -> NodeResult<String> {
@@ -2114,16 +2168,29 @@ impl TryFrom<cln::ListpaysPays> for Payment {
             .as_ref()
             .ok_or(InvoiceError::generic("No bolt11 invoice"))
             .and_then(|b| parse_invoice(b));
-        let payment_amount = payment
-            .amount_msat
-            .clone()
-            .map(|a| a.msat)
-            .unwrap_or_default();
         let payment_amount_sent = payment
             .amount_sent_msat
             .clone()
             .map(|a| a.msat)
             .unwrap_or_default();
+
+        // For trampoline payments the amount_msat doesn't match the actual
+        // amount. If it's a trampoline payment, take the amount from the label.
+        let (payment_amount, client_label) = serde_json::from_str::<PaymentLabel>(payment.label())
+            .ok()
+            .and_then(|label| {
+                label
+                    .trampoline
+                    .then_some((label.amount_msat, label.client_label))
+            })
+            .unwrap_or((
+                payment
+                    .amount_msat
+                    .clone()
+                    .map(|a| a.msat)
+                    .unwrap_or_default(),
+                payment.label.clone(),
+            ));
         let status = payment.status().into();
 
         Ok(Payment {
@@ -2136,14 +2203,14 @@ impl TryFrom<cln::ListpaysPays> for Payment {
                     .as_ref()
                     .map_or(0, |i| i.amount_msat.unwrap_or_default()),
             },
-            fee_msat: payment_amount_sent - payment_amount,
+            fee_msat: payment_amount_sent.saturating_sub(payment_amount),
             status,
             error: None,
             description: ln_invoice.map(|i| i.description).unwrap_or_default(),
             details: PaymentDetails::Ln {
                 data: LnPaymentDetails {
                     payment_hash: hex::encode(payment.payment_hash),
-                    label: payment.label.unwrap_or_default(),
+                    label: client_label.unwrap_or_default(),
                     destination_pubkey: payment.destination.map(hex::encode).unwrap_or_default(),
                     payment_preimage: payment.preimage.map(hex::encode).unwrap_or_default(),
                     keysend: payment.bolt11.is_none(),

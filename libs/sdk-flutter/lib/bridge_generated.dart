@@ -589,6 +589,16 @@ class ConnectRequest {
   });
 }
 
+class ConnectedPeer {
+  final String id;
+  final PeerFeatures features;
+
+  const ConnectedPeer({
+    required this.id,
+    required this.features,
+  });
+}
+
 class CurrencyInfo {
   final String name;
   final int fractionSize;
@@ -862,6 +872,7 @@ class LnUrlPayErrorData {
 class LnUrlPayRequest {
   final LnUrlPayRequestData data;
   final int amountMsat;
+  final bool useTrampoline;
   final String? comment;
   final String? paymentLabel;
   final bool? validateSuccessActionUrl;
@@ -869,6 +880,7 @@ class LnUrlPayRequest {
   const LnUrlPayRequest({
     required this.data,
     required this.amountMsat,
+    required this.useTrampoline,
     this.comment,
     this.paymentLabel,
     this.validateSuccessActionUrl,
@@ -1118,7 +1130,7 @@ class NodeState {
   final int maxReceivableMsat;
   final int maxSinglePaymentAmountMsat;
   final int maxChanReserveMsats;
-  final List<String> connectedPeers;
+  final List<ConnectedPeer> connectedPeers;
 
   /// Maximum receivable in a single payment without requiring a new channel open.
   final int maxReceivableSinglePaymentAmountMsat;
@@ -1312,6 +1324,14 @@ enum PaymentTypeFilter {
   Sent,
   Received,
   ClosedChannel,
+}
+
+class PeerFeatures {
+  final bool trampoline;
+
+  const PeerFeatures({
+    required this.trampoline,
+  });
 }
 
 /// See [ReverseSwapFeesRequest]
@@ -1704,6 +1724,12 @@ class SendPaymentRequest {
   /// The bolt11 invoice
   final String bolt11;
 
+  /// By default, if the LSP supports it, trampoline payments will be tried. Trampoline payments
+  /// outsource pathfinding to the LSP. Trampoline payments improve payment performance, but are
+  /// generally more expensive in terms of fees and they compromise on privacy. Setting this flag
+  /// to `true` will ensure no trampoline payment is attempted.
+  final bool useTrampoline;
+
   /// The amount to pay in millisatoshis. Should only be set when `bolt11` is a zero-amount invoice.
   final int? amountMsat;
 
@@ -1712,6 +1738,7 @@ class SendPaymentRequest {
 
   const SendPaymentRequest({
     required this.bolt11,
+    required this.useTrampoline,
     this.amountMsat,
     this.label,
   });
@@ -3337,6 +3364,15 @@ class BreezSdkCoreImpl implements BreezSdkCore {
     );
   }
 
+  ConnectedPeer _wire2api_connected_peer(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ConnectedPeer(
+      id: _wire2api_String(arr[0]),
+      features: _wire2api_peer_features(arr[1]),
+    );
+  }
+
   CurrencyInfo _wire2api_currency_info(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
@@ -3449,6 +3485,10 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       bolt11: _wire2api_String(arr[1]),
       payment: _wire2api_opt_box_autoadd_payment(arr[2]),
     );
+  }
+
+  List<ConnectedPeer> _wire2api_list_connected_peer(dynamic raw) {
+    return (raw as List<dynamic>).map(_wire2api_connected_peer).toList();
   }
 
   List<FiatCurrency> _wire2api_list_fiat_currency(dynamic raw) {
@@ -3767,7 +3807,7 @@ class BreezSdkCoreImpl implements BreezSdkCore {
       maxReceivableMsat: _wire2api_u64(arr[7]),
       maxSinglePaymentAmountMsat: _wire2api_u64(arr[8]),
       maxChanReserveMsats: _wire2api_u64(arr[9]),
-      connectedPeers: _wire2api_StringList(arr[10]),
+      connectedPeers: _wire2api_list_connected_peer(arr[10]),
       maxReceivableSinglePaymentAmountMsat: _wire2api_u64(arr[11]),
       totalInboundLiquidityMsats: _wire2api_u64(arr[12]),
     );
@@ -3930,6 +3970,14 @@ class BreezSdkCoreImpl implements BreezSdkCore {
 
   PaymentType _wire2api_payment_type(dynamic raw) {
     return PaymentType.values[raw as int];
+  }
+
+  PeerFeatures _wire2api_peer_features(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1) throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return PeerFeatures(
+      trampoline: _wire2api_bool(arr[0]),
+    );
   }
 
   PrepareOnchainPaymentResponse _wire2api_prepare_onchain_payment_response(dynamic raw) {
@@ -4840,6 +4888,7 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
   void _api_fill_to_wire_ln_url_pay_request(LnUrlPayRequest apiObj, wire_LnUrlPayRequest wireObj) {
     _api_fill_to_wire_ln_url_pay_request_data(apiObj.data, wireObj.data);
     wireObj.amount_msat = api2wire_u64(apiObj.amountMsat);
+    wireObj.use_trampoline = api2wire_bool(apiObj.useTrampoline);
     wireObj.comment = api2wire_opt_String(apiObj.comment);
     wireObj.payment_label = api2wire_opt_String(apiObj.paymentLabel);
     wireObj.validate_success_action_url = api2wire_opt_box_autoadd_bool(apiObj.validateSuccessActionUrl);
@@ -4999,6 +5048,7 @@ class BreezSdkCorePlatform extends FlutterRustBridgeBase<BreezSdkCoreWire> {
 
   void _api_fill_to_wire_send_payment_request(SendPaymentRequest apiObj, wire_SendPaymentRequest wireObj) {
     wireObj.bolt11 = api2wire_String(apiObj.bolt11);
+    wireObj.use_trampoline = api2wire_bool(apiObj.useTrampoline);
     wireObj.amount_msat = api2wire_opt_box_autoadd_u64(apiObj.amountMsat);
     wireObj.label = api2wire_opt_String(apiObj.label);
   }
@@ -6576,6 +6626,9 @@ final class wire_ListPaymentsRequest extends ffi.Struct {
 final class wire_SendPaymentRequest extends ffi.Struct {
   external ffi.Pointer<wire_uint_8_list> bolt11;
 
+  @ffi.Bool()
+  external bool use_trampoline;
+
   external ffi.Pointer<ffi.Uint64> amount_msat;
 
   external ffi.Pointer<wire_uint_8_list> label;
@@ -6670,6 +6723,9 @@ final class wire_LnUrlPayRequest extends ffi.Struct {
 
   @ffi.Uint64()
   external int amount_msat;
+
+  @ffi.Bool()
+  external bool use_trampoline;
 
   external ffi.Pointer<wire_uint_8_list> comment;
 

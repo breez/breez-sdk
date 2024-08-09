@@ -13,7 +13,7 @@ use crate::{
     lightning_invoice::RawBolt11Invoice,
     persist::error::PersistError,
     CustomMessage, LnUrlAuthError, LspInformation, MaxChannelAmount, NodeCredentials, Payment,
-    PaymentResponse, PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse,
+    PaymentResponse, PeerFeatures, PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse,
     RouteHint, RouteHintHop, SyncResponse, TlvEntry,
 };
 
@@ -137,6 +137,13 @@ pub trait NodeAPI: Send + Sync {
         extra_tlvs: Option<Vec<TlvEntry>>,
         label: Option<String>,
     ) -> NodeResult<Payment>;
+    async fn send_trampoline_payment(
+        &self,
+        bolt11: String,
+        amount_msat: u64,
+        label: Option<String>,
+        trampoline_node_id: Vec<u8>,
+    ) -> NodeResult<Payment>;
     async fn start(&self) -> NodeResult<String>;
 
     /// Attempts to find a payment path "manually" and send the htlcs in a way that will drain
@@ -162,7 +169,9 @@ pub trait NodeAPI: Send + Sync {
     ) -> NodeResult<PrepareRedeemOnchainFundsResponse>;
     async fn start_signer(&self, shutdown: mpsc::Receiver<()>);
     async fn start_keep_alive(&self, shutdown: watch::Receiver<()>);
-    async fn connect_peer(&self, node_id: String, addr: String) -> NodeResult<()>;
+
+    /// Connects to a remote node and returns the remote node's features.
+    async fn connect_peer(&self, node_id: String, addr: String) -> NodeResult<PeerFeatures>;
     fn sign_invoice(&self, invoice: RawBolt11Invoice) -> NodeResult<String>;
     async fn close_peer_channels(&self, node_id: String) -> NodeResult<Vec<String>>;
     async fn stream_incoming_payments(

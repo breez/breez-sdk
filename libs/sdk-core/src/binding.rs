@@ -123,6 +123,7 @@ pub struct _RouteHintHop {
 pub struct _LnUrlPayRequest {
     pub data: LnUrlPayRequestData,
     pub amount_msat: u64,
+    pub use_trampoline: bool,
     pub comment: Option<String>,
     pub payment_label: Option<String>,
     pub validate_success_action_url: Option<bool>,

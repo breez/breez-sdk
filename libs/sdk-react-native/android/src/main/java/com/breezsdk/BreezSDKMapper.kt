@@ -517,6 +517,42 @@ fun asConnectRequestList(arr: ReadableArray): List<ConnectRequest> {
     return list
 }
 
+fun asConnectedPeer(connectedPeer: ReadableMap): ConnectedPeer? {
+    if (!validateMandatoryFields(
+            connectedPeer,
+            arrayOf(
+                "id",
+                "features",
+            ),
+        )
+    ) {
+        return null
+    }
+    val id = connectedPeer.getString("id")!!
+    val features = connectedPeer.getMap("features")?.let { asPeerFeatures(it) }!!
+    return ConnectedPeer(
+        id,
+        features,
+    )
+}
+
+fun readableMapOf(connectedPeer: ConnectedPeer): ReadableMap =
+    readableMapOf(
+        "id" to connectedPeer.id,
+        "features" to readableMapOf(connectedPeer.features),
+    )
+
+fun asConnectedPeerList(arr: ReadableArray): List<ConnectedPeer> {
+    val list = ArrayList<ConnectedPeer>()
+    for (value in arr.toArrayList()) {
+        when (value) {
+            is ReadableMap -> list.add(asConnectedPeer(value)!!)
+            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
+        }
+    }
+    return list
+}
+
 fun asCurrencyInfo(currencyInfo: ReadableMap): CurrencyInfo? {
     if (!validateMandatoryFields(
             currencyInfo,
@@ -1150,6 +1186,7 @@ fun asLnUrlPayRequest(lnUrlPayRequest: ReadableMap): LnUrlPayRequest? {
             arrayOf(
                 "data",
                 "amountMsat",
+                "useTrampoline",
             ),
         )
     ) {
@@ -1157,6 +1194,7 @@ fun asLnUrlPayRequest(lnUrlPayRequest: ReadableMap): LnUrlPayRequest? {
     }
     val data = lnUrlPayRequest.getMap("data")?.let { asLnUrlPayRequestData(it) }!!
     val amountMsat = lnUrlPayRequest.getDouble("amountMsat").toULong()
+    val useTrampoline = lnUrlPayRequest.getBoolean("useTrampoline")
     val comment = if (hasNonNullKey(lnUrlPayRequest, "comment")) lnUrlPayRequest.getString("comment") else null
     val paymentLabel = if (hasNonNullKey(lnUrlPayRequest, "paymentLabel")) lnUrlPayRequest.getString("paymentLabel") else null
     val validateSuccessActionUrl =
@@ -1172,6 +1210,7 @@ fun asLnUrlPayRequest(lnUrlPayRequest: ReadableMap): LnUrlPayRequest? {
     return LnUrlPayRequest(
         data,
         amountMsat,
+        useTrampoline,
         comment,
         paymentLabel,
         validateSuccessActionUrl,
@@ -1182,6 +1221,7 @@ fun readableMapOf(lnUrlPayRequest: LnUrlPayRequest): ReadableMap =
     readableMapOf(
         "data" to readableMapOf(lnUrlPayRequest.data),
         "amountMsat" to lnUrlPayRequest.amountMsat,
+        "useTrampoline" to lnUrlPayRequest.useTrampoline,
         "comment" to lnUrlPayRequest.comment,
         "paymentLabel" to lnUrlPayRequest.paymentLabel,
         "validateSuccessActionUrl" to lnUrlPayRequest.validateSuccessActionUrl,
@@ -1772,7 +1812,7 @@ fun asNodeState(nodeState: ReadableMap): NodeState? {
     val maxReceivableMsat = nodeState.getDouble("maxReceivableMsat").toULong()
     val maxSinglePaymentAmountMsat = nodeState.getDouble("maxSinglePaymentAmountMsat").toULong()
     val maxChanReserveMsats = nodeState.getDouble("maxChanReserveMsats").toULong()
-    val connectedPeers = nodeState.getArray("connectedPeers")?.let { asStringList(it) }!!
+    val connectedPeers = nodeState.getArray("connectedPeers")?.let { asConnectedPeerList(it) }!!
     val maxReceivableSinglePaymentAmountMsat = nodeState.getDouble("maxReceivableSinglePaymentAmountMsat").toULong()
     val totalInboundLiquidityMsats = nodeState.getDouble("totalInboundLiquidityMsats").toULong()
     return NodeState(
@@ -2190,6 +2230,38 @@ fun asPaymentFailedDataList(arr: ReadableArray): List<PaymentFailedData> {
     for (value in arr.toArrayList()) {
         when (value) {
             is ReadableMap -> list.add(asPaymentFailedData(value)!!)
+            else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
+        }
+    }
+    return list
+}
+
+fun asPeerFeatures(peerFeatures: ReadableMap): PeerFeatures? {
+    if (!validateMandatoryFields(
+            peerFeatures,
+            arrayOf(
+                "trampoline",
+            ),
+        )
+    ) {
+        return null
+    }
+    val trampoline = peerFeatures.getBoolean("trampoline")
+    return PeerFeatures(
+        trampoline,
+    )
+}
+
+fun readableMapOf(peerFeatures: PeerFeatures): ReadableMap =
+    readableMapOf(
+        "trampoline" to peerFeatures.trampoline,
+    )
+
+fun asPeerFeaturesList(arr: ReadableArray): List<PeerFeatures> {
+    val list = ArrayList<PeerFeatures>()
+    for (value in arr.toArrayList()) {
+        when (value) {
+            is ReadableMap -> list.add(asPeerFeatures(value)!!)
             else -> throw SdkException.Generic(errUnexpectedType("${value::class.java.name}"))
         }
     }
@@ -3199,16 +3271,19 @@ fun asSendPaymentRequest(sendPaymentRequest: ReadableMap): SendPaymentRequest? {
             sendPaymentRequest,
             arrayOf(
                 "bolt11",
+                "useTrampoline",
             ),
         )
     ) {
         return null
     }
     val bolt11 = sendPaymentRequest.getString("bolt11")!!
+    val useTrampoline = sendPaymentRequest.getBoolean("useTrampoline")
     val amountMsat = if (hasNonNullKey(sendPaymentRequest, "amountMsat")) sendPaymentRequest.getDouble("amountMsat").toULong() else null
     val label = if (hasNonNullKey(sendPaymentRequest, "label")) sendPaymentRequest.getString("label") else null
     return SendPaymentRequest(
         bolt11,
+        useTrampoline,
         amountMsat,
         label,
     )
@@ -3217,6 +3292,7 @@ fun asSendPaymentRequest(sendPaymentRequest: ReadableMap): SendPaymentRequest? {
 fun readableMapOf(sendPaymentRequest: SendPaymentRequest): ReadableMap =
     readableMapOf(
         "bolt11" to sendPaymentRequest.bolt11,
+        "useTrampoline" to sendPaymentRequest.useTrampoline,
         "amountMsat" to sendPaymentRequest.amountMsat,
         "label" to sendPaymentRequest.label,
     )
@@ -4474,6 +4550,7 @@ fun pushToArray(
 ) {
     when (value) {
         null -> array.pushNull()
+        is ConnectedPeer -> array.pushMap(readableMapOf(value))
         is FiatCurrency -> array.pushMap(readableMapOf(value))
         is LocaleOverrides -> array.pushMap(readableMapOf(value))
         is LocalizedName -> array.pushMap(readableMapOf(value))

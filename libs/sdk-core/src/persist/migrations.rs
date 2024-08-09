@@ -433,7 +433,8 @@ pub(crate) fn current_migrations() -> Vec<&'static str> {
         UPDATE channels SET local_balance_msat = spendable_msat;
        ",
        "DELETE FROM cached_items WHERE key = 'gl_credentials'",
-       "DELETE FROM cached_items WHERE key = 'last_sync_time'"
+       "DELETE FROM cached_items WHERE key = 'last_sync_time'",
+       "DELETE FROM cached_items WHERE key = 'node_state'"
     ]
 }
 

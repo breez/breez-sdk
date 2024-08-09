@@ -289,33 +289,121 @@ impl BreezServices {
             }
         };
 
-        match self
+        if self
             .persister
             .get_completed_payment_by_hash(&parsed_invoice.payment_hash)?
+            .is_some()
         {
-            Some(_) => Err(SendPaymentError::AlreadyPaid),
+            return Err(SendPaymentError::AlreadyPaid);
+        }
+
+        // If there is an lsp, the invoice route hint does not contain the
+        // lsp in the hint, and the lsp supports trampoline payments, attempt a
+        // trampoline payment.
+        let maybe_trampoline_id = self.get_trampoline_id(&req, &parsed_invoice)?;
+
+        self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
+
+        // If trampoline is an option, try trampoline first.
+        let trampoline_result = if let Some(trampoline_id) = maybe_trampoline_id {
+            debug!("attempting trampoline payment");
+            match self
+                .node_api
+                .send_trampoline_payment(
+                    parsed_invoice.bolt11.clone(),
+                    amount_msat,
+                    req.label.clone(),
+                    trampoline_id,
+                )
+                .await
+            {
+                Ok(res) => Some(res),
+                Err(e) => {
+                    warn!("trampoline payment failed: {:?}", e);
+                    None
+                }
+            }
+        } else {
+            debug!("not attempting trampoline payment");
+            None
+        };
+
+        // If trampoline failed or didn't happen, fall back to regular payment.
+        let payment_res = match trampoline_result {
+            Some(res) => Ok(res),
             None => {
-                self.persist_pending_payment(&parsed_invoice, amount_msat, req.label.clone())?;
-                let payment_res = self
-                    .node_api
+                debug!("attempting normal payment");
+                self.node_api
                     .send_payment(
                         parsed_invoice.bolt11.clone(),
                         req.amount_msat,
                         req.label.clone(),
                     )
                     .map_err(Into::into)
-                    .await;
-                let payment = self
-                    .on_payment_completed(
-                        parsed_invoice.payee_pubkey.clone(),
-                        Some(parsed_invoice),
-                        req.label,
-                        payment_res,
-                    )
-                    .await?;
-                Ok(SendPaymentResponse { payment })
+                    .await
             }
+        };
+
+        let payment = self
+            .on_payment_completed(
+                parsed_invoice.payee_pubkey.clone(),
+                Some(parsed_invoice),
+                req.label,
+                payment_res,
+            )
+            .await?;
+        Ok(SendPaymentResponse { payment })
+    }
+
+    fn get_trampoline_id(
+        &self,
+        req: &SendPaymentRequest,
+        invoice: &LNInvoice,
+    ) -> Result<Option<Vec<u8>>, SendPaymentError> {
+        // If trampoline is turned off, return immediately
+        if !req.use_trampoline {
+            return Ok(None);
         }
+
+        // Get the persisted LSP id. If no LSP, return early.
+        let lsp_pubkey = match self.persister.get_lsp_pubkey()? {
+            Some(lsp_pubkey) => lsp_pubkey,
+            None => return Ok(None),
+        };
+
+        // If the LSP is in the routing hint, don't use trampoline, but rather
+        // pay directly to the destination.
+        if invoice.routing_hints.iter().any(|hint| {
+            hint.hops
+                .last()
+                .map(|hop| hop.src_node_id == lsp_pubkey)
+                .unwrap_or(false)
+        }) {
+            return Ok(None);
+        }
+
+        // Get the LSP connected peer to extract its features.
+        let node_state = self.node_info()?;
+        let peer = match node_state
+            .connected_peers
+            .iter()
+            .find(|peer| peer.id == lsp_pubkey)
+        {
+            Some(peer) => peer,
+            None => return Ok(None),
+        };
+
+        // If the LSP does not support trampoline, don't attempt it.
+        if !peer.features.trampoline {
+            return Ok(None);
+        }
+
+        // If ended up here, this payment will attempt trampoline.
+        Ok(Some(hex::decode(lsp_pubkey).map_err(|_| {
+            SendPaymentError::Generic {
+                err: "failed to decode lsp pubkey".to_string(),
+            }
+        })?))
     }
 
     /// Pay directly to a node id using keysend
@@ -365,6 +453,7 @@ impl BreezServices {
                 let pay_req = SendPaymentRequest {
                     bolt11: cb.pr.clone(),
                     amount_msat: None,
+                    use_trampoline: req.use_trampoline,
                     label: req.payment_label,
                 };
                 let invoice = parse_invoice(cb.pr.as_str())?;
@@ -673,19 +762,22 @@ impl BreezServices {
 
     /// Select the LSP to be used and provide inbound liquidity
     pub async fn connect_lsp(&self, lsp_id: String) -> SdkResult<()> {
-        match self.list_lsps().await?.iter().any(|lsp| lsp.id == lsp_id) {
-            true => {
-                self.persister.set_lsp_id(lsp_id)?;
-                self.sync().await?;
-                if let Some(webhook_url) = self.persister.get_webhook_url()? {
-                    self.register_payment_notifications(webhook_url).await?
-                }
-                Ok(())
+        let lsp_pubkey = match self.list_lsps().await?.iter().find(|lsp| lsp.id == lsp_id) {
+            Some(lsp) => lsp.pubkey.clone(),
+            None => {
+                return Err(SdkError::Generic {
+                    err: format!("Unknown LSP: {lsp_id}"),
+                })
             }
-            false => Err(SdkError::Generic {
-                err: format!("Unknown LSP: {lsp_id}"),
-            }),
+        };
+
+        self.persister.set_lsp_id(lsp_id)?;
+        self.persister.set_lsp_pubkey(lsp_pubkey)?;
+        self.sync().await?;
+        if let Some(webhook_url) = self.persister.get_webhook_url()? {
+            self.register_payment_notifications(webhook_url).await?
         }
+        Ok(())
     }
 
     /// Get the current LSP's ID
@@ -1171,32 +1263,46 @@ impl BreezServices {
     /// If not or no LSP is selected, it selects the first LSP in [`list_lsps`].
     async fn connect_lsp_peer(&self, node_pubkey: String) -> SdkResult<()> {
         let lsps = self.lsp_api.list_lsps(node_pubkey).await?;
-        if let Some(lsp) = self
+        let lsp = match self
             .persister
             .get_lsp_id()?
-            .and_then(|lsp_id| lsps.clone().into_iter().find(|lsp| lsp.id == lsp_id))
-            .or_else(|| lsps.first().cloned())
+            .and_then(|lsp_id| lsps.iter().find(|lsp| lsp.id == lsp_id))
+            .or_else(|| lsps.first())
         {
-            self.persister.set_lsp_id(lsp.id)?;
-            if let Ok(node_state) = self.node_info() {
-                let node_id = lsp.pubkey;
-                let address = lsp.host;
-                let lsp_connected = node_state
-                    .connected_peers
-                    .iter()
-                    .any(|e| e == node_id.as_str());
-                if !lsp_connected {
-                    debug!("connecting to lsp {}@{}", node_id.clone(), address.clone());
-                    self.node_api
-                        .connect_peer(node_id.clone(), address.clone())
-                        .await
-                        .map_err(|e| SdkError::ServiceConnectivity {
-                            err: format!("(LSP: {node_id}) Failed to connect: {e}"),
-                        })?;
-                }
-                debug!("connected to lsp {node_id}@{address}");
-            }
+            Some(lsp) => lsp.clone(),
+            None => return Ok(()),
+        };
+
+        self.persister.set_lsp_id(lsp.id)?;
+        self.persister.set_lsp_pubkey(lsp.pubkey.clone())?;
+        let mut node_state = match self.node_info() {
+            Ok(node_state) => node_state,
+            Err(_) => return Ok(()),
+        };
+
+        let node_id = lsp.pubkey;
+        let address = lsp.host;
+        let lsp_connected = node_state
+            .connected_peers
+            .iter()
+            .any(|peer| peer.id == node_id);
+        if !lsp_connected {
+            debug!("connecting to lsp {}@{}", node_id.clone(), address.clone());
+            let features = self
+                .node_api
+                .connect_peer(node_id.clone(), address.clone())
+                .await
+                .map_err(|e| SdkError::ServiceConnectivity {
+                    err: format!("(LSP: {node_id}) Failed to connect: {e}"),
+                })?;
+            node_state.connected_peers.push(ConnectedPeer {
+                id: node_id.clone(),
+                features,
+            });
+            self.persister.set_node_state(&node_state)?;
+            debug!("connected to lsp {node_id}@{address}");
         }
+
         Ok(())
     }
 
@@ -1401,15 +1507,15 @@ impl BreezServices {
             .await;
 
         // Sync node state
-        let sync_breez_services = self.clone();
-        match sync_breez_services.persister.get_node_state()? {
+        match self.persister.get_node_state()? {
             Some(node) => {
-                info!("Starting existing node {}", node.id)
+                info!("Starting existing node {}", node.id);
+                self.connect_lsp_peer(node.id).await?;
             }
             None => {
                 // In case it is a first run we sync in foreground to get the node state.
                 info!("First run, syncing in foreground");
-                sync_breez_services.sync().await?;
+                self.sync().await?;
                 info!("First run, finished running syncing in foreground");
             }
         }
@@ -3280,7 +3386,10 @@ pub(crate) mod tests {
             max_receivable_msat: 4_000_000_000,
             max_single_payment_amount_msat: 1_000,
             max_chan_reserve_msats: 0,
-            connected_peers: vec!["1111".to_string()],
+            connected_peers: vec![ConnectedPeer {
+                id: "1111".to_string(),
+                features: PeerFeatures::default(),
+            }],
             max_receivable_single_payment_amount_msat: 2_000,
             total_inbound_liquidity_msats: 10_000,
         }

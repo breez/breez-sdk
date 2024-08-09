@@ -30,6 +30,8 @@ use crate::swap_out::error::{ReverseSwapError, ReverseSwapResult};
 pub const SWAP_PAYMENT_FEE_EXPIRY_SECONDS: u32 = 60 * 60 * 24 * 2; // 2 days
 pub const INVOICE_PAYMENT_FEE_EXPIRY_SECONDS: u32 = 60 * 60; // 60 minutes
 
+const FEATURE_TRAMPOLINE: usize = 427;
+
 /// Different types of supported payments
 #[derive(Clone, PartialEq, Eq, Debug, EnumString, Display, Deserialize, Serialize, Hash)]
 pub enum PaymentType {
@@ -628,13 +630,43 @@ pub struct NodeState {
     pub max_receivable_msat: u64,
     pub max_single_payment_amount_msat: u64,
     pub max_chan_reserve_msats: u64,
-    pub connected_peers: Vec<String>,
+    pub connected_peers: Vec<ConnectedPeer>,
 
     /// Maximum receivable in a single payment without requiring a new channel open.
     pub max_receivable_single_payment_amount_msat: u64,
 
     /// Total receivable on all available channels
     pub total_inbound_liquidity_msats: u64,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
+pub struct ConnectedPeer {
+    pub id: String,
+    pub features: PeerFeatures,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug, Default)]
+pub struct PeerFeatures {
+    pub trampoline: bool,
+}
+
+impl From<Vec<u8>> for PeerFeatures {
+    fn from(value: Vec<u8>) -> Self {
+        PeerFeatures {
+            trampoline: has_feature(&value, FEATURE_TRAMPOLINE),
+        }
+    }
+}
+
+/// Checks whether the given features vector contains the specified feature.
+fn has_feature(features: &[u8], feature: usize) -> bool {
+    if features.is_empty() || features.len() * 8 - 1 < feature {
+        return false;
+    }
+
+    let byte_index = features.len() - feature / 8 - 1;
+    let bit_index = feature % 8;
+    ((features[byte_index] >> bit_index) & 1) == 1
 }
 
 /// Internal response to a [crate::node_api::NodeAPI::pull_changed] call
@@ -847,6 +879,11 @@ pub struct ReceivePaymentResponse {
 pub struct SendPaymentRequest {
     /// The bolt11 invoice
     pub bolt11: String,
+    /// By default, if the LSP supports it, trampoline payments will be tried. Trampoline payments
+    /// outsource pathfinding to the LSP. Trampoline payments improve payment performance, but are
+    /// generally more expensive in terms of fees and they compromise on privacy. Setting this flag
+    /// to `true` will ensure no trampoline payment is attempted.
+    pub use_trampoline: bool,
     /// The amount to pay in millisatoshis. Should only be set when `bolt11` is a zero-amount invoice.
     pub amount_msat: Option<u64>,
     /// The external label or identifier of the [Payment]
@@ -1597,7 +1634,7 @@ mod tests {
     use sdk_common::grpc;
 
     use crate::test_utils::{get_test_ofp, rand_vec_u8};
-    use crate::{OpeningFeeParams, PaymentPath, PaymentPathEdge};
+    use crate::{OpeningFeeParams, PaymentPath, PaymentPathEdge, PeerFeatures};
 
     #[test]
     fn test_route_fees() -> Result<()> {
@@ -1756,5 +1793,19 @@ mod tests {
         let mut ofp: OpeningFeeParams = get_test_ofp(1, 1, true).into();
         ofp.valid_until = "2023-08-03T00:30:35.117Z".to_string();
         ofp.valid_until_date().map(|_| ())
+    }
+
+    #[test]
+    fn test_trampoline_feature_bit() {
+        let features_hex =
+            "08000000000000000000000000000000000000000000000000000000000000000000000\
+            0000000000000000000000000000000000000";
+        let features = hex::decode(features_hex).unwrap();
+        let peer_features = PeerFeatures::from(features);
+        assert!(peer_features.trampoline);
+
+        let features = Vec::new();
+        let peer_features = PeerFeatures::from(features);
+        assert!(!peer_features.trampoline);
     }
 }

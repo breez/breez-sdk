@@ -193,9 +193,18 @@ dictionary NodeState {
     u64 max_receivable_msat;
     u64 max_single_payment_amount_msat;
     u64 max_chan_reserve_msats;
-    sequence<string> connected_peers;
+    sequence<ConnectedPeer> connected_peers;
     u64 max_receivable_single_payment_amount_msat;
     u64 total_inbound_liquidity_msats;
+};
+
+dictionary ConnectedPeer {
+    string id;
+    PeerFeatures features;
+};
+
+dictionary PeerFeatures {
+    boolean trampoline;
 };
 
 dictionary ConfigureNodeRequest {
@@ -634,6 +643,7 @@ dictionary LnUrlPayErrorData {
 dictionary LnUrlPayRequest {
     LnUrlPayRequestData data;
     u64 amount_msat;
+    boolean use_trampoline;
     string? comment = null;
     string? payment_label = null;
     boolean? validate_success_action_url = null;
@@ -766,6 +776,7 @@ dictionary RedeemOnchainFundsResponse {
 
 dictionary SendPaymentRequest {
     string bolt11;
+    boolean use_trampoline;
     u64? amount_msat = null;
     string? label = null;
 };

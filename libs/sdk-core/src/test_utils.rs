@@ -45,9 +45,9 @@ use crate::swap_out::boltzswap::{BoltzApiCreateReverseSwapResponse, BoltzApiReve
 use crate::swap_out::error::{ReverseSwapError, ReverseSwapResult};
 use crate::{
     parse_invoice, BuyBitcoinProvider, Config, CustomMessage, LNInvoice, MaxChannelAmount,
-    NodeCredentials, OpeningFeeParamsMenu, PaymentResponse, PrepareRedeemOnchainFundsRequest,
-    PrepareRedeemOnchainFundsResponse, ReceivePaymentRequest, ReverseSwapPairInfo, RouteHint,
-    RouteHintHop, SwapInfo,
+    NodeCredentials, OpeningFeeParamsMenu, PaymentResponse, PeerFeatures,
+    PrepareRedeemOnchainFundsRequest, PrepareRedeemOnchainFundsResponse, ReceivePaymentRequest,
+    ReverseSwapPairInfo, RouteHint, RouteHintHop, SwapInfo,
 };
 
 pub const MOCK_REVERSE_SWAP_MIN: u64 = 50_000;
@@ -381,6 +381,17 @@ impl NodeAPI for MockNodeAPI {
         Ok(payment)
     }
 
+    async fn send_trampoline_payment(
+        &self,
+        bolt11: String,
+        _amount_msat: u64,
+        _label: Option<String>,
+        _trampoline_id: Vec<u8>,
+    ) -> NodeResult<Payment> {
+        let payment = self.add_dummy_payment_for(bolt11, None, None).await?;
+        Ok(payment)
+    }
+
     async fn send_spontaneous_payment(
         &self,
         _node_id: String,
@@ -415,8 +426,8 @@ impl NodeAPI for MockNodeAPI {
 
     async fn start_keep_alive(&self, _shutdown: watch::Receiver<()>) {}
 
-    async fn connect_peer(&self, _node_id: String, _addr: String) -> NodeResult<()> {
-        Ok(())
+    async fn connect_peer(&self, _node_id: String, _addr: String) -> NodeResult<PeerFeatures> {
+        Ok(PeerFeatures::default())
     }
 
     async fn sign_message(&self, _message: &str) -> NodeResult<String> {
