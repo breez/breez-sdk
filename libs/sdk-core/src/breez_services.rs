@@ -36,8 +36,8 @@ use crate::greenlight::{GLBackupTransport, Greenlight};
 use crate::lnurl::pay::*;
 use crate::lsp::LspInformation;
 use crate::models::{
-    parse_short_channel_id, ChannelState, ClosedChannelPaymentDetails, Config, EnvironmentType,
-    LspAPI, NodeState, Payment, PaymentDetails, PaymentType, ReverseSwapPairInfo,
+    parse_short_channel_id, sanitize::*, ChannelState, ClosedChannelPaymentDetails, Config,
+    EnvironmentType, LspAPI, NodeState, Payment, PaymentDetails, PaymentType, ReverseSwapPairInfo,
     ReverseSwapServiceAPI, SwapInfo, SwapperAPI, INVOICE_PAYMENT_FEE_EXPIRY_SECONDS,
 };
 use crate::node_api::{CreateInvoiceRequest, NodeAPI};
@@ -2095,8 +2095,14 @@ impl BreezServices {
         )?;
         let channels = serde_json::to_string_pretty(&self.persister.list_channels()?)?;
         let settings = serde_json::to_string_pretty(&self.persister.list_settings()?)?;
-        let reverse_swaps = serde_json::to_string_pretty(&self.persister.list_reverse_swaps()?)?;
-        let swaps = serde_json::to_string_pretty(&self.persister.list_swaps()?)?;
+        let reverse_swaps = self
+            .persister
+            .list_reverse_swaps()
+            .map(sanitize_vec_pretty_print)??;
+        let swaps = self
+            .persister
+            .list_swaps()
+            .map(sanitize_vec_pretty_print)??;
         let lsp_id = serde_json::to_string_pretty(&self.persister.get_lsp_id()?)?;
 
         let res = format!(
